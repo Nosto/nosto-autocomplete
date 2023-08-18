@@ -1,0 +1,20 @@
+{% if response.keywords %}
+  <div class="ns-autocomplete-header">
+    Keywords
+  </div>
+  {% for hit in response.keywords.hits %}
+    <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json }}">
+      <span>{{ hit.keyword }}</span>
+    </div>
+  {% endfor %}
+{% endif %}
+{% if response.products %}
+  <div class="ns-autocomplete-header">
+    Products
+  </div>
+  {% for hit in response.products.hits %}
+    <a href="{{ hit.url }}" data-ns-hit="{{ hit | json }}">
+      {{ hit.name }}
+    </a>
+  {% endfor %}
+{% endif %}

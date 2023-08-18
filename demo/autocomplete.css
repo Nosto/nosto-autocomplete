@@ -1,0 +1,40 @@
+#search-form {
+  position: relative;
+}
+.ns-autocomplete {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+  width: 100%;
+  z-index: 1001;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: border-box;
+  min-width: 250px;
+  max-width: 800px;
+
+}
+
+.ns-autocomplete-header {
+  padding: 5px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #666;
+}
+
+.ns-autocomplete-keyword {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.ns-autocomplete-product {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
