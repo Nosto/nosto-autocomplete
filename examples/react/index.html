@@ -19,11 +19,24 @@
     </script>
     <!-- Include demo merchant with ability to run it locally -->
     <script src="https://connect.nosto.com/include/shopify-9758212174" async onload="window.nosto.reload({site: location.hostname, searchEnabled: false })"></script>
-    <script src="../dist/nosto-autocomplete.umd.js" async onload="initAutocomplete()"></script>
+    <script src="../../dist/nosto-autocomplete.umd.js" async onload="initAutocomplete()"></script>
+
+    <!-- Include browser bundle of react -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Include browser babel (do not use in production) -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <link rel="stylesheet" href="autocomplete.css">
-    <script>
+    <script type="text/babel">
+      function Autocomplete({}) {
+        return <div></div>
+      }
+
       window.initAutocomplete = function () {
+        let reactRoot = undefined
+
         window.nostoAutocomplete.autocomplete({
           query: {
             products: {
@@ -36,7 +49,12 @@
           },
           inputSelector: '#search',
           dropdownSelector: '#search-results',
-          render: window.nostoAutocomplete.fromRemoteLiquidTemplate('autocomplete.liquid')
+          render: function (container, state) {
+            if (!reactRoot) {
+              reactRoot = ReactDOM.createRoot(container)
+            }
+            reactRoot.render(<Autocomplete {...state}/>)
+          }
         })
       }
     </script>

@@ -6,16 +6,14 @@ export class Dropdown {
 
     constructor(
         protected container: HTMLElement,
-        protected render: ((state: State) => string) | ((state: State) => PromiseLike<string>),
+        protected render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
     ) {
         this.hide()
     }
 
     update(state: State): void {
-        Promise.resolve(this.render(state)).then((result) => {
-
-            this.isEmpty = !result.trim()
-            this.container.innerHTML = result
+        Promise.resolve(this.render(this.container, state)).then(() => {
+            this.isEmpty = !this.container.innerHTML.trim()
             this.show()
         })
     }

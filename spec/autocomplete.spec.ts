@@ -43,7 +43,9 @@ test('autocomplete', async () => {
         },
         inputSelector: '#search',
         dropdownSelector: '#search-results',
-        render: () => `<div>Hello</div>`,
+        render: (container) => {
+            container.innerHTML = '<div>test</div>'
+        },
     })
 
     await user.type(screen.getByTestId('input'), 'red')

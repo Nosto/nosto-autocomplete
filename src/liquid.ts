@@ -13,17 +13,16 @@ export function fromLiquidTemplate(
 
 export function fromRemoteLiquidTemplate(
     url: string,
-): (state: State) => PromiseLike<string> {
-    return (state) => {
+): (container: HTMLElement, state: State) => PromiseLike<void> {
+    return (container, state) => {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open('GET', url)
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     try {
-                        resolve(
-                            engine.parseAndRenderSync(xhr.responseText, state),
-                        )
+                        container.innerHTML = engine.parseAndRenderSync(xhr.responseText, state)
+                        resolve(undefined)
                     } catch (err) {
                         reject(err)
                     }

@@ -1,0 +1,52 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nosto Autocomplete</title>
+    <link rel="stylesheet" href="global.css">
+
+    <!-- Include default nosto code -->
+    <script>
+      (function() {
+        var name="nostojs";
+        window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};
+       })();
+    </script>
+    <!-- Include demo merchant with ability to run it locally -->
+    <script src="https://connect.nosto.com/include/shopify-9758212174" async onload="window.nosto.reload({site: location.hostname, searchEnabled: false })"></script>
+    <script src="../../dist/nosto-autocomplete.umd.js" async onload="initAutocomplete()"></script>
+
+    <link rel="stylesheet" href="autocomplete.css">
+    <script>
+      window.initAutocomplete = function () {
+        window.nostoAutocomplete.autocomplete({
+          query: {
+            products: {
+              fields: ['name', 'url', 'imageUrl'],
+              size: 5
+            },
+            keywords: {
+              size: 5
+            }
+          },
+          inputSelector: '#search',
+          dropdownSelector: '#search-results',
+          render: window.nostoAutocomplete.fromRemoteLiquidTemplate('autocomplete.liquid')
+        })
+      }
+    </script>
+</head>
+
+  <body>
+    <form id="search-form">
+      <input type="text" id="search" placeholder="search" />
+      <button type="submit" id="search-button">Search</button>
+      <div id="search-results" class="ns-autocomplete"></div>
+    </form>
+  </body>
+</html>

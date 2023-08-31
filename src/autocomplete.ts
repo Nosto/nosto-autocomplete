@@ -20,7 +20,7 @@ export interface AutocompleteConfig {
     /**
      * The function to use to render the dropdown
      */
-    render: ((state: State) => string) | ((state: State) => PromiseLike<string>)
+    render: (container: HTMLElement, state: State) => void | PromiseLike<void>
 }
 
 export function autocomplete(config: AutocompleteConfig): {
