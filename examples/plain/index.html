@@ -34,7 +34,41 @@
           },
           inputSelector: '#search',
           dropdownSelector: '#search-results',
-          render: window.nostoAutocomplete.fromRemoteLiquidTemplate('autocomplete.liquid')
+          render: function (container, state) {
+            var response = state.response
+
+            container.innerHTML = ''
+
+            if (response.keywords && response.keywords.hits.length > 0) {
+              container.innerHTML += [
+                '<div class="ns-autocomplete-header">',
+                  'Keywords',
+                '</div>',
+                response.keywords.hits.map(function (hit) {
+                  return [
+                    '<div class="ns-autocomplete-keyword" data-ns-hit="' + JSON.stringify(hit) + '">',
+                      '<span>' + hit.keyword + '</span>',
+                    '</div>'
+                  ].join('')
+                }).join('')
+              ].join('')
+            }
+
+            if (response.products && response.products.hits.length > 0) {
+              container.innerHTML += [
+                '<div class="ns-autocomplete-header">',
+                  'Products',
+                '</div>',
+                response.products.hits.map(function (hit) {
+                  return [
+                    '<a href="' + hit.url + '" data-ns-hit="' + JSON.stringify(hit) + '">',
+                      hit.name,
+                    '</a>'
+                  ].join('')
+                }).join('')
+              ].join('')
+            }
+          }
         })
       }
     </script>

@@ -28,7 +28,7 @@ beforeAll(() => {
     document.body.appendChild(script)
 })
 
-describe('autocomplete', () => {
+describe('liquid', () => {
     it('renders autocomplete', async () => {
         const user = userEvent.setup()
 

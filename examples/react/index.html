@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -17,9 +15,10 @@
         window[name]=window[name]||function(cb){(window[name].q=window[name].q||[]).push(cb);};
        })();
     </script>
+
     <!-- Include demo merchant with ability to run it locally -->
-    <script src="https://connect.nosto.com/include/shopify-9758212174" async onload="window.nosto.reload({site: location.hostname, searchEnabled: false })"></script>
-    <script src="../../dist/nosto-autocomplete.umd.js" async onload="initAutocomplete()"></script>
+    <script src="https://connect.nosto.com/include/shopify-9758212174" async onload="setTimeout(function() { window.nosto.reload({site: location.hostname, searchEnabled: false }) }, 100)"></script>
+    <script src="../../dist/nosto-autocomplete.umd.js" async onload="setTimeout(function() { window.initAutocomplete() }, 100)"></script>
 
     <!-- Include browser bundle of react -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -30,8 +29,33 @@
 
     <link rel="stylesheet" href="autocomplete.css">
     <script type="text/babel">
-      function Autocomplete({}) {
-        return <div></div>
+      function Autocomplete({ response }) {
+        if (!response.keywords || !response.keywords.hits.length || !response.products || !response.products.hits.length) {
+          return null
+        }
+
+        return <div>
+          {response.keywords && response.keywords.hits.length > 0 && <div>
+            <div class="ns-autocomplete-header">
+              Keywords
+            </div>
+              {response.keywords.hits.map((hit) => {
+                return <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json }}">
+                  <span>{ hit.keyword }</span>
+                </div>
+              })}
+            </div>}
+            {response.products && response.products.hits.length > 0 && <div>
+              <div class="ns-autocomplete-header">
+                Products
+              </div>
+                {response.products.hits.map((hit) => {
+                  return <a href={hit.url} data-ns-hit={JSON.stringify(hit)}>
+                    { hit.name }
+                  </a>
+                })}
+              </div>}
+        </div>
       }
 
       window.initAutocomplete = function () {
@@ -50,6 +74,7 @@
           inputSelector: '#search',
           dropdownSelector: '#search-results',
           render: function (container, state) {
+            console.log('render')
             if (!reactRoot) {
               reactRoot = ReactDOM.createRoot(container)
             }

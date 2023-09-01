@@ -40,14 +40,18 @@ jobs:
       - run: npm ci
 
       - run: npm run build
-      
+
+      - run: npm run test:cov
+
+      - run: npm run build:site
+    
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: 'docs'
+          path: 'site'
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -3,14 +3,24 @@ import { State } from './state'
 
 const engine = new Liquid()
 
-export function fromLiquidTemplate(
-    template: string,
-): (state: State) => string {
+/**
+ * Render a liquid template into a container
+ * 
+ * @param template Liquid template
+ * @returns render function
+ */
+export function fromLiquidTemplate(template: string): (state: State) => string {
     return (state) => {
         return engine.parseAndRenderSync(template, state)
     }
 }
 
+/**
+ * Load a remote liquid template and render it into a container
+ * 
+ * @param url remote Liquid template URL
+ * @returns render function
+ */
 export function fromRemoteLiquidTemplate(
     url: string,
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
@@ -21,7 +31,10 @@ export function fromRemoteLiquidTemplate(
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     try {
-                        container.innerHTML = engine.parseAndRenderSync(xhr.responseText, state)
+                        container.innerHTML = engine.parseAndRenderSync(
+                            xhr.responseText,
+                            state,
+                        )
                         resolve(undefined)
                     } catch (err) {
                         reject(err)

@@ -1,4 +1,4 @@
-import { SimplePromise } from './promise'
+import { AnyPromise } from './promise'
 
 export interface SearchQuery {}
 
@@ -9,7 +9,7 @@ export interface NostoAPI {
 }
 
 export function getNosto(): PromiseLike<NostoAPI> {
-    return new SimplePromise((resolve, reject) => {
+    return new AnyPromise((resolve, reject) => {
         if ('nostojs' in window && typeof window.nostojs === 'function') {
             window.nostojs((api: NostoAPI) => {
                 resolve(api)
