@@ -1,7 +1,10 @@
-import type { State } from './state'
-import type { SearchQuery } from './utils/api'
+import { InputSearchQueryWithFields } from './api/search'
 
-export interface AutocompleteConfig {
+/**
+ * @group Autocomplete
+ * @category Core
+ */
+export interface AutocompleteConfig<State> {
     /**
      * The input element to attach the autocomplete to
      */
@@ -15,10 +18,6 @@ export interface AutocompleteConfig {
               input: HTMLInputElement,
           ) => string | Element | Element[] | NodeListOf<Element>)
     /**
-     * The query to use when searching
-     */
-    query: SearchQuery
-    /**
      * The function to use to render the dropdown
      */
     render: (container: HTMLElement, state: State) => void | PromiseLike<void>
@@ -26,8 +25,12 @@ export interface AutocompleteConfig {
      * Minimum length of the query before searching
      */
     minQueryLength?: number
+    /**
+     * The function to use to fetch the search state
+     */
+    fetch: InputSearchQueryWithFields | ((input: string) => PromiseLike<State>)
 }
 
-export const defaultConfig: Partial<AutocompleteConfig> = {
+export const defaultConfig = {
     minQueryLength: 2,
 }

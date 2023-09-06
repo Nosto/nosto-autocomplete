@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
-import { autocomplete } from '../src'
+import { autocomplete, fromLiquidTemplate } from '../src'
 
 import '@testing-library/jest-dom'
 
@@ -28,12 +28,40 @@ beforeAll(() => {
     document.body.appendChild(script)
 })
 
-describe('liquid', () => {
-    it('renders autocomplete', async () => {
+afterAll(() => {
+    jest.restoreAllMocks()
+    document.body.innerHTML = ''
+})
+
+const template = `
+    {% if response.keywords %}
+        <div class="ns-autocomplete-header">
+        Keywords
+        </div>
+        {% for hit in response.keywords.hits %}
+        <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}" data-testid="keyword">
+            {{ hit.keyword }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% if response.products %}
+        <div class="ns-autocomplete-header">
+        Products
+        </div>
+        {% for hit in response.products.hits %}
+        <a href="{{ hit.url }}" data-ns-hit="{{ hit | json | escape }}" data-testid="product">
+            {{ hit.name }}
+        </a>
+        {% endfor %}
+    {% endif %}
+`
+
+describe('fromLiquidTemplate', () => {
+    it('uses local liquid template', async () => {
         const user = userEvent.setup()
 
         autocomplete({
-            query: {
+            fetch: {
                 products: {
                     fields: ['name', 'url', 'imageUrl'],
                     size: 5,
@@ -44,9 +72,7 @@ describe('liquid', () => {
             },
             inputSelector: '#search',
             dropdownSelector: '#search-results',
-            render: (container, state) => {
-                container.innerHTML = '<div>test</div>'
-            },
+            render: fromLiquidTemplate(template),
         })
 
         expect(screen.getByTestId('dropdown')).not.toBeVisible()
@@ -61,5 +87,66 @@ describe('liquid', () => {
                 timeout: 4000,
             },
         )
+
+        expect(screen.getByText('Keywords')).toBeVisible()
+        expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+
+        expect(screen.getByText('Products')).toBeVisible()
+        expect(screen.getAllByTestId('product')).toHaveLength(5)
     })
 })
+
+// describe('fromRemoteLiquidTemplate', () => {
+//     it('fetches remote liquid template', async () => {
+//         const user = userEvent.setup()
+
+//         const XMLHttpRequestMock = jest.fn(() => ({
+//             open() {
+//                 return undefined
+//             },
+//             send() {
+//                 setTimeout(() => {
+//                     this.onload()
+//                 }, 100)
+//             },
+//             readyState: 4,
+//             status: 200,
+//             responseText: template,
+//             onload() {}
+//         }))
+
+//         autocomplete({
+//             fetch: {
+//                 products: {
+//                     fields: ['name', 'url', 'imageUrl'],
+//                     size: 5,
+//                 },
+//                 keywords: {
+//                     size: 5,
+//                 },
+//             },
+//             inputSelector: '#search',
+//             dropdownSelector: '#search-results',
+//             render: fromRemoteLiquidTemplate(`template.liquid`)
+//         })
+
+//         expect(screen.getByTestId('dropdown')).not.toBeVisible()
+
+//         await user.type(screen.getByTestId('input'), 'red')
+
+//         await waitFor(
+//             () => {
+//                 expect(screen.getByTestId('dropdown')).toBeVisible()
+//             },
+//             {
+//                 timeout: 4000,
+//             },
+//         )
+
+//         expect(screen.getByText('Keywords')).toBeVisible()
+//         expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+
+//         expect(screen.getByText('Products')).toBeVisible()
+//         expect(screen.getAllByTestId('product')).toHaveLength(5)
+//     })
+// })

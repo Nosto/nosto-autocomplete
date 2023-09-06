@@ -1,12 +1,11 @@
-import { State } from './state'
 import { AnyPromise } from './utils/promise'
 
-export class Dropdown {
-    protected state: State = {}
+export class Dropdown<State> {
+    protected state: State = {} as State
     protected isEmpty: boolean = true
 
     constructor(
-        protected container: HTMLElement,
+        public container: HTMLElement,
         protected render: (
             container: HTMLElement,
             state: State,
@@ -16,14 +15,10 @@ export class Dropdown {
     }
 
     update(state: State): void {
-        if (state.response) {
-            AnyPromise.resolve(this.render(this.container, state)).then(() => {
-                this.isEmpty = !this.container.innerHTML.trim()
-                this.show()
-            })
-        } else {
-            this.clear()
-        }
+        AnyPromise.resolve(this.render(this.container, state)).then(() => {
+            this.isEmpty = !this.container.innerHTML.trim()
+            this.show()
+        })
     }
 
     hide(): void {

@@ -25,7 +25,7 @@
   "module": "./dist/nosto-autocomplete.module.js",
   "source": "./src/index.ts",
   "types": "./dist/nosto-autocomplete.d.ts",
-  "files": [ 
+  "files": [
     "dist/**/*"
   ],
   "scripts": {
@@ -36,7 +36,9 @@
     "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r./docs ./site && cp -r./examples ./site/examples && cp -r./coverage ./site/coverage",
     "prettify": "prettier --write \"{src,spec}/**/*.ts\"",
     "test": "jest spec",
-    "test:cov": "jest --coverage spec && make-coverage-badge"
+    "test:cov": "jest --coverage spec && make-coverage-badge",
+    "codegen": "graphql-codegen",
+    "dev:docs": "typedoc --watch src/index.ts"
   },
   "prettier": {
     "semi": false,
@@ -67,6 +69,8 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/typescript": "4.0.1",
     "@testing-library/dom": "^9.3.1",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -96,5 +100,21 @@
       "lcov",
       "text"
     ]
+  },
+  "codegen": {
+    "overwrite": true,
+    "schema": "https://search.nosto.com/v1/graphql",
+    "generates": {
+      "src/api/search/generated.ts": {
+        "plugins": ["typescript"],
+        "config": {
+          "enumsAsTypes": true,
+          "defaultScalarType": "unknown",
+          "skipTypename": true,
+          "useImplementingTypes": true,
+          "declarationKind": "interface"
+        }
+      }
+    }
   }
 }

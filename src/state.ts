@@ -1,12 +1,16 @@
-import { SearchQuery, SearchResponse } from './utils/api'
+import { InputSearchQuery, SearchResult } from './api/search/generated'
 
-export interface State {
+/**
+ * @group Autocomplete
+ * @category Core
+ */
+export interface DefaultState {
     /**
      * The current search query
      */
-    query?: SearchQuery
+    query?: InputSearchQuery
     /**
      * The current search response
      */
-    response?: SearchResponse
+    response?: SearchResult
 }

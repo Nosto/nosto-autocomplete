@@ -62,7 +62,7 @@
         let reactRoot = undefined
 
         window.nostoAutocomplete.autocomplete({
-          query: {
+          fetch: {
             products: {
               fields: ['name', 'url', 'imageUrl'],
               size: 5
@@ -74,7 +74,6 @@
           inputSelector: '#search',
           dropdownSelector: '#search-results',
           render: function (container, state) {
-            console.log('render')
             if (!reactRoot) {
               reactRoot = ReactDOM.createRoot(container)
             }

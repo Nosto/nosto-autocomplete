@@ -81,4 +81,3 @@ class SimplePromise<T> implements PromiseLike<T> {
 }
 
 export let AnyPromise = 'Promise' in window ? window.Promise : SimplePromise
-

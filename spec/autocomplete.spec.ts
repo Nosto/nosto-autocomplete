@@ -32,8 +32,17 @@ describe('autocomplete', () => {
     it('renders autocomplete', async () => {
         const user = userEvent.setup()
 
+        function escapeHtml(unsafe: string): string {
+            return unsafe
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+        }
+
         autocomplete({
-            query: {
+            fetch: {
                 products: {
                     fields: ['name', 'url', 'imageUrl'],
                     size: 5,
@@ -44,8 +53,48 @@ describe('autocomplete', () => {
             },
             inputSelector: '#search',
             dropdownSelector: '#search-results',
-            render: (container, state) => {
-                container.innerHTML = '<div>test</div>'
+            render: (container, { response }) => {
+                container.innerHTML = ''
+
+                if (response?.keywords?.hits.length) {
+                    container.innerHTML += [
+                        '<div class="ns-autocomplete-header">',
+                        'Keywords',
+                        '</div>',
+                        response.keywords.hits
+                            .map(function (hit) {
+                                return [
+                                    '<div class="ns-autocomplete-keyword" data-ns-hit="' +
+                                        escapeHtml(JSON.stringify(hit)) +
+                                        '">',
+                                    '<span>' + hit.keyword + '</span>',
+                                    '</div>',
+                                ].join('')
+                            })
+                            .join(''),
+                    ].join('')
+                }
+
+                if (response?.products?.hits.length) {
+                    container.innerHTML += [
+                        '<div class="ns-autocomplete-header">',
+                        'Products',
+                        '</div>',
+                        response.products.hits
+                            .map(function (hit) {
+                                return [
+                                    '<a href="' +
+                                        hit.url +
+                                        '" data-ns-hit="' +
+                                        escapeHtml(JSON.stringify(hit)) +
+                                        '">',
+                                    hit.name,
+                                    '</a>',
+                                ].join('')
+                            })
+                            .join(''),
+                    ].join('')
+                }
             },
         })
 
