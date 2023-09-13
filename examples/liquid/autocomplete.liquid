@@ -1,20 +1,64 @@
-{% if response.keywords %}
-  <div class="ns-autocomplete-header">
-    Keywords
-  </div>
-  {% for hit in response.keywords.hits %}
-    <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json }}">
-      <span>{{ hit.keyword }}</span>
+<div class="ns-autocomplete-results">
+  {% if response.keywords and response.keywords.hits.length %}
+    <div class="ns-autocomplete-keywords">
+      <div class="ns-autocomplete-header">
+        Keywords
+      </div>
+      {% for hit in response.keywords.hits %}
+        <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}">
+          {% if hit._highlight and hit._highlight.keyword %}
+            {{ hit._highlight.keyword }}
+          {% else %}
+            <span>{{ hit.keyword }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-{% endif %}
-{% if response.products %}
-  <div class="ns-autocomplete-header">
-    Products
+  {% endif %}
+  {% if response.products and response.products.hits.length %}
+    <div class="ns-autocomplete-products">
+      <div class="ns-autocomplete-header">
+        Products
+      </div>
+      {% for hit in response.products.hits %}
+        <a
+          class="ns-autocomplete-product"
+          href="{{ hit.url }}"
+          data-ns-hit="{{ hit | json }}">
+          <img
+            class="ns-autocomplete-product-image"
+            src="{{ hit.imageUrl }}"
+            alt="{{ hit.name }}"
+            width="60"
+            height="40" />
+          <div class="ns-autocomplete-product-info">
+            {% if hit.brand %}
+              <div class="ns-autocomplete-product-brand">
+                {{ hit.brand }}
+              </div>
+            {% endif %}
+            <div class="ns-autocomplete-product-name">
+              {{ hit.name }}
+            </div>
+            <div>
+              <span>
+                {{ hit.price }}&euro;
+              </span>
+              {% if hit.listPrice %}
+                <span class="ns-autocomplete-product-list-price">
+                  {{ hit.listPrice }}
+                  &euro;
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <div class="ns-autocomplete-submit">
+    <button type="submit" class="ns-autocomplete-button">
+      See all search results
+    </button>
   </div>
-  {% for hit in response.products.hits %}
-    <a href="{{ hit.url }}" data-ns-hit="{{ hit | json }}">
-      {{ hit.name }}
-    </a>
-  {% endfor %}
-{% endif %}
+</div>
