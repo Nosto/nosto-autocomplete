@@ -61,6 +61,10 @@
                     render: window.nostoAutocomplete.fromRemoteLiquidTemplate(
                         'autocomplete.liquid',
                     ),
+                    submit: (query) => {
+                        // Handle search submit
+                        console.log('Submitting search with query: ', query)
+                    }
                 })
             }
         </script>

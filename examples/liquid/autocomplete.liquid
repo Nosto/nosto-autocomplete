@@ -1,5 +1,5 @@
 <div class="ns-autocomplete-results">
-  {% if response.keywords and response.keywords.hits.length %}
+  {% if response.keywords and response.keywords.hits and response.keywords.hits.length > 0 %}
     <div class="ns-autocomplete-keywords">
       <div class="ns-autocomplete-header">
         Keywords
@@ -15,7 +15,7 @@
       {% endfor %}
     </div>
   {% endif %}
-  {% if response.products and response.products.hits.length %}
+  {% if response.products and response.products.hits and response.products.hits.length > 0 %}
     <div class="ns-autocomplete-products">
       <div class="ns-autocomplete-header">
         Products
@@ -24,7 +24,7 @@
         <a
           class="ns-autocomplete-product"
           href="{{ hit.url }}"
-          data-ns-hit="{{ hit | json }}">
+          data-ns-hit="{{ hit | json | escape }}">
           <img
             class="ns-autocomplete-product-image"
             src="{{ hit.imageUrl }}"

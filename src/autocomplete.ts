@@ -48,13 +48,26 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onSubmit() {
+                    dropdown.submit()
                     dropdown.hide()
+
+                    if (typeof config?.submit === 'function') {
+                        config.submit(inputElement.value)
+                    }
                 },
                 onKeyDown(_, key) {
                     if (key === 'Escape') {
                         dropdown.hide()
                     } else if (key === 'ArrowDown') {
-                        dropdown.show()
+                        if (dropdown.isOpen()) {
+                            dropdown.goDown()
+                        } else {
+                            dropdown.show()
+                        }
+                    } else if (key === 'ArrowUp') {
+                        if (dropdown.isOpen()) {
+                            dropdown.goUp()
+                        }
                     }
                 },
             })
@@ -114,7 +127,7 @@ function createInputDropdown<State>(
     }
 
     const dropdownElement = dropdownElements[0]
-    return new Dropdown<State>(dropdownElement, config.render)
+    return new Dropdown<State>(dropdownElement, config.render, (value) => input.value = value)
 }
 
 function fetchState<State>(

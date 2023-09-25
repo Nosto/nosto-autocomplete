@@ -29,6 +29,10 @@ export interface AutocompleteConfig<State> {
      * The function to use to fetch the search state
      */
     fetch: InputSearchQueryWithFields | ((input: string) => PromiseLike<State>)
+    /**
+     * The function to use to submit the search
+     */
+    submit: (query: string) => unknown
 }
 
 export const defaultConfig = {
