@@ -48,7 +48,6 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onSubmit() {
-                    dropdown.submit()
                     dropdown.hide()
 
                     if (typeof config?.submit === 'function') {
@@ -127,7 +126,12 @@ function createInputDropdown<State>(
     }
 
     const dropdownElement = dropdownElements[0]
-    return new Dropdown<State>(dropdownElement, config.render, (value) => input.value = value)
+    return new Dropdown<State>(
+        dropdownElement,
+        config.render,
+        config.submit,
+        (value) => (input.value = value),
+    )
 }
 
 function fetchState<State>(
