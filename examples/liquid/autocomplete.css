@@ -24,7 +24,8 @@
     width: 100%;
 }
 
-.ns-autocomplete-keywords {
+.ns-autocomplete-keywords,
+.ns-autocomplete-history {
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid #F0F3F6;
@@ -38,14 +39,18 @@
     font-size: 0.9rem;
 }
 
-.ns-autocomplete-keyword {
+.ns-autocomplete-keyword,
+.ns-autocomplete-history-item {
     padding: 0.25rem 1rem;
     color: #000000;
     font-size: 0.9rem;
     cursor: pointer;
 }
 
-.ns-autocomplete-keyword:hover, .ns-autocomplete-keyword.selected {
+.ns-autocomplete-keyword:hover,
+.ns-autocomplete-keyword.selected,
+.ns-autocomplete-history-item:hover,
+.ns-autocomplete-history-item.selected {
     background-color: #F0F3F6;
 }
 
@@ -66,7 +71,8 @@
     cursor: pointer;
 }
 
-.ns-autocomplete-product:hover, .ns-autocomplete-product.selected {
+.ns-autocomplete-product:hover,
+.ns-autocomplete-product.selected {
     background-color: #F0F3F6;
 }
 

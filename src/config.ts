@@ -33,8 +33,18 @@ export interface AutocompleteConfig<State> {
      * The function to use to submit the search
      */
     submit: (query: string) => unknown
+    /**
+     * Enable history
+     */
+    historyEnabled?: boolean
+    /**
+     * Max number of history items to show
+     */
+    historySize?: number
 }
 
 export const defaultConfig = {
     minQueryLength: 2,
+    historyEnabled: true,
+    historySize: 5,
 }

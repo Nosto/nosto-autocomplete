@@ -1,14 +1,16 @@
 import { AnyPromise } from './utils/promise'
 
 export class Dropdown<State> {
-    protected state: State = {} as State
-    protected isEmpty: boolean = true
-    protected selectedIndex: number = -1
     private elements: HTMLElement[] = []
     private unbindCallbacks: Array<() => void> = []
 
+    protected state: State = {} as State
+    protected isEmpty: boolean = true
+    protected selectedIndex: number = -1
+
     constructor(
         public container: HTMLElement,
+        protected initialState: State,
         protected render: (
             container: HTMLElement,
             state: State,
@@ -16,7 +18,19 @@ export class Dropdown<State> {
         protected submit: (query: string) => unknown,
         protected updateInput: (value: string) => void,
     ) {
-        this.hide()
+        AnyPromise.resolve(this.render(this.container, initialState)).then(() => {
+            this.isEmpty = !this.container.innerHTML.trim()
+
+            if (!this.isEmpty) {
+                this.elements = Array.from<HTMLElement>(
+                    this.container.querySelectorAll('[data-ns-hit]'),
+                ).map((el) => {
+                    this.bindElementSubmit(el)
+                    return el
+                })
+            }
+            this.hide()
+        })
     }
 
     private highlight(index: number, prevIndex?: number): void {
@@ -32,8 +46,15 @@ export class Dropdown<State> {
             if (hit) {
                 try {
                     const parsedHit = JSON.parse(hit)
+
+                    if (parsedHit.item) {
+                        this.updateInput(parsedHit.item)
+                        return
+                    }
+
                     if (parsedHit.keyword) {
                         this.updateInput(parsedHit.keyword)
+                        return
                     }
                 } catch (error) {
                     console.error('Could not parse [data-ns-hit]')
@@ -55,9 +76,16 @@ export class Dropdown<State> {
         if (hit) {
             try {
                 const parsedHit = JSON.parse(hit)
+                this.hide()
+
+                if (parsedHit.item) {
+                    this.submit(parsedHit.item)
+                    return
+                }
 
                 if (parsedHit.keyword) {
                     this.submit(parsedHit.keyword)
+                    return
                 }
 
                 if (parsedHit.url) {
@@ -69,7 +97,7 @@ export class Dropdown<State> {
         }
     }
 
-    private onElementSubmit(el: HTMLElement): void {
+    private bindElementSubmit(el: HTMLElement): void {
         const onSubmit = () => {
             this.handleElementSubmit(el)
         }
@@ -97,7 +125,7 @@ export class Dropdown<State> {
                 this.elements = Array.from<HTMLElement>(
                     this.container.querySelectorAll('[data-ns-hit]'),
                 ).map((el) => {
-                    this.onElementSubmit(el)
+                    this.bindElementSubmit(el)
                     return el
                 })
             }

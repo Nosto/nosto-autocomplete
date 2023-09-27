@@ -5,6 +5,7 @@ import { DefaultState } from './state'
 import { getNostoClient } from './api/client'
 import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
+import { History } from './history'
 
 /**
  * @group Autocomplete
@@ -18,10 +19,15 @@ export function autocomplete<State = DefaultState>(
     close(): void
 } {
     const minQueryLength = config.minQueryLength ?? defaultConfig.minQueryLength
+    const historyEnabled = config.historyEnabled ?? defaultConfig.historyEnabled
+    const historySize = config.historySize ?? defaultConfig.historySize
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         (inputElement) => {
-            const dropdown = createInputDropdown(inputElement, config)
+            const history = historyEnabled
+                ? new History(historySize)
+                : undefined
+            const dropdown = createInputDropdown(inputElement, config, history)
 
             if (!dropdown) {
                 return
@@ -39,6 +45,13 @@ export function autocomplete<State = DefaultState>(
                                 dropdown.update(state)
                             }
                         })
+                    } else if (history) {
+                        dropdown.update({
+                            query: {
+                                query: value,
+                            },
+                            history: history.getItems(),
+                        } as State)
                     }
                 },
                 onFocus() {
@@ -49,6 +62,10 @@ export function autocomplete<State = DefaultState>(
                 },
                 onSubmit() {
                     dropdown.hide()
+
+                    if (historyEnabled) {
+                        history?.add(inputElement.value)
+                    }
 
                     if (typeof config?.submit === 'function') {
                         config.submit(inputElement.value)
@@ -110,6 +127,7 @@ export function autocomplete<State = DefaultState>(
 function createInputDropdown<State>(
     input: HTMLInputElement,
     config: AutocompleteConfig<State>,
+    history?: History
 ): Dropdown<State> | undefined {
     const dropdownElements =
         typeof config.dropdownSelector === 'function'
@@ -128,6 +146,9 @@ function createInputDropdown<State>(
     const dropdownElement = dropdownElements[0]
     return new Dropdown<State>(
         dropdownElement,
+        {
+            history: history?.getItems(),
+        } as State,
         config.render,
         config.submit,
         (value) => (input.value = value),

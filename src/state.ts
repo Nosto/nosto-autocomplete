@@ -13,4 +13,8 @@ export interface DefaultState {
      * The current search response
      */
     response?: SearchResult
+    /**
+     * The history items
+     */
+    history?: { item: string }[]
 }
