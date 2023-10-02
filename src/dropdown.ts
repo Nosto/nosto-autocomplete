@@ -4,32 +4,75 @@ export class Dropdown<State> {
     private elements: HTMLElement[] = []
     private unbindCallbacks: Array<() => void> = []
 
-    protected state: State = {} as State
     protected isEmpty: boolean = true
     protected selectedIndex: number = -1
 
     constructor(
         public container: HTMLElement,
-        protected initialState: State,
+        protected initialState: PromiseLike<State>,
         protected render: (
             container: HTMLElement,
             state: State,
         ) => void | PromiseLike<void>,
-        protected submit: (query: string) => unknown,
-        protected updateInput: (value: string) => void,
+        protected submit: (inputValue: string) => unknown,
+        protected updateInput: (inputValue: string) => void,
     ) {
-        AnyPromise.resolve(this.render(this.container, initialState)).then(() => {
-            this.isEmpty = !this.container.innerHTML.trim()
+        AnyPromise.resolve(initialState)
+            .then((state) => this.render(this.container, state as State))
+            .then(() => {
+                this.loadElements()
+                this.hide()
+            })
+    }
 
-            if (!this.isEmpty) {
-                this.elements = Array.from<HTMLElement>(
-                    this.container.querySelectorAll('[data-ns-hit]'),
-                ).map((el) => {
-                    this.bindElementSubmit(el)
-                    return el
-                })
+    private handleElementSubmit(el: HTMLElement): void {
+        const hit = el?.dataset?.nsHit
+
+        if (hit) {
+            try {
+                const parsedHit = JSON.parse(hit)
+                this.hide()
+
+                if (parsedHit.item) {
+                    this.submit(parsedHit.item)
+                    return
+                }
+
+                if (parsedHit.keyword) {
+                    this.submit(parsedHit.keyword)
+                    return
+                }
+
+                if (parsedHit.url) {
+                    location.href = parsedHit.url
+                }
+            } catch (error) {
+                console.error('Could not parse [data-ns-hit]')
             }
-            this.hide()
+        }
+    }
+
+    private loadElements() {
+        this.isEmpty = !this.container.innerHTML.trim()
+
+        if (!this.isEmpty) {
+            this.elements = Array.from<HTMLElement>(
+                this.container.querySelectorAll('[data-ns-hit]'),
+            ).map((el) => {
+                this.bindElementSubmit(el)
+                return el
+            })
+        }
+    }
+
+    private bindElementSubmit(el: HTMLElement): void {
+        const onSubmit = () => {
+            this.handleElementSubmit(el)
+        }
+
+        el.addEventListener('click', onSubmit)
+        this.unbindCallbacks.push(() => {
+            el.removeEventListener('click', onSubmit)
         })
     }
 
@@ -70,44 +113,6 @@ export class Dropdown<State> {
         }
     }
 
-    private handleElementSubmit(el: HTMLElement): void {
-        const hit = el?.dataset?.nsHit
-
-        if (hit) {
-            try {
-                const parsedHit = JSON.parse(hit)
-                this.hide()
-
-                if (parsedHit.item) {
-                    this.submit(parsedHit.item)
-                    return
-                }
-
-                if (parsedHit.keyword) {
-                    this.submit(parsedHit.keyword)
-                    return
-                }
-
-                if (parsedHit.url) {
-                    location.href = parsedHit.url
-                }
-            } catch (error) {
-                console.error('Could not parse [data-ns-hit]')
-            }
-        }
-    }
-
-    private bindElementSubmit(el: HTMLElement): void {
-        const onSubmit = () => {
-            this.handleElementSubmit(el)
-        }
-
-        el.addEventListener('click', onSubmit)
-        this.unbindCallbacks.push(() => {
-            el.removeEventListener('click', onSubmit)
-        })
-    }
-
     private dispose(): void {
         this.resetHighlight()
         this.elements = []
@@ -119,16 +124,7 @@ export class Dropdown<State> {
         this.dispose()
 
         AnyPromise.resolve(this.render(this.container, state)).then(() => {
-            this.isEmpty = !this.container.innerHTML.trim()
-
-            if (!this.isEmpty) {
-                this.elements = Array.from<HTMLElement>(
-                    this.container.querySelectorAll('[data-ns-hit]'),
-                ).map((el) => {
-                    this.bindElementSubmit(el)
-                    return el
-                })
-            }
+            this.loadElements()
             this.show()
         })
     }
@@ -193,6 +189,10 @@ export class Dropdown<State> {
         ) {
             this.handleElementSubmit(this.elements[this.selectedIndex])
         }
+    }
+
+    hasHighlight(): boolean {
+        return this.selectedIndex > -1
     }
 
     destroy(): void {

@@ -6,6 +6,8 @@ import { getNostoClient } from './api/client'
 import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
 import { History } from './history'
+import { AnyPromise, Cancellable, makeCancellable } from './utils/promise'
+import { Limiter, LimiterError } from './utils/limiter'
 
 /**
  * @group Autocomplete
@@ -21,13 +23,18 @@ export function autocomplete<State = DefaultState>(
     const minQueryLength = config.minQueryLength ?? defaultConfig.minQueryLength
     const historyEnabled = config.historyEnabled ?? defaultConfig.historyEnabled
     const historySize = config.historySize ?? defaultConfig.historySize
+    const history = historyEnabled ? new History(historySize) : undefined
+    const state = initState(config, { minQueryLength, history })
+
+    const limiter = new Limiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         (inputElement) => {
-            const history = historyEnabled
-                ? new History(historySize)
-                : undefined
-            const dropdown = createInputDropdown(inputElement, config, history)
+            const dropdown = createInputDropdown(
+                inputElement,
+                config,
+                state.getState(inputElement.value),
+            )
 
             if (!dropdown) {
                 return
@@ -36,22 +43,21 @@ export function autocomplete<State = DefaultState>(
             let lastRenderTime = Date.now()
 
             const input = bindInput(inputElement, {
-                onInput: (value) => {
-                    if (value.length >= minQueryLength) {
-                        const requestTime = Date.now()
+                onInput: async (value) => {
+                    const requestTime = Date.now()
 
-                        fetchState(value, config).then((state) => {
-                            if (requestTime >= lastRenderTime) {
-                                dropdown.update(state)
-                            }
+                    try {
+                        await limiter.limited(() => {
+                            return state.getState(value).then((state) => {
+                                if (requestTime >= lastRenderTime) {
+                                    dropdown.update(state)
+                                }
+                            })
                         })
-                    } else if (history) {
-                        dropdown.update({
-                            query: {
-                                query: value,
-                            },
-                            history: history.getItems(),
-                        } as State)
+                    } catch (err) {
+                        if (!(err instanceof LimiterError)) {
+                            throw err
+                        }
                     }
                 },
                 onFocus() {
@@ -61,15 +67,19 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onSubmit() {
-                    dropdown.hide()
-
                     if (historyEnabled) {
                         history?.add(inputElement.value)
                     }
 
-                    if (typeof config?.submit === 'function') {
-                        config.submit(inputElement.value)
+                    if (dropdown.hasHighlight()) {
+                        dropdown.handleSubmit()
+                    } else {
+                        if (typeof config?.submit === 'function') {
+                            config.submit(inputElement.value)
+                        }
                     }
+
+                    dropdown.hide()
                 },
                 onKeyDown(_, key) {
                     if (key === 'Escape') {
@@ -127,7 +137,7 @@ export function autocomplete<State = DefaultState>(
 function createInputDropdown<State>(
     input: HTMLInputElement,
     config: AutocompleteConfig<State>,
-    history?: History
+    initialState: PromiseLike<State>,
 ): Dropdown<State> | undefined {
     const dropdownElements =
         typeof config.dropdownSelector === 'function'
@@ -144,40 +154,75 @@ function createInputDropdown<State>(
     }
 
     const dropdownElement = dropdownElements[0]
+
     return new Dropdown<State>(
         dropdownElement,
-        {
-            history: history?.getItems(),
-        } as State,
+        initialState,
         config.render,
         config.submit,
         (value) => (input.value = value),
     )
 }
 
-function fetchState<State>(
-    value: string,
+const initState = <State>(
     config: AutocompleteConfig<State>,
-): PromiseLike<State> {
-    if (typeof config.fetch === 'function') {
-        return config.fetch(value)
-    } else {
-        const query = {
-            query: value,
-            ...config.fetch,
-        }
-        return getNostoClient()
-            .then((api) => {
-                return api.search(query, {
-                    track: 'autocomplete',
+    options?: {
+        history?: History
+        minQueryLength?: number
+    },
+) => {
+    let cancellable: Cancellable<State> | undefined
+
+    const { minQueryLength = defaultConfig.minQueryLength, history } =
+        options ?? {}
+
+    function fetchState<State>(
+        value: string,
+        config: AutocompleteConfig<State>,
+    ): PromiseLike<State> {
+        if (typeof config.fetch === 'function') {
+            return config.fetch(value)
+        } else {
+            const query = {
+                query: value,
+                ...config.fetch,
+            }
+            return getNostoClient()
+                .then((api) => {
+                    return api.search(query, {
+                        track: 'autocomplete',
+                    })
                 })
-            })
-            .then(
-                (response) =>
-                    ({
-                        query,
-                        response,
-                    }) as State,
+                .then(
+                    (response) =>
+                        ({
+                            query,
+                            response,
+                        }) as State,
+                )
+        }
+    }
+
+    return {
+        getState: (inputValue?: string): PromiseLike<State> => {
+            cancellable?.cancel()
+
+            if (inputValue && inputValue.length >= minQueryLength) {
+                cancellable = makeCancellable(fetchState(inputValue, config))
+                return cancellable.promise
+            } else if (history) {
+                return AnyPromise.resolve({
+                    query: {
+                        query: inputValue,
+                    },
+                    history: history.getItems(),
+                }).then((s) => s as State)
+            }
+
+            return (
+                cancellable?.promise ??
+                AnyPromise.resolve({}).then((s) => s as State)
             )
+        },
     }
 }
