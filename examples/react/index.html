@@ -47,105 +47,143 @@
 
         <link rel="stylesheet" href="autocomplete.css" />
         <script type="text/babel">
-            function Autocomplete({ response }) {
-                if (
-                    !response.keywords ||
-                    !response.keywords.hits.length ||
-                    !response.products ||
-                    !response.products.hits.length
-                ) {
+            function Autocomplete({ response, history }) {
+                const hasKeywords =
+                    response &&
+                    response.keywords &&
+                    response.keywords.hits &&
+                    response.keywords.hits.length > 0
+                const hasProducts =
+                    response &&
+                    response.products &&
+                    response.products.hits &&
+                    response.products.hits.length > 0
+                const hasHistory = history && history.length > 0
+
+                if (!hasKeywords && !hasProducts && !hasHistory) {
                     return null
+                }
+
+                const renderHistory = () => {
+                    return (
+                        <div class="ns-autocomplete-history">
+                            <div class="ns-autocomplete-header">
+                                Recently Searched
+                            </div>
+                            {history.map((hit) => {
+                                return (
+                                    <div
+                                        class="ns-autocomplete-history-item"
+                                        data-ns-hit={JSON.stringify(hit)}
+                                    >
+                                        {hit.item}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    )
+                }
+
+                const renderKeywords = () => {
+                    return (
+                        hasKeywords && (
+                            <div class="ns-autocomplete-keywords">
+                                <div class="ns-autocomplete-header">
+                                    Keywords
+                                </div>
+                                {response.keywords.hits.map((hit) => {
+                                    return (
+                                        <div
+                                            class="ns-autocomplete-keyword"
+                                            data-ns-hit={JSON.stringify(hit)}
+                                        >
+                                            {hit._highlight &&
+                                            hit._highlight.keyword ? (
+                                                <span
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: hit._highlight
+                                                            .keyword,
+                                                    }}
+                                                ></span>
+                                            ) : (
+                                                <span>{hit.keyword}</span>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )
+                    )
+                }
+
+                const renderProducts = () => {
+                    return (
+                        hasProducts && (
+                            <div class="ns-autocomplete-products">
+                                <div class="ns-autocomplete-header">
+                                    Products
+                                </div>
+                                {response.products.hits.map((hit) => {
+                                    return (
+                                        <a
+                                            class="ns-autocomplete-product"
+                                            href={hit.url}
+                                            data-ns-hit={JSON.stringify(hit)}
+                                        >
+                                            <img
+                                                class="ns-autocomplete-product-image"
+                                                src={hit.imageUrl}
+                                                alt={hit.name}
+                                                width="60"
+                                                height="40"
+                                            />
+                                            <div class="ns-autocomplete-product-info">
+                                                {hit.brand && (
+                                                    <div class="ns-autocomplete-product-brand">
+                                                        {hit.brand}
+                                                    </div>
+                                                )}
+                                                <div class="ns-autocomplete-product-name">
+                                                    {hit.name}
+                                                </div>
+                                                <div>
+                                                    <span>
+                                                        {hit.price}&euro;
+                                                    </span>
+                                                    {hit.listPrice && (
+                                                        <span class="ns-autocomplete-product-list-price">
+                                                            {hit.listPrice}
+                                                            &euro;
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </a>
+                                    )
+                                })}
+                            </div>
+                        )
+                    )
                 }
 
                 return (
                     <div class="ns-autocomplete-results">
-                        {response.keywords &&
-                            response.keywords.hits.length > 0 && (
-                                <div class="ns-autocomplete-keywords">
-                                    <div class="ns-autocomplete-header">
-                                        Keywords
-                                    </div>
-                                    {response.keywords.hits.map((hit) => {
-                                        return (
-                                            <div
-                                                class="ns-autocomplete-keyword"
-                                                data-ns-hit={JSON.stringify(
-                                                    hit,
-                                                )}
-                                            >
-                                                {hit._highlight &&
-                                                hit._highlight.keyword ? (
-                                                    <span
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: hit
-                                                                ._highlight
-                                                                .keyword,
-                                                        }}
-                                                    ></span>
-                                                ) : (
-                                                    <span>{hit.keyword}</span>
-                                                )}
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            )}
-                        {response.products &&
-                            response.products.hits.length > 0 && (
-                                <div class="ns-autocomplete-products">
-                                    <div class="ns-autocomplete-header">
-                                        Products
-                                    </div>
-                                    {response.products.hits.map((hit) => {
-                                        return (
-                                            <a
-                                                class="ns-autocomplete-product"
-                                                href={hit.url}
-                                                data-ns-hit={JSON.stringify(
-                                                    hit,
-                                                )}
-                                            >
-                                                <img
-                                                    class="ns-autocomplete-product-image"
-                                                    src={hit.imageUrl}
-                                                    alt={hit.name}
-                                                    width="60"
-                                                    height="40"
-                                                />
-                                                <div class="ns-autocomplete-product-info">
-                                                    {hit.brand && (
-                                                        <div class="ns-autocomplete-product-brand">
-                                                            {hit.brand}
-                                                        </div>
-                                                    )}
-                                                    <div class="ns-autocomplete-product-name">
-                                                        {hit.name}
-                                                    </div>
-                                                    <div>
-                                                        <span>
-                                                            {hit.price}&euro;
-                                                        </span>
-                                                        {hit.listPrice && (
-                                                            <span class="ns-autocomplete-product-list-price">
-                                                                {hit.listPrice}
-                                                                &euro;
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        )
-                                    })}
-                                </div>
-                            )}
-                        <div class="ns-autocomplete-submit">
-                            <button
-                                type="submit"
-                                class="ns-autocomplete-button"
-                            >
-                                See all search results
-                            </button>
-                        </div>
+                        {!hasKeywords && !hasProducts && hasHistory
+                            ? renderHistory()
+                            : hasKeywords || hasProducts
+                            ? [
+                                  renderKeywords(),
+                                  renderProducts(),
+                                  <div class="ns-autocomplete-submit">
+                                      <button
+                                          type="submit"
+                                          class="ns-autocomplete-button"
+                                      >
+                                          See all search results
+                                      </button>
+                                  </div>,
+                              ]
+                            : null}
                     </div>
                 )
             }
@@ -183,6 +221,10 @@
                         }
                         reactRoot.render(<Autocomplete {...state} />)
                     },
+                    submit: (query) => {
+                        // Handle search submit
+                        console.log('Submitting search with query: ', query)
+                    }
                 })
             }
         </script>

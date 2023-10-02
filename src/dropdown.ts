@@ -47,7 +47,7 @@ export class Dropdown<State> {
                     location.href = parsedHit.url
                 }
             } catch (error) {
-                console.error('Could not parse [data-ns-hit]')
+                console.error('Could not parse [data-ns-hit]', error)
             }
         }
     }
@@ -100,7 +100,7 @@ export class Dropdown<State> {
                         return
                     }
                 } catch (error) {
-                    console.error('Could not parse [data-ns-hit]')
+                    console.error('Could not parse [data-ns-hit]', error)
                 }
             }
         }
