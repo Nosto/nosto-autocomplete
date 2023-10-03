@@ -1,5 +1,5 @@
 import { Liquid } from 'liquidjs'
-import { DefaultState } from './state'
+import { State } from './state'
 import { AnyPromise } from './utils/promise'
 
 const engine = new Liquid()
@@ -12,9 +12,9 @@ const engine = new Liquid()
  * @group Autocomplete
  * @category Liquid
  */
-export function fromLiquidTemplate<State extends object = DefaultState>(
+export function fromLiquidTemplate<T extends object = State>(
     template: string,
-): (container: HTMLElement, state: State) => PromiseLike<void> {
+): (container: HTMLElement, state: T) => PromiseLike<void> {
     return (container, state) => {
         container.innerHTML = engine.parseAndRenderSync(template, state)
 
@@ -30,9 +30,9 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
  * @group Autocomplete
  * @category Liquid
  */
-export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
+export function fromRemoteLiquidTemplate<T extends object = State>(
     url: string,
-): (container: HTMLElement, state: State) => PromiseLike<void> {
+): (container: HTMLElement, state: T) => PromiseLike<void> {
     return (container, state) => {
         return new AnyPromise((resolve, reject) => {
             const xhr = new XMLHttpRequest()

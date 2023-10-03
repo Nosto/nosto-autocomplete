@@ -1,6 +1,6 @@
 export { autocomplete } from '../autocomplete'
 export { AutocompleteConfig } from '../config'
-export { DefaultState } from '../state'
+export { State } from '../state'
 
 export {
     getNostoClient,

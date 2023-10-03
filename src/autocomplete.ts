@@ -1,20 +1,18 @@
 import { AutocompleteConfig } from '.'
 import { defaultConfig } from './config'
 import { Dropdown } from './dropdown'
-import { DefaultState } from './state'
-import { getNostoClient } from './api/client'
+import { State, initState } from './state'
 import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
 import { History } from './history'
-import { AnyPromise, Cancellable, makeCancellable } from './utils/promise'
 import { Limiter, LimiterError } from './utils/limiter'
 
 /**
  * @group Autocomplete
  * @category Core
  */
-export function autocomplete<State = DefaultState>(
-    config: AutocompleteConfig<State>,
+export function autocomplete<T extends State>(
+    config: AutocompleteConfig<T>,
 ): {
     destroy(): void
     open(): void
@@ -162,67 +160,4 @@ function createInputDropdown<State>(
         config.submit,
         (value) => (input.value = value),
     )
-}
-
-const initState = <State>(
-    config: AutocompleteConfig<State>,
-    options?: {
-        history?: History
-        minQueryLength?: number
-    },
-) => {
-    let cancellable: Cancellable<State> | undefined
-
-    const { minQueryLength = defaultConfig.minQueryLength, history } =
-        options ?? {}
-
-    function fetchState<State>(
-        value: string,
-        config: AutocompleteConfig<State>,
-    ): PromiseLike<State> {
-        if (typeof config.fetch === 'function') {
-            return config.fetch(value)
-        } else {
-            const query = {
-                query: value,
-                ...config.fetch,
-            }
-            return getNostoClient()
-                .then((api) => {
-                    return api.search(query, {
-                        track: 'autocomplete',
-                    })
-                })
-                .then(
-                    (response) =>
-                        ({
-                            query,
-                            response,
-                        }) as State,
-                )
-        }
-    }
-
-    return {
-        getState: (inputValue?: string): PromiseLike<State> => {
-            cancellable?.cancel()
-
-            if (inputValue && inputValue.length >= minQueryLength) {
-                cancellable = makeCancellable(fetchState(inputValue, config))
-                return cancellable.promise
-            } else if (history) {
-                return AnyPromise.resolve({
-                    query: {
-                        query: inputValue,
-                    },
-                    history: history.getItems(),
-                }).then((s) => s as State)
-            }
-
-            return (
-                cancellable?.promise ??
-                AnyPromise.resolve({}).then((s) => s as State)
-            )
-        },
-    }
 }

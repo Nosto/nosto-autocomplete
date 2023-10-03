@@ -1,6 +1,6 @@
-import { DefaultState } from './state'
+import { State } from './state'
 
-type Items = NonNullable<DefaultState['history']>
+type Items = NonNullable<State['history']>
 
 export class History {
     private localStorageKey = 'nostoAutocomplete:history'

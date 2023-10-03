@@ -159,7 +159,21 @@
                                                   '<a class="ns-autocomplete-product" href="' +
                                                       hit.url +
                                                       '" data-ns-hit="' +
-                                                      JSON.stringify(hit) +
+                                                      JSON.stringify(hit)
+                                                          .replace(
+                                                              /&/g,
+                                                              '&amp;',
+                                                          )
+                                                          .replace(/</g, '&lt;')
+                                                          .replace(/>/g, '&gt;')
+                                                          .replace(
+                                                              /"/g,
+                                                              '&quot;',
+                                                          )
+                                                          .replace(
+                                                              /'/g,
+                                                              '&#039;',
+                                                          ) +
                                                       '">',
                                                   '<img class="ns-autocomplete-product-image" src="' +
                                                       hit.imageUrl +
