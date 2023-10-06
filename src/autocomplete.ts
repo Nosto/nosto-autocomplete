@@ -1,7 +1,7 @@
 import { AutocompleteConfig } from '.'
 import { defaultConfig } from './config'
 import { Dropdown } from './dropdown'
-import { State, initState } from './state'
+import { State, StateActions, getStateActions } from './state'
 import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
 import { History } from './history'
@@ -22,17 +22,23 @@ export function autocomplete<T extends State>(
     const historyEnabled = config.historyEnabled ?? defaultConfig.historyEnabled
     const historySize = config.historySize ?? defaultConfig.historySize
     const history = historyEnabled ? new History(historySize) : undefined
-    const state = initState(config, { minQueryLength, history })
 
     const limiter = new Limiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         (inputElement) => {
-            const dropdown = createInputDropdown(
-                inputElement,
+            const actions = getStateActions({
                 config,
-                state.getState(inputElement.value),
-            )
+                minQueryLength,
+                history,
+                input: inputElement,
+            })
+
+            const dropdown = createInputDropdown({
+                input: inputElement,
+                config,
+                actions,
+            })
 
             if (!dropdown) {
                 return
@@ -46,7 +52,7 @@ export function autocomplete<T extends State>(
 
                     try {
                         await limiter.limited(() => {
-                            return state.getState(value).then((state) => {
+                            return actions.updateState(value).then((state) => {
                                 if (requestTime >= lastRenderTime) {
                                     dropdown.update(state)
                                 }
@@ -66,7 +72,7 @@ export function autocomplete<T extends State>(
                 },
                 onSubmit() {
                     if (historyEnabled) {
-                        history?.add(inputElement.value)
+                        actions.addHistoryItem(inputElement.value)
                     }
 
                     if (dropdown.hasHighlight()) {
@@ -132,11 +138,15 @@ export function autocomplete<T extends State>(
     }
 }
 
-function createInputDropdown<State>(
-    input: HTMLInputElement,
-    config: AutocompleteConfig<State>,
-    initialState: PromiseLike<State>,
-): Dropdown<State> | undefined {
+function createInputDropdown<T extends State>({
+    input,
+    config,
+    actions,
+}: {
+    input: HTMLInputElement
+    config: AutocompleteConfig<T>
+    actions: StateActions<T>
+}): Dropdown<T> | undefined {
     const dropdownElements =
         typeof config.dropdownSelector === 'function'
             ? findAll(config.dropdownSelector(input), HTMLElement)
@@ -153,11 +163,20 @@ function createInputDropdown<State>(
 
     const dropdownElement = dropdownElements[0]
 
-    return new Dropdown<State>(
+    return new Dropdown<T>(
         dropdownElement,
-        initialState,
+        actions.updateState(input.value),
         config.render,
         config.submit,
         (value) => (input.value = value),
+        {
+            removeHistory: function (data) {
+                if (data === 'all') {
+                    return actions.clearHistory()
+                } else if (data) {
+                    return actions.removeHistoryItem(data)
+                }
+            },
+        },
     )
 }

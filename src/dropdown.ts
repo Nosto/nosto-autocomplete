@@ -16,12 +16,22 @@ export class Dropdown<State> {
         ) => void | PromiseLike<void>,
         protected submit: (inputValue: string) => unknown,
         protected updateInput: (inputValue: string) => void,
+        protected onClickBindings?: {
+            [key: string]: (
+                data: string | undefined,
+                el: HTMLElement,
+            ) => PromiseLike<State> | undefined
+        },
     ) {
         AnyPromise.resolve(initialState)
             .then((state) => this.render(this.container, state as State))
             .then(() => {
-                this.loadElements()
-                this.hide()
+                // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+                setTimeout(() => {
+                    this.loadElements()
+                    this.bindDataCallbacks()
+                    this.hide()
+                }, 0)
             })
     }
 
@@ -63,6 +73,31 @@ export class Dropdown<State> {
                 return el
             })
         }
+    }
+
+    private bindDataCallbacks() {
+        Object.entries(this.onClickBindings ?? {}).map(([key, callback]) => {
+            // Convert camelCase to kebab-case
+            const dataKey = `[data-ns-${key
+                .replace(/([A-Z])/g, '-$1')
+                .toLowerCase()}]`
+
+            Array.from<HTMLElement>(
+                this.container.querySelectorAll(dataKey),
+            ).map((el) => {
+                const data =
+                    el?.dataset?.[
+                        `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
+                    ]
+                const onClick = () => {
+                    callback(data, el)?.then((state) => this.update(state))
+                }
+                el.addEventListener('click', onClick)
+                this.unbindCallbacks.push(() => {
+                    el.removeEventListener('click', onClick)
+                })
+            })
+        })
     }
 
     private bindElementSubmit(el: HTMLElement): void {
@@ -124,8 +159,12 @@ export class Dropdown<State> {
         this.dispose()
 
         AnyPromise.resolve(this.render(this.container, state)).then(() => {
-            this.loadElements()
-            this.show()
+            // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+            setTimeout(() => {
+                this.loadElements()
+                this.bindDataCallbacks()
+                this.show()
+            }, 0)
         })
     }
 

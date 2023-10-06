@@ -41,6 +41,8 @@
 
 .ns-autocomplete-keyword,
 .ns-autocomplete-history-item {
+    display: flex;
+    align-items: center;
     padding: 0.25rem 1rem;
     color: #000000;
     font-size: 0.9rem;
@@ -52,6 +54,18 @@
 .ns-autocomplete-history-item:hover,
 .ns-autocomplete-history-item.selected {
     background-color: #F0F3F6;
+}
+
+.ns-autocomplete-history-item-remove {
+    margin-right: 0;
+    margin-left: auto;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.75rem;
+}
+
+.ns-autocomplete-history-item-remove:hover {
+    color: #999999;
 }
 
 .ns-autocomplete-products {
@@ -109,12 +123,14 @@
     color: #516980;
 }
 
-.ns-autocomplete-submit {
+.ns-autocomplete-submit,
+.ns-autocomplete-history-clear {
     display: flex;
     justify-content: center;
 }
 
-.ns-autocomplete-submit:hover {
+.ns-autocomplete-submit:hover,
+.ns-autocomplete-history-clear:hover {
     background-color: #F0F3F6;
 }
 
@@ -131,4 +147,5 @@
     padding: 0.5rem;
     font-size: 0.9rem;
     border-radius: 4px;
+    width: 100%;
 }

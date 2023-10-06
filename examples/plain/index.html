@@ -77,7 +77,7 @@
                             return hasHistory
                                 ? [
                                       '<div class="ns-autocomplete-history">',
-                                      '<div class="ns-autocomplete-header">Recently Searched</div>',
+                                      '<div class="ns-autocomplete-header">Recently searched</div>',
                                       history
                                           .map(function (hit) {
                                               return [
@@ -98,13 +98,19 @@
                                                               '&#039;',
                                                           ) +
                                                       '">',
-                                                  '<span>' +
-                                                      hit.item +
-                                                      '</span>',
+                                                  hit.item +
+                                                      '<a href="javascript:void(0)"' +
+                                                      `class="ns-autocomplete-history-item-remove" data-ns-remove-history="${hit.item}">` +
+                                                      '&#x2715;</a>',
                                                   '</div>',
                                               ].join('')
                                           })
                                           .join(''),
+                                      '</div>',
+                                      '<div class="ns-autocomplete-history-clear">',
+                                      '<button type="button" class="ns-autocomplete-button" data-ns-remove-history="all">',
+                                      'Clear history',
+                                      '</button>',
                                       '</div>',
                                   ].join('')
                                 : ''
@@ -117,6 +123,11 @@
                                       '<div class="ns-autocomplete-header">Keywords</div>',
                                       response.keywords.hits
                                           .map(function (hit) {
+                                              const keyword =
+                                                  hit._highlight &&
+                                                  hit._highlight.keyword
+                                                      ? hit._highlight.keyword
+                                                      : hit.keyword
                                               return [
                                                   '<div class="ns-autocomplete-keyword" data-ns-hit="' +
                                                       JSON.stringify(hit)
@@ -135,10 +146,9 @@
                                                               '&#039;',
                                                           ) +
                                                       '">',
-                                                  '<span>' + hit._highlight &&
-                                                  hit._highlight.keyword
-                                                      ? hit._highlight.keyword
-                                                      : hit.keyword + '</span>',
+                                                  '<span>' +
+                                                      keyword +
+                                                      '</span>',
                                                   '</div>',
                                               ].join('')
                                           })

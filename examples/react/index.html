@@ -65,10 +65,10 @@
                 }
 
                 const renderHistory = () => {
-                    return (
+                    return [
                         <div class="ns-autocomplete-history">
                             <div class="ns-autocomplete-header">
-                                Recently Searched
+                                Recently searched
                             </div>
                             {history.map((hit) => {
                                 return (
@@ -77,11 +77,27 @@
                                         data-ns-hit={JSON.stringify(hit)}
                                     >
                                         {hit.item}
+                                        <a
+                                            href="javascript:void(0)"
+                                            class="ns-autocomplete-history-item-remove"
+                                            data-ns-remove-history={hit.item}
+                                        >
+                                            &#x2715;
+                                        </a>
                                     </div>
                                 )
                             })}
-                        </div>
-                    )
+                        </div>,
+                        <div class="ns-autocomplete-history-clear">
+                            <button
+                                type="button"
+                                class="ns-autocomplete-button"
+                                data-ns-remove-history="all"
+                            >
+                                Clear history
+                            </button>
+                        </div>,
+                    ]
                 }
 
                 const renderKeywords = () => {
@@ -224,7 +240,7 @@
                     submit: (query) => {
                         // Handle search submit
                         console.log('Submitting search with query: ', query)
-                    }
+                    },
                 })
             }
         </script>

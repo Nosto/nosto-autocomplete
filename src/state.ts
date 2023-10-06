@@ -1,7 +1,6 @@
 import { InputSearchQuery, SearchResult } from './api/search/generated'
 
 import { AutocompleteConfig } from '.'
-import { defaultConfig } from './config'
 import { getNostoClient } from './api/client'
 import { History } from './history'
 import { AnyPromise, Cancellable, makeCancellable } from './utils/promise'
@@ -25,22 +24,27 @@ export interface State {
     history?: { item: string }[]
 }
 
-export const initState = <T extends State>(
-    config: AutocompleteConfig<T>,
-    options?: {
-        history?: History
-        minQueryLength?: number
-    },
-) => {
+export type StateActions<T extends State> = {
+    updateState(inputValue?: string): PromiseLike<T>
+    addHistoryItem(item: string): PromiseLike<T>
+    removeHistoryItem(item: string): PromiseLike<T>
+    clearHistory(): PromiseLike<T>
+}
+
+export const getStateActions = <T extends State>({
+    config,
+    history,
+    input,
+    minQueryLength,
+}: {
+    config: AutocompleteConfig<T>
+    history?: History
+    input: HTMLInputElement
+    minQueryLength: number
+}): StateActions<T> => {
     let cancellable: Cancellable<T> | undefined
 
-    const { minQueryLength = defaultConfig.minQueryLength, history } =
-        options ?? {}
-
-    function fetchState<State>(
-        value: string,
-        config: AutocompleteConfig<State>,
-    ): PromiseLike<State> {
+    const fetchState = (value: string, config: AutocompleteConfig<T>) => {
         if (typeof config.fetch === 'function') {
             return config.fetch(value)
         } else {
@@ -59,31 +63,53 @@ export const initState = <T extends State>(
                         ({
                             query,
                             response,
-                        }) as State,
+                        }) as T,
                 )
         }
     }
 
+    const getHistoryState = (query: string) => {
+        return AnyPromise.resolve({
+            query: {
+                query,
+            },
+            history: history?.getItems(),
+        }).then((s) => s as T)
+    }
+
     return {
-        getState: (inputValue?: string): PromiseLike<T> => {
+        updateState: (inputValue?: string): PromiseLike<T> => {
             cancellable?.cancel()
 
             if (inputValue && inputValue.length >= minQueryLength) {
                 cancellable = makeCancellable(fetchState(inputValue, config))
                 return cancellable.promise
             } else if (history) {
-                return AnyPromise.resolve({
-                    query: {
-                        query: inputValue,
-                    },
-                    history: history.getItems(),
-                }).then((s) => s as T)
+                return getHistoryState(inputValue ?? '')
             }
 
             return (
                 cancellable?.promise ??
                 AnyPromise.resolve({}).then((s) => s as T)
             )
+        },
+        addHistoryItem: (item: string) => {
+            if (history) {
+                history.add(item)
+            }
+            return getHistoryState(input.value)
+        },
+        removeHistoryItem: (item: string) => {
+            if (history) {
+                history.remove(item)
+            }
+            return getHistoryState(input.value)
+        },
+        clearHistory: () => {
+            if (history) {
+                history.clear()
+            }
+            return getHistoryState(input.value)
         },
     }
 }

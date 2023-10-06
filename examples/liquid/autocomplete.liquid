@@ -6,13 +6,27 @@
   {% if hasKeywords == false and hasProducts == false and hasHistory %}
     <div class="ns-autocomplete-history">
       <div class="ns-autocomplete-header">
-        Recently Searched
+        Recently searched
       </div>
       {% for hit in history %}
         <div class="ns-autocomplete-history-item" data-ns-hit="{{ hit | json | escape }}">
-          <span>{{ hit.item }}</span>
+          {{ hit.item }}
+          <a
+            href="javascript:void(0)"
+            class="ns-autocomplete-history-item-remove"
+            data-ns-remove-history="{{hit.item}}">
+            &#x2715;
+          </a>
         </div>
       {% endfor %}
+    </div>
+    <div class="ns-autocomplete-history-clear">
+      <button
+        type="button"
+        class="ns-autocomplete-button"
+        data-ns-remove-history="all">
+        Clear history
+      </button>
     </div>
   {% elsif hasKeywords or hasProducts %}
     {% if hasKeywords %}
@@ -23,7 +37,7 @@
         {% for hit in response.keywords.hits %}
           <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}">
             {% if hit._highlight and hit._highlight.keyword %}
-              {{ hit._highlight.keyword }}
+              <span>{{ hit._highlight.keyword }}</span>
             {% else %}
               <span>{{ hit.keyword }}</span>
             {% endif %}

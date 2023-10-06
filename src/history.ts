@@ -44,6 +44,11 @@ export class History {
         this.set(this.items)
     }
 
+    remove(item: string): void {
+        this.items = this.items.filter((v) => v.item !== item)
+        this.set(this.items)
+    }
+
     getItems(): Items {
         return this.items
     }
