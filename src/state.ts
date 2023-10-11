@@ -9,7 +9,7 @@ import { AnyPromise, Cancellable, makeCancellable } from './utils/promise'
  * @group Autocomplete
  * @category Core
  */
-export interface State {
+export interface DefaultState {
     /**
      * The current search query
      */
@@ -24,27 +24,27 @@ export interface State {
     history?: { item: string }[]
 }
 
-export type StateActions<T extends State> = {
-    updateState(inputValue?: string): PromiseLike<T>
-    addHistoryItem(item: string): PromiseLike<T>
-    removeHistoryItem(item: string): PromiseLike<T>
-    clearHistory(): PromiseLike<T>
+export type StateActions<State> = {
+    updateState(inputValue?: string): PromiseLike<State>
+    addHistoryItem(item: string): PromiseLike<State>
+    removeHistoryItem(item: string): PromiseLike<State>
+    clearHistory(): PromiseLike<State>
 }
 
-export const getStateActions = <T extends State>({
+export const getStateActions = <State>({
     config,
     history,
     input,
     minQueryLength,
 }: {
-    config: AutocompleteConfig<T>
+    config: AutocompleteConfig<State>
     history?: History
     input: HTMLInputElement
     minQueryLength: number
-}): StateActions<T> => {
-    let cancellable: Cancellable<T> | undefined
+}): StateActions<State> => {
+    let cancellable: Cancellable<State> | undefined
 
-    const fetchState = (value: string, config: AutocompleteConfig<T>) => {
+    const fetchState = (value: string, config: AutocompleteConfig<State>) => {
         if (typeof config.fetch === 'function') {
             return config.fetch(value)
         } else {
@@ -63,7 +63,7 @@ export const getStateActions = <T extends State>({
                         ({
                             query,
                             response,
-                        }) as T,
+                        }) as State,
                 )
         }
     }
@@ -74,11 +74,11 @@ export const getStateActions = <T extends State>({
                 query,
             },
             history: history?.getItems(),
-        }).then((s) => s as T)
+        }).then((s) => s as State)
     }
 
     return {
-        updateState: (inputValue?: string): PromiseLike<T> => {
+        updateState: (inputValue?: string): PromiseLike<State> => {
             cancellable?.cancel()
 
             if (inputValue && inputValue.length >= minQueryLength) {
@@ -90,7 +90,7 @@ export const getStateActions = <T extends State>({
 
             return (
                 cancellable?.promise ??
-                AnyPromise.resolve({}).then((s) => s as T)
+                AnyPromise.resolve({}).then((s) => s as State)
             )
         },
         addHistoryItem: (item: string) => {

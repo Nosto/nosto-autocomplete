@@ -44,67 +44,194 @@ describe('autocomplete', () => {
         autocomplete({
             fetch: {
                 products: {
-                    fields: ['name', 'url', 'imageUrl'],
+                    fields: [
+                        'name',
+                        'url',
+                        'imageUrl',
+                        'price',
+                        'listPrice',
+                        'brand',
+                    ],
                     size: 5,
                 },
                 keywords: {
                     size: 5,
+                    fields: ['keyword', '_highlight.keyword'],
+                    highlight: {
+                        preTag: `<strong>`,
+                        postTag: '</strong>',
+                    },
                 },
             },
             inputSelector: '#search',
             dropdownSelector: '#search-results',
-            render: (container, { response }) => {
-                container.innerHTML = ''
+            render: function (container, state) {
+                var response = state.response
+                var history = state.history
+                var hasKeywords =
+                    response &&
+                    response.keywords &&
+                    response.keywords.hits &&
+                    response.keywords.hits.length > 0
+                var hasProducts =
+                    response &&
+                    response.products &&
+                    response.products.hits &&
+                    response.products.hits.length > 0
+                var hasHistory = history && history.length > 0
 
-                if (response?.keywords?.hits.length) {
-                    container.innerHTML += [
-                        '<div class="ns-autocomplete-header">',
-                        'Keywords',
-                        '</div>',
-                        response.keywords.hits
-                            .map(function (hit) {
-                                return [
-                                    '<div class="ns-autocomplete-keyword" data-ns-hit="' +
-                                        escapeHtml(JSON.stringify(hit)) +
-                                        '">',
-                                    '<span>' + hit.keyword + '</span>',
-                                    '</div>',
-                                ].join('')
-                            })
-                            .join(''),
-                    ].join('')
+                function renderHistory() {
+                    return hasHistory
+                        ? [
+                              '<div class="ns-autocomplete-history">',
+                              '<div class="ns-autocomplete-header">Recently searched</div>',
+                              history
+                                  ?.map(function (hit) {
+                                      return [
+                                          '<div class="ns-autocomplete-history-item" data-ns-hit="' +
+                                              escapeHtml(JSON.stringify(hit)) +
+                                              '">',
+                                          hit.item +
+                                              '<a href="javascript:void(0)"' +
+                                              `class="ns-autocomplete-history-item-remove" data-ns-remove-history="${hit.item}">` +
+                                              '&#x2715;</a>',
+                                          '</div>',
+                                      ].join('')
+                                  })
+                                  .join(''),
+                              '</div>',
+                              '<div class="ns-autocomplete-history-clear">',
+                              '<button type="button" class="ns-autocomplete-button" data-ns-remove-history="all">',
+                              'Clear history',
+                              '</button>',
+                              '</div>',
+                          ].join('')
+                        : ''
                 }
 
-                if (response?.products?.hits.length) {
-                    container.innerHTML += [
-                        '<div class="ns-autocomplete-header">',
-                        'Products',
-                        '</div>',
-                        response.products.hits
-                            .map(function (hit) {
-                                return [
-                                    '<a href="' +
-                                        hit.url +
-                                        '" data-ns-hit="' +
-                                        escapeHtml(JSON.stringify(hit)) +
-                                        '">',
-                                    hit.name,
-                                    '</a>',
-                                ].join('')
-                            })
-                            .join(''),
-                    ].join('')
+                function renderKeywords() {
+                    return hasKeywords
+                        ? [
+                              '<div class="ns-autocomplete-keywords">',
+                              '<div class="ns-autocomplete-header">Keywords</div>',
+                              response?.keywords?.hits
+                                  .map(function (hit) {
+                                      const keyword =
+                                          hit._highlight &&
+                                          hit._highlight.keyword
+                                              ? hit._highlight.keyword
+                                              : hit.keyword
+                                      return [
+                                          '<div class="ns-autocomplete-keyword" data-ns-hit="' +
+                                              escapeHtml(JSON.stringify(hit)) +
+                                              '" data-testid="keyword">',
+                                          '<span>' + keyword + '</span>',
+                                          '</div>',
+                                      ].join('')
+                                  })
+                                  .join(''),
+                              '</div>',
+                          ].join('')
+                        : ''
                 }
+
+                function renderProducts() {
+                    return hasProducts
+                        ? [
+                              '<div class="ns-autocomplete-products">',
+                              '<div class="ns-autocomplete-header">Products</div>',
+                              response?.products?.hits
+                                  .map(function (hit) {
+                                      return [
+                                          '<a class="ns-autocomplete-product" href="' +
+                                              hit.url +
+                                              '" data-ns-hit="' +
+                                              escapeHtml(JSON.stringify(hit)) +
+                                              '" data-testid="product">',
+                                          '<img class="ns-autocomplete-product-image" src="' +
+                                              hit.imageUrl +
+                                              '" alt="' +
+                                              hit.name +
+                                              '" width="60" height="40" />',
+                                          '<div class="ns-autocomplete-product-info">',
+                                          hit.brand
+                                              ? [
+                                                    '<div class="ns-autocomplete-product-brand">',
+                                                    hit.brand,
+                                                    '</div>',
+                                                ].join('')
+                                              : '',
+                                          '<div class="ns-autocomplete-product-name">',
+                                          hit.name,
+                                          '</div>',
+                                          '<div>',
+                                          '<span>',
+                                          hit.price + '€',
+                                          '</span>',
+                                          hit.listPrice && hit.listPrice > 0
+                                              ? [
+                                                    '<span class="ns-autocomplete-product-list-price">',
+                                                    hit.listPrice + '€',
+                                                    '</span>',
+                                                ].join('')
+                                              : '',
+                                          '</div>',
+                                          '</div>',
+                                          '</a>',
+                                      ].join('')
+                                  })
+                                  .join(''),
+                              '</div>',
+                          ].join('')
+                        : ''
+                }
+
+                container.innerHTML = [
+                    '<div class="ns-autocomplete-results">',
+                    [
+                        !hasKeywords && !hasProducts && hasHistory
+                            ? renderHistory()
+                            : hasKeywords || hasProducts
+                            ? [
+                                  renderKeywords(),
+                                  renderProducts(),
+                                  '<div class="ns-autocomplete-submit">',
+                                  '<button type="submit" class="ns-autocomplete-button">',
+                                  'See all search results',
+                                  '</button>',
+                                  '</div>',
+                              ].join('')
+                            : '',
+                    ],
+                    '</div>',
+                ].join('')
+            },
+            submit: (query) => {
+                // Handle search submit
+                console.log('Submitting search with query: ', query)
             },
         })
 
-        expect(screen.getByTestId('dropdown')).not.toBeVisible()
+        await waitFor(
+            () => {
+                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+            },
+            {
+                timeout: 1000,
+            },
+        )
 
-        await user.type(screen.getByTestId('input'), 'red')
+        await user.type(screen.getByTestId('input'), 're')
 
         await waitFor(
             () => {
                 expect(screen.getByTestId('dropdown')).toBeVisible()
+
+                expect(screen.getByText('Keywords')).toBeVisible()
+                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+
+                expect(screen.getByText('Products')).toBeVisible()
+                expect(screen.getAllByTestId('product')).toHaveLength(5)
             },
             {
                 timeout: 4000,

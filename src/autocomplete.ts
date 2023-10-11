@@ -1,7 +1,7 @@
 import { AutocompleteConfig } from '.'
 import { defaultConfig } from './config'
 import { Dropdown } from './dropdown'
-import { State, StateActions, getStateActions } from './state'
+import { DefaultState, StateActions, getStateActions } from './state'
 import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
 import { History } from './history'
@@ -11,8 +11,8 @@ import { Limiter, LimiterError } from './utils/limiter'
  * @group Autocomplete
  * @category Core
  */
-export function autocomplete<T extends State>(
-    config: AutocompleteConfig<T>,
+export function autocomplete<State = DefaultState>(
+    config: AutocompleteConfig<State>,
 ): {
     destroy(): void
     open(): void
@@ -138,15 +138,15 @@ export function autocomplete<T extends State>(
     }
 }
 
-function createInputDropdown<T extends State>({
+function createInputDropdown<State = DefaultState>({
     input,
     config,
     actions,
 }: {
     input: HTMLInputElement
-    config: AutocompleteConfig<T>
-    actions: StateActions<T>
-}): Dropdown<T> | undefined {
+    config: AutocompleteConfig<State>
+    actions: StateActions<State>
+}): Dropdown<State> | undefined {
     const dropdownElements =
         typeof config.dropdownSelector === 'function'
             ? findAll(config.dropdownSelector(input), HTMLElement)
@@ -163,7 +163,7 @@ function createInputDropdown<T extends State>({
 
     const dropdownElement = dropdownElements[0]
 
-    return new Dropdown<T>(
+    return new Dropdown<State>(
         dropdownElement,
         actions.updateState(input.value),
         config.render,

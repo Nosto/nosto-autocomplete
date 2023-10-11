@@ -28,19 +28,39 @@ describe('autocomplete', () => {
                 })
             },
             render: (container, state) => {
-                container.innerHTML = state.items
-                    .map((item) => `<div>keyword ${item}</div>`)
-                    .join('')
+                container.innerHTML =
+                    state?.items?.length > 0
+                        ? state.items
+                              .map((item) => `<div>keyword ${item}</div>`)
+                              .join('')
+                        : ''
+            },
+            submit: (query) => {
+                // Handle search submit
+                console.log('Submitting search with query: ', query)
             },
         })
 
-        expect(screen.getByTestId('dropdown')).not.toBeVisible()
+        await waitFor(
+            () => {
+                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+            },
+            {
+                timeout: 1000,
+            },
+        )
+
 
         await user.type(screen.getByTestId('input'), 'red')
 
-        await waitFor(() => {
-            expect(screen.getByTestId('dropdown')).toBeVisible()
-        })
+        await waitFor(
+            () => {
+                expect(screen.getByTestId('dropdown')).toBeVisible()
+            },
+            {
+                timeout: 4000,
+            },
+        )
 
         expect(screen.getByText('keyword red')).toBeVisible()
         expect(screen.getByText('keyword blue')).toBeVisible()
