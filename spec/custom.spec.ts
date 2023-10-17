@@ -50,7 +50,6 @@ describe('autocomplete', () => {
             },
         )
 
-
         await user.type(screen.getByTestId('input'), 'red')
 
         await waitFor(

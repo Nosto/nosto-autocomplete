@@ -1,14 +1,20 @@
 import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
-import { autocomplete, fromLiquidTemplate } from '../src'
+import {
+    autocomplete,
+    fromLiquidTemplate,
+    fromRemoteLiquidTemplate,
+} from '../src'
 
 import '@testing-library/jest-dom'
+import { AnyPromise } from '../src/utils/promise'
+import { State } from '../dist/nosto-autocomplete'
 
-beforeAll(() => {
+function setup() {
     document.body.innerHTML = `
         <form id="search-form">
-            <input type="text" id="search" placeholder="search" data-testid="input"/>
+            <input type="text" id="search" placeholder="search" data-testid="input" />
             <button type="submit" id="search-button">Search</button>
             <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
         </form>
@@ -26,12 +32,7 @@ beforeAll(() => {
         w.nosto.reload({ site: location.hostname, searchEnabled: false })
     }
     document.body.appendChild(script)
-})
-
-afterAll(() => {
-    jest.restoreAllMocks()
-    document.body.innerHTML = ''
-})
+}
 
 const template = `
     {% assign hasKeywords = response.keywords.hits.length > 0 %}
@@ -133,6 +134,15 @@ const template = `
 `
 
 describe('fromLiquidTemplate', () => {
+    beforeAll(() => {
+        setup()
+    })
+
+    afterAll(() => {
+        jest.restoreAllMocks()
+        document.body.innerHTML = ''
+    })
+
     it('uses local liquid template', async () => {
         const user = userEvent.setup()
 
@@ -195,57 +205,167 @@ describe('fromLiquidTemplate', () => {
     })
 })
 
-// describe('fromRemoteLiquidTemplate', () => {
-//     it('fetches remote liquid template', async () => {
-//         const user = userEvent.setup()
+describe('fromRemoteLiquidTemplate', () => {
+    beforeEach(() => {
+        setup()
+    })
 
-//         const XMLHttpRequestMock = jest.fn(() => ({
-//             open() {
-//                 return undefined
-//             },
-//             send() {
-//                 setTimeout(() => {
-//                     this.onload()
-//                 }, 100)
-//             },
-//             readyState: 4,
-//             status: 200,
-//             responseText: template,
-//             onload() {}
-//         }))
+    afterEach(() => {
+        jest.restoreAllMocks()
 
-//         autocomplete({
-//             fetch: {
-//                 products: {
-//                     fields: ['name', 'url', 'imageUrl'],
-//                     size: 5,
-//                 },
-//                 keywords: {
-//                     size: 5,
-//                 },
-//             },
-//             inputSelector: '#search',
-//             dropdownSelector: '#search-results',
-//             render: fromRemoteLiquidTemplate(`template.liquid`)
-//         })
+        const dropdown = screen.getByTestId('dropdown')
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
 
-//         expect(screen.getByTestId('dropdown')).not.toBeVisible()
+        const w = window as any
+        w.nostojs = undefined
+        w.nosto = undefined
+    })
 
-//         await user.type(screen.getByTestId('input'), 'red')
+    it('fetches remote templates url', async () => {
+        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
+        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
 
-//         await waitFor(
-//             () => {
-//                 expect(screen.getByTestId('dropdown')).toBeVisible()
-//             },
-//             {
-//                 timeout: 4000,
-//             },
-//         )
+        const mockUrl = 'template.liquid'
+        const render = fromRemoteLiquidTemplate(mockUrl)
 
-//         expect(screen.getByText('Keywords')).toBeVisible()
-//         expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+        const mockXhr = {
+            open: jest.fn(),
+            send: jest.fn(),
+            status: 200,
+            responseText: template,
+            onload: jest.fn(),
+            onerror: jest.fn(),
+        }
 
-//         expect(screen.getByText('Products')).toBeVisible()
-//         expect(screen.getAllByTestId('product')).toHaveLength(5)
-//     })
-// })
+        openSpy.mockImplementation((method, url) => {
+            if (url === mockUrl) {
+                return mockXhr.open(method, url)
+            }
+            return openSpy.mock.calls[0]
+        })
+
+        sendSpy.mockImplementation(() => {
+            return sendSpy.mock.calls[0]
+        })
+
+        autocomplete({
+            fetch: {
+                products: {
+                    fields: [
+                        'name',
+                        'url',
+                        'imageUrl',
+                        'price',
+                        'listPrice',
+                        'brand',
+                    ],
+                    size: 5,
+                },
+                keywords: {
+                    size: 5,
+                    fields: ['keyword', '_highlight.keyword'],
+                    highlight: {
+                        preTag: `<strong>`,
+                        postTag: '</strong>',
+                    },
+                },
+            },
+            inputSelector: '#search',
+            dropdownSelector: '#search-results',
+            render,
+            submit: (query) => {
+                // Handle search submit
+                console.log('Submitting search with query: ', query)
+            },
+        })
+
+        await waitFor(
+            () => {
+                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
+                expect(sendSpy).toHaveBeenCalled()
+            },
+            {
+                timeout: 1000,
+            },
+        )
+    })
+
+    it('it renders autocomplete from remote templates', async () => {
+        const user = userEvent.setup()
+
+        const mockRender: (
+            container: HTMLElement,
+            state: State,
+        ) => void | PromiseLike<void> = (
+            container: HTMLElement,
+            state: State,
+        ) => {
+            return new AnyPromise((resolve) => {
+                fromLiquidTemplate(template)(
+                    screen.getByTestId('dropdown'),
+                    state,
+                ).then(() => {
+                    resolve(undefined)
+                })
+            })
+        }
+
+        autocomplete({
+            fetch: {
+                products: {
+                    fields: [
+                        'name',
+                        'url',
+                        'imageUrl',
+                        'price',
+                        'listPrice',
+                        'brand',
+                    ],
+                    size: 5,
+                },
+                keywords: {
+                    size: 5,
+                    fields: ['keyword', '_highlight.keyword'],
+                    highlight: {
+                        preTag: `<strong>`,
+                        postTag: '</strong>',
+                    },
+                },
+            },
+            inputSelector: '#search',
+            dropdownSelector: '#search-results',
+            render: mockRender,
+            submit: (query) => {
+                // Handle search submit
+                console.log('Submitting search with query: ', query)
+            },
+        })
+
+        await waitFor(
+            () => {
+                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+            },
+            {
+                timeout: 1000,
+            },
+        )
+
+        await user.type(screen.getByTestId('input'), 're')
+
+        await waitFor(
+            () => {
+                expect(screen.getByTestId('dropdown')).toBeVisible()
+
+                expect(screen.getByText('Keywords')).toBeVisible()
+                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+
+                expect(screen.getByText('Products')).toBeVisible()
+                expect(screen.getAllByTestId('product')).toHaveLength(5)
+            },
+            {
+                timeout: 4000,
+            },
+        )
+    })
+})
