@@ -9,7 +9,7 @@ import {
 
 import '@testing-library/jest-dom'
 import { AnyPromise } from '../src/utils/promise'
-import { State } from '../dist/nosto-autocomplete'
+import { DefaultState } from '../src/state'
 
 function setup() {
     document.body.innerHTML = `
@@ -296,10 +296,10 @@ describe('fromRemoteLiquidTemplate', () => {
 
         const mockRender: (
             container: HTMLElement,
-            state: State,
+            state: DefaultState,
         ) => void | PromiseLike<void> = (
             container: HTMLElement,
-            state: State,
+            state: DefaultState,
         ) => {
             return new AnyPromise((resolve) => {
                 fromLiquidTemplate(template)(
