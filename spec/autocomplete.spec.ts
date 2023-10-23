@@ -179,8 +179,7 @@ const handleAutocomplete = () => {
             ].join('')
         },
         submit: (query) => {
-            // Handle search submit
-            // console.log('Submitting search with query: ', query)
+            console.log(`Submitted search with query: ${query}`)
         },
     })
 }
@@ -289,25 +288,63 @@ describe('history', () => {
             expect(screen.getByText('re')).toBeVisible()
         })
     })
-    // it('should show two history keywords', async () => {
-    //     const user = userEvent.setup()
-    //     handleAutocomplete()
-    //     await user.clear(screen.getByTestId('input'))
-    //     await user.type(screen.getByTestId('input'), 're')
-    //     await user.click(screen.getByTestId('search-button'))
-    //     await user.clear(screen.getByTestId('input'))
-    //     await user.type(screen.getByTestId('input'), 'black')
-    //     await user.click(screen.getByTestId('search-button'))
-    //     await user.clear(screen.getByTestId('input'))
 
-    //     await waitFor(
-    //         () => {
-    //             expect(screen.getByText('black')).toBeVisible()
-    //             expect(screen.getByText('re')).toBeVisible()
-    //         },
-    //         { timeout: 4000 },
-    //     )
-    // })
+    it('should navigate and select history keywords with keyboard', async () => {
+        const user = userEvent.setup()
+        handleAutocomplete()
+
+        // Mock console.log
+        const consoleSpy = jest.spyOn(console, 'log')
+
+        // Add multiple keywords to history
+        await user.type(screen.getByTestId('input'), 're')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+
+        await user.type(screen.getByTestId('input'), 'white')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+
+        // Delete previous console.logs and add new console.log
+        consoleSpy.mockClear()
+
+        // Navigate and select history keywords
+        await user.keyboard('{arrowdown}') // Navigate down
+        await user.keyboard('{arrowdown}') // Navigate down
+        await user.keyboard('{arrowup}') // Navigate up
+        await user.keyboard('{enter}') // Select and submit
+
+        // Ensure the selected query content is logged
+        expect(consoleSpy).toHaveBeenCalledWith(
+            'Submitted search with query: re',
+        )
+
+        // Ensure additional console.log calls are not made
+        expect(consoleSpy).toHaveBeenCalledTimes(1)
+
+        // Restore the original console.log after the test
+        consoleSpy.mockRestore()
+    })
+
+    it('should show two history keywords', async () => {
+        const user = userEvent.setup()
+        handleAutocomplete()
+        await user.clear(screen.getByTestId('input'))
+        await user.type(screen.getByTestId('input'), 're')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+        await user.type(screen.getByTestId('input'), 'black')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+
+        await waitFor(
+            () => {
+                expect(screen.getByText('black')).toBeVisible()
+                expect(screen.getByText('re')).toBeVisible()
+            },
+            { timeout: 4000 },
+        )
+    })
 
     it('should clear history keyword', async () => {
         const user = userEvent.setup()
@@ -320,14 +357,16 @@ describe('history', () => {
         await user.keyboard('{enter}')
         await user.clear(screen.getByTestId('input'))
         await waitFor(async () => {
-            const removeHistoryElement = screen.queryByTestId('remove-history-black');
+            const removeHistoryElement = screen.queryByTestId(
+                'remove-history-black',
+            )
             if (removeHistoryElement) {
-                userEvent.click(removeHistoryElement);
+                userEvent.click(removeHistoryElement)
                 await waitFor(() => {
-                    expect(screen.queryByText('black')).toBeNull();
-                });
+                    expect(screen.queryByText('black')).toBeNull()
+                })
             }
-        });
+        })
     })
 
     it('should clear history', async () => {
