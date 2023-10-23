@@ -428,7 +428,6 @@ describe('fromRemoteLiquidTemplate', () => {
             // Mock console.log
             const consoleSpy = jest.spyOn(console, 'log')
 
-            // Add multiple keywords to history
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
@@ -437,24 +436,19 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            // Delete previous console.logs and add new console.log
             consoleSpy.mockClear()
 
-            // Navigate and select history keywords
-            await user.keyboard('{arrowdown}') // Navigate down
-            await user.keyboard('{arrowdown}') // Navigate down
-            await user.keyboard('{arrowup}') // Navigate up
-            await user.keyboard('{enter}') // Select and submit
+            await user.keyboard('{arrowdown}') 
+            await user.keyboard('{arrowdown}') 
+            await user.keyboard('{arrowup}') 
+            await user.keyboard('{enter}') 
 
-            // Ensure the selected query content is logged
             expect(consoleSpy).toHaveBeenCalledWith(
                 'Submitted search with query: re',
             )
 
-            // Ensure additional console.log calls are not made
             expect(consoleSpy).toHaveBeenCalledTimes(1)
 
-            // Restore the original console.log after the test
             consoleSpy.mockRestore()
         })
 
