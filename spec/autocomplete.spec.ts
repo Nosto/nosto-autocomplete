@@ -245,6 +245,7 @@ describe('history', () => {
     it('should see results after typing', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+        
         await user.type(screen.getByTestId('input'), 're')
         await waitFor(
             () => {
@@ -265,6 +266,7 @@ describe('history', () => {
     it('should see history on empty input', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))
@@ -279,6 +281,7 @@ describe('history', () => {
     it('should show history keyword', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))
@@ -296,7 +299,6 @@ describe('history', () => {
         // Mock console.log
         const consoleSpy = jest.spyOn(console, 'log')
 
-        // Add multiple keywords to history
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))
         await user.clear(screen.getByTestId('input'))
@@ -305,30 +307,26 @@ describe('history', () => {
         await user.click(screen.getByTestId('search-button'))
         await user.clear(screen.getByTestId('input'))
 
-        // Delete previous console.logs and add new console.log
         consoleSpy.mockClear()
 
-        // Navigate and select history keywords
-        await user.keyboard('{arrowdown}') // Navigate down
-        await user.keyboard('{arrowdown}') // Navigate down
-        await user.keyboard('{arrowup}') // Navigate up
-        await user.keyboard('{enter}') // Select and submit
+        await user.keyboard('{arrowdown}')
+        await user.keyboard('{arrowdown}')
+        await user.keyboard('{arrowup}')
+        await user.keyboard('{enter}')
 
-        // Ensure the selected query content is logged
         expect(consoleSpy).toHaveBeenCalledWith(
             'Submitted search with query: re',
         )
 
-        // Ensure additional console.log calls are not made
         expect(consoleSpy).toHaveBeenCalledTimes(1)
 
-        // Restore the original console.log after the test
         consoleSpy.mockRestore()
     })
 
     it('should show two history keywords', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))
@@ -349,6 +347,7 @@ describe('history', () => {
     it('should clear history keyword', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
         await user.keyboard('{enter}')
@@ -356,6 +355,7 @@ describe('history', () => {
         await user.type(screen.getByTestId('input'), 'black')
         await user.keyboard('{enter}')
         await user.clear(screen.getByTestId('input'))
+
         await waitFor(async () => {
             const removeHistoryElement = screen.queryByTestId(
                 'remove-history-black',
@@ -372,6 +372,7 @@ describe('history', () => {
     it('should clear history', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
+
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))

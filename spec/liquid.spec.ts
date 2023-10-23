@@ -377,7 +377,9 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should see results after typing', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.type(screen.getByTestId('input'), 're')
+            
             await waitFor(
                 () => {
                     expect(screen.getByTestId('dropdown')).toBeVisible()
@@ -397,6 +399,7 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should see history on empty input', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
@@ -411,6 +414,7 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should show history keyword', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
@@ -455,9 +459,11 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should show two history keywords', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 'black')
             await user.click(screen.getByTestId('search-button'))
@@ -475,6 +481,7 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should clear history keyword', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.keyboard('{enter}')
@@ -482,6 +489,7 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.type(screen.getByTestId('input'), 'black')
             await user.keyboard('{enter}')
             await user.clear(screen.getByTestId('input'))
+
             await waitFor(async () => {
                 const removeHistoryElement = screen.queryByTestId(
                     'remove-history-black',
@@ -498,6 +506,7 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should clear history', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
