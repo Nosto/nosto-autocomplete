@@ -84,16 +84,18 @@ export let AnyPromise = 'Promise' in window ? window.Promise : SimplePromise
 
 export type Cancellable<T> = { promise: PromiseLike<T>; cancel: () => void }
 
+export class  CancellableError extends Error {}
+
 export function makeCancellable<T>(promise: PromiseLike<T>): Cancellable<T> {
     let hasCanceled_ = false
 
     const wrappedPromise = new AnyPromise<T>((resolve, reject) => {
         promise.then(
             (val) => {
-                hasCanceled_ ? reject({ isCanceled: true }) : resolve(val)
+                hasCanceled_ ? reject(new CancellableError('cancelled promise')) : resolve(val)
             },
             (error) => {
-                hasCanceled_ ? reject({ isCanceled: true }) : reject(error)
+                hasCanceled_ ? reject(new CancellableError('cancelled promise')) : reject(error)
             },
         )
     })
