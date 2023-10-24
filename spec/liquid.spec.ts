@@ -374,6 +374,21 @@ describe('fromRemoteLiquidTemplate', () => {
     })
 
     describe('history', () => {
+        // beforeEach(() => {
+        //     setup()
+        // })
+    
+        // afterEach(() => {
+        //     jest.restoreAllMocks()
+    
+        //     const dropdown = screen.getByTestId('dropdown')
+        //     const newElement = dropdown.cloneNode(true)
+        //     dropdown?.parentNode?.replaceChild(newElement, dropdown)
+    
+        //     const w = window as any
+        //     w.nostojs = undefined
+        //     w.nosto = undefined
+        // })
         it('should see results after typing', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
@@ -519,6 +534,34 @@ describe('fromRemoteLiquidTemplate', () => {
             await waitFor(() => {
                 expect(screen.queryByText('black')).toBeNull()
                 expect(screen.queryByText('re')).toBeNull()
+            })
+        })
+
+        it('should highlight history keyword with keyboard navigation', async () => {
+            const user = userEvent.setup()
+            handleAutocomplete()
+    
+            await user.clear(screen.getByTestId('input'))
+            await user.type(screen.getByTestId('input'), 're')
+            await user.click(screen.getByTestId('search-button'))
+            await user.clear(screen.getByTestId('input'))
+            await user.type(screen.getByTestId('input'), 'black')
+            await user.click(screen.getByTestId('search-button'))
+            await user.clear(screen.getByTestId('input'))
+    
+            await waitFor(() => {
+                expect(screen.getByText('black')).toBeVisible()
+                expect(screen.getByText('re')).toBeVisible()
+            })
+    
+            await user.keyboard('{arrowdown}')
+            await user.keyboard('{arrowdown}')
+            await user.keyboard('{arrowup}')
+    
+            await waitFor(() => {
+                expect(screen.getByText('black')).toHaveClass(
+                    'selected',
+                )
             })
         })
     })
