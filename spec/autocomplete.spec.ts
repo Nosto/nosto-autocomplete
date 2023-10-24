@@ -237,21 +237,21 @@ beforeAll(async () => {
 describe('autocomplete', () => {
     beforeEach(() => {
         // Reset the entire DOM and perform necessary setup steps
-        document.body.innerHTML = '';
-        jest.clearAllMocks();
-        setup();
-    });
+        document.body.innerHTML = ''
+        jest.clearAllMocks()
+        setup()
+    })
 
     afterEach(() => {
         // Clean up after each test
-        jest.restoreAllMocks();
-        const dropdown = screen.getByTestId('dropdown');
-        const newElement = dropdown.cloneNode(true);
-        dropdown?.parentNode?.replaceChild(newElement, dropdown);
-        const w = window as any;
-        w.nostojs = undefined;
-        w.nosto = undefined;
-    });
+        jest.restoreAllMocks()
+        const dropdown = screen.getByTestId('dropdown')
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
+        const w = window as any
+        w.nostojs = undefined
+        w.nosto = undefined
+    })
 
     it('renders autocomplete', async () => {
         const user = userEvent.setup()
@@ -289,22 +289,21 @@ describe('autocomplete', () => {
 describe('history', () => {
     beforeEach(() => {
         // Reset the entire DOM and perform necessary setup steps
-        document.body.innerHTML = '';
-        jest.clearAllMocks();
-        setup();
-    });
+        document.body.innerHTML = ''
+        jest.clearAllMocks()
+        setup()
+    })
 
     afterEach(() => {
         // Clean up after each test
-        jest.restoreAllMocks();
-        const dropdown = screen.getByTestId('dropdown');
-        const newElement = dropdown.cloneNode(true);
-        dropdown?.parentNode?.replaceChild(newElement, dropdown);
-        const w = window as any;
-        w.nostojs = undefined;
-        w.nosto = undefined;
-    });
-
+        jest.restoreAllMocks()
+        const dropdown = screen.getByTestId('dropdown')
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
+        const w = window as any
+        w.nostojs = undefined
+        w.nosto = undefined
+    })
 
     it('should see results after typing', async () => {
         const user = userEvent.setup()
@@ -411,47 +410,39 @@ describe('history', () => {
     })
 
     it('should clear history keyword', async () => {
-        const user = userEvent.setup()
-        handleAutocomplete()
-
-        await user.clear(screen.getByTestId('input'))
-        await user.type(screen.getByTestId('input'), 're')
-        await user.click(screen.getByTestId('search-button'))
-        await user.clear(screen.getByTestId('input'))
-        await user.type(screen.getByTestId('input'), 'black')
-        await user.click(screen.getByTestId('search-button'))
-        await user.clear(screen.getByTestId('input'))
-
+        const user = userEvent.setup();
+        handleAutocomplete();
+    
+        await user.clear(screen.getByTestId('input'));
+        await user.type(screen.getByTestId('input'), 're');
+        await user.click(screen.getByTestId('search-button'));
+        await user.clear(screen.getByTestId('input'));
+        await user.type(screen.getByTestId('input'), 'black');
+        await user.click(screen.getByTestId('search-button'));
+        await user.clear(screen.getByTestId('input'));
+    
         await waitFor(async () => {
-            const user = userEvent.setup()
-            handleAutocomplete()
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            //IT SHOULD BE 'black' but for testing purposes it is 're' now and test still passes
-            const blackItem = screen.queryByText('re')
-            expect(blackItem).toBeInTheDocument()
-            console.log('blackItem', blackItem)
-            if (!blackItem) return
-            const xButton = blackItem.parentElement?.querySelector(
-                '.ns-autocomplete-history-item-remove',
-            )
-            //it prints 'x' correctly
-            console.log('xButton', xButton?.textContent)
-
-            expect(xButton).toBeInTheDocument()
-            if (!xButton) return
-            userEvent.click(xButton)
-
-            await waitForElementToBeRemoved(() => screen.queryByText('black'))
-            expect(screen.queryByText('black')).toBeNull()
-        })
+            expect(screen.getByText('re')).toBeVisible();
+            expect(screen.getByText('black')).toBeVisible();
+    
+            await waitFor(async () => {
+                //intentionally using 're' here for test to fail
+                const blackItem = screen.getByText('re'); 
+                console.log('blackItem', blackItem?.textContent); // it prints 're✕' correctly
+                expect(blackItem).toBeInTheDocument();
+    
+                const xButton = blackItem.parentElement?.querySelector('.ns-autocomplete-history-item-remove');
+                console.log('xButton', xButton?.textContent); // it prints '✕' correctly
+    
+                expect(xButton).toBeInTheDocument();
+                if (xButton) {
+                    userEvent.click(xButton);
+    
+                    await waitForElementToBeRemoved(() => screen.queryByText('black'));
+                    expect(screen.queryByText('black')).toBeNull();
+                }
+            });
+        });
     })
 
     it('should clear history', async () => {
