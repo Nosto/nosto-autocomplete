@@ -242,6 +242,22 @@ describe('autocomplete', () => {
 })
 
 describe('history', () => {
+    // beforeEach(() => {
+    //     setup()
+    // })
+
+    // afterEach(() => {
+    //     jest.restoreAllMocks()
+
+    //     const dropdown = screen.getByTestId('dropdown')
+    //     const newElement = dropdown.cloneNode(true)
+    //     dropdown?.parentNode?.replaceChild(newElement, dropdown)
+
+    //     const w = window as any
+    //     w.nostojs = undefined
+    //     w.nosto = undefined
+    // })
+
     it('should see results after typing', async () => {
         const user = userEvent.setup()
         handleAutocomplete()
@@ -314,11 +330,13 @@ describe('history', () => {
         await user.keyboard('{arrowup}')
         await user.keyboard('{enter}')
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-            'Submitted search with query: re',
-        )
+        waitFor(() => {
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'Submitted search with query: re',
+            )
 
-        expect(consoleSpy).toHaveBeenCalledTimes(1)
+            expect(consoleSpy).toHaveBeenCalledTimes(1)
+        })
 
         consoleSpy.mockRestore()
     })
