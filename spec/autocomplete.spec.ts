@@ -426,8 +426,7 @@ describe('history', () => {
             expect(screen.getByText('black')).toBeVisible();
     
             await waitFor(async () => {
-                //intentionally using 're' here for test to fail
-                const blackItem = screen.getByText('re'); 
+                const blackItem = screen.getByText('black'); 
                 console.log('blackItem', blackItem?.textContent); // it prints 're✕' correctly
                 expect(blackItem).toBeInTheDocument();
     
