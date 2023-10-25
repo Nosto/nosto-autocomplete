@@ -1,4 +1,4 @@
-class SimplePromise<T> implements PromiseLike<T> {
+export class SimplePromise<T> implements PromiseLike<T> {
     private status: string
     private value: T
     private onFulfilledCallbacks: Array<(value: T) => void>
