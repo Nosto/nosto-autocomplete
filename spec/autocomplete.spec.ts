@@ -440,6 +440,7 @@ describe('history', () => {
     
                     await waitForElementToBeRemoved(() => screen.queryByText('black'));
                     expect(screen.queryByText('black')).toBeNull();
+                    expect(screen.queryByText('re')).toBeVisible();
                 }
             });
         });
