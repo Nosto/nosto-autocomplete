@@ -427,7 +427,7 @@ describe('history', () => {
     
             await waitFor(async () => {
                 const blackItem = screen.getByText('black'); 
-                console.log('blackItem', blackItem?.textContent); // it prints 're✕' correctly
+                console.log('blackItem', blackItem?.textContent);
                 expect(blackItem).toBeInTheDocument();
     
                 const xButton = blackItem.parentElement?.querySelector('.ns-autocomplete-history-item-remove');
