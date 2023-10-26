@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event'
 import { autocomplete } from '../src'
 
 import '@testing-library/jest-dom'
-import { AnyPromise, SimplePromise } from '../src/utils/promise'
 
 beforeAll(() => {
     document.body.innerHTML = `
@@ -64,84 +63,5 @@ describe('autocomplete', () => {
 
         expect(screen.getByText('keyword red')).toBeVisible()
         expect(screen.getByText('keyword blue')).toBeVisible()
-    })
-})
-
-describe('SimplePromise', () => {
-    it('has resolve and reject callbacks', async () => {
-        const promise = new SimplePromise((resolve, reject) => {
-            // expect resolve and reject to be defined and to be functions which acceps one argument
-            expect(resolve).toBeDefined()
-            expect(reject).toBeDefined()
-            expect(typeof resolve).toBe('function')
-            expect(typeof reject).toBe('function')
-
-            // resolve promise with value of 1
-            setTimeout(() => {
-                resolve(1)
-            }, 0)
-        })
-
-        await promise
-    })
-
-    it('resolve() corectly returns value in .then block', async () => {
-        const promise = new SimplePromise((resolve) => {
-            setTimeout(() => {
-                resolve('promise')
-            }, 0)
-        })
-
-        let value;
-        promise.then((v) => {
-            value = v
-        })
-        await promise
-
-        expect(value).toBe('promise')
-    })
-
-    it('reject() correctly rejects with a value in .then block', async () => {
-        const promise = new SimplePromise((_, reject) => {
-            setTimeout(() => {
-                reject('error')
-            }, 0)
-        })
-
-        let error: any;
-
-
-        promise.then(() => {
-            return
-        }, (err) => {
-            error = err
-            return
-        })
-
-        await waitFor(() => {
-            expect(error).toBe('error')
-        }, {
-            timeout: 1000
-        })
-    })
-
-    it('resolves promise in .then block', async () => {
-        const promise = new SimplePromise((resolve) => {
-            setTimeout(() => {
-                resolve('promise')
-            }, 0)
-        })
-
-        let value;
-        promise.then(() => {
-            return new SimplePromise((resolve) => {
-                resolve('promise2')
-            })
-        }).then((v) => {
-            value = v
-        })
-
-        await promise;
-        expect(value).toBe('promise2')
     })
 })

@@ -10,7 +10,6 @@ import {
 
 import '@testing-library/jest-dom'
 import { AnyPromise } from '../src/utils/promise'
-import { DefaultState } from '../src/state'
 
 const handleAutocomplete = () => {
     autocomplete({

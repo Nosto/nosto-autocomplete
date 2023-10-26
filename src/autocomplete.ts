@@ -6,7 +6,6 @@ import { bindClickOutside, findAll } from './utils/dom'
 import { bindInput } from './utils/input'
 import { History } from './history'
 import { Limiter, LimiterError } from './utils/limiter'
-import { CancellableError } from './utils/promise'
 
 /**
  * @group Autocomplete
@@ -45,19 +44,22 @@ export function autocomplete<State = DefaultState>(
                 return
             }
 
+            let lastRenderTime = Date.now()
 
             const input = bindInput(inputElement, {
                 onInput: async (value) => {
+                    const requestTime = Date.now()
+
                     try {
                         await limiter.limited(() => {
-                            return actions.updateState(value).then(
-                                (state) => {
+                            return actions.updateState(value).then((state) => {
+                                if (requestTime >= lastRenderTime) {
                                     dropdown.update(state)
                                 }
-                            )
+                            })
                         })
                     } catch (err) {
-                        if (!(err instanceof LimiterError || err instanceof CancellableError)) {
+                        if (!(err instanceof LimiterError)) {
                             throw err
                         }
                     }
@@ -163,10 +165,7 @@ function createInputDropdown<State = DefaultState>({
 
     return new Dropdown<State>(
         dropdownElement,
-        actions.updateState(input.value).then(
-            (state) => state,
-            () =>  ({} as State),
-        ),
+        actions.updateState(input.value),
         config.render,
         config.submit,
         (value) => (input.value = value),
