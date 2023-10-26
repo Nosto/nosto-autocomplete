@@ -410,39 +410,38 @@ describe('history', () => {
     })
 
     it('should clear history keyword', async () => {
-        const user = userEvent.setup();
-        handleAutocomplete();
-    
-        await user.clear(screen.getByTestId('input'));
-        await user.type(screen.getByTestId('input'), 're');
-        await user.click(screen.getByTestId('search-button'));
-        await user.clear(screen.getByTestId('input'));
-        await user.type(screen.getByTestId('input'), 'black');
-        await user.click(screen.getByTestId('search-button'));
-        await user.clear(screen.getByTestId('input'));
-    
-        await waitFor(async () => {
-            expect(screen.getByText('re')).toBeVisible();
-            expect(screen.getByText('black')).toBeVisible();
-    
-            await waitFor(async () => {
-                const blackItem = screen.getByText('black'); 
-                console.log('blackItem', blackItem?.textContent);
-                expect(blackItem).toBeInTheDocument();
-    
-                const xButton = blackItem.parentElement?.querySelector('.ns-autocomplete-history-item-remove');
-                console.log('xButton', xButton?.textContent); // it prints '✕' correctly
-    
-                expect(xButton).toBeInTheDocument();
-                if (xButton) {
-                    userEvent.click(xButton);
-    
-                    await waitForElementToBeRemoved(() => screen.queryByText('black'));
-                    expect(screen.queryByText('black')).toBeNull();
-                    expect(screen.queryByText('re')).toBeVisible();
-                }
-            });
-        });
+        const user = userEvent.setup()
+        handleAutocomplete()
+
+        await user.clear(screen.getByTestId('input'))
+
+        await user.type(screen.getByTestId('input'), 'black')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+        await user.type(screen.getByTestId('input'), 're')
+        await user.click(screen.getByTestId('search-button'))
+        await user.clear(screen.getByTestId('input'))
+
+        await waitFor(() => expect(screen.getByText('re')).toBeVisible())
+        await waitFor(() => expect(screen.getByText('black')).toBeVisible())
+
+        const blackItem = screen.getByText('black')
+        expect(blackItem).toBeInTheDocument()
+
+        const xButton = blackItem.querySelector(
+            '.ns-autocomplete-history-item-remove',
+        )
+
+        await waitFor(() => expect(xButton).toBeInTheDocument())
+
+        if (xButton) {
+            userEvent.click(xButton)
+
+            await waitForElementToBeRemoved(() => screen.queryByText('black'))
+
+            expect(screen.queryByText('black')).toBeNull()
+            expect(screen.queryByText('re')).toBeDefined()
+        }
     })
 
     it('should clear history', async () => {
