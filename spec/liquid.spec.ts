@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
 import {
+    DefaultState,
     autocomplete,
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
@@ -9,7 +10,6 @@ import {
 
 import '@testing-library/jest-dom'
 import { AnyPromise } from '../src/utils/promise'
-import { State } from '../dist/nosto-autocomplete'
 
 function setup() {
     document.body.innerHTML = `
@@ -296,10 +296,10 @@ describe('fromRemoteLiquidTemplate', () => {
 
         const mockRender: (
             container: HTMLElement,
-            state: State,
+            state: DefaultState,
         ) => void | PromiseLike<void> = (
             container: HTMLElement,
-            state: State,
+            state: DefaultState,
         ) => {
             return new AnyPromise((resolve) => {
                 fromLiquidTemplate(template)(
