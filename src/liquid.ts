@@ -1,8 +1,17 @@
-import { Liquid } from 'liquidjs'
 import { DefaultState } from './state'
 import { AnyPromise } from './utils/promise'
+import { Liquid as LiquidJS } from 'liquidjs'
 
-const engine = new Liquid()
+declare global {
+    interface Window {
+        liquidjs?: {
+            Liquid: any
+        }
+    }
+}
+
+const Liquid = 'liquidjs' in window ? window.liquidjs?.Liquid : undefined
+const engine: LiquidJS | undefined = Liquid !== undefined ? new Liquid() : undefined
 
 /**
  * Render a liquid template into a container
@@ -15,6 +24,12 @@ const engine = new Liquid()
 export function fromLiquidTemplate<State extends object = DefaultState>(
     template: string,
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
+    if (engine === undefined) {
+        throw new Error(
+            'Liquid is not defined. Please include the Liquid library in your page.',
+        )
+    }
+
     return (container, state) => {
         container.innerHTML = engine.parseAndRenderSync(template, state)
 

@@ -30,9 +30,8 @@
             async
             onload="setTimeout(function() { window.initAutocomplete() }, 100)"
         ></script>
-
         <script
-            src="https://cdn.jsdelivr.net/npm/liquidjs/dist/liquid.browser.min.js"
+            src="https://unpkg.com/mustache@4.2.0/mustache.min.js"
             crossorigin
         ></script>
 
@@ -63,13 +62,13 @@
                     },
                     inputSelector: '#search',
                     dropdownSelector: '#search-results',
-                    render: window.nostoAutocomplete.fromRemoteLiquidTemplate(
-                        'autocomplete.liquid',
+                    render: window.nostoAutocomplete.fromRemoteMustacheTemplate(
+                        'autocomplete.mustache',
                     ),
                     submit: (query) => {
                         // Handle search submit
                         console.log('Submitting search with query: ', query)
-                    }
+                    },
                 })
             }
         </script>

@@ -1,1 +1,1 @@
-export * from './entries/liquid'
+export * from './entries/index'
