@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
 import {
+    DefaultState,
     autocomplete,
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
