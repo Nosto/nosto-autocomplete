@@ -1,8 +1,6 @@
 export { autocomplete } from '../autocomplete'
 export { AutocompleteConfig } from '../config'
 export { DefaultState } from '../state'
-export { fromLiquidTemplate, fromRemoteLiquidTemplate } from '../liquid'
-export { fromMustacheTemplate, fromRemoteMustacheTemplate } from '../mustache'
 
 export {
     getNostoClient,

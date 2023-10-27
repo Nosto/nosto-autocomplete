@@ -1,5 +1,5 @@
-import { AnyPromise } from './utils/promise';
-import { DefaultState } from './state';
+import { AnyPromise } from './utils/promise'
+import { DefaultState } from './state'
 
 // define window.Mustache type
 declare global {
@@ -26,12 +26,18 @@ export function fromMustacheTemplate(template: string) {
     return (container: HTMLElement, state: object) => {
         container.innerHTML = window.Mustache.render(template, {
             ...state,
-            hasKeywords: (state as any )?.response?.keywords?.hits.length,
-            hasProducts: (state as any )?.response?.products?.hits.length,
-            hasCategories: (state as any )?.response?.categories?.hits.length,
-        });
+            hasKeywords: (state as any)?.response?.keywords?.hits.length,
+            hasProducts: (state as any)?.response?.products?.hits.length,
+            hasCategories: (state as any)?.response?.categories?.hits.length,
+            imagePlaceholder: 'https://cdn.nosto.com/nosto/9/mock',
+            json: function() {
+                return (val: any, render: any) => {
+                    return JSON.stringify(render(val))
+                }
+            }
+        })
 
-        return AnyPromise.resolve(undefined);
+        return AnyPromise.resolve(undefined)
     }
 }
 
@@ -52,11 +58,12 @@ export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
             xhr.open('GET', url)
             xhr.onload = () => {
                 if (xhr.status === 200) {
-                    fromMustacheTemplate(xhr.responseText)(container, state).then(
-                        () => {
-                            resolve(undefined)
-                        },
-                    )
+                    fromMustacheTemplate(xhr.responseText)(
+                        container,
+                        state,
+                    ).then(() => {
+                        resolve(undefined)
+                    })
                 } else {
                     reject(
                         new Error(

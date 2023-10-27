@@ -1,6 +1,7 @@
 {% assign hasKeywords = response.keywords.hits.length > 0 %}
 {% assign hasProducts = response.products.hits.length > 0 %}
 {% assign hasHistory = history.length > 0 %}
+{% assign imagePlaceHolder = 'https://cdn.nosto.com/nosto/9/mock' %}
 
 <div class="ns-autocomplete-results">
   {% if hasKeywords == false and hasProducts == false and hasHistory %}
@@ -57,7 +58,7 @@
             data-ns-hit="{{ hit | json | escape }}">
             <img
               class="ns-autocomplete-product-image"
-              src="{{ hit.imageUrl }}"
+              src="{% if hit.imageUrl %}{{ hit.imageUrl }}{% else %}{{ imagePlaceHolder }}{% endif %}"
               alt="{{ hit.name }}"
               width="60"
               height="40" />

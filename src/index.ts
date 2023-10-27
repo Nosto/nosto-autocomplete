@@ -1,1 +1,1 @@
-export * from './entries/index'
+export * from './entries/base'
