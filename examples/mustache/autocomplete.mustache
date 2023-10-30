@@ -1,11 +1,11 @@
 <div class="ns-autocomplete-results">
-  {{#hasKeywords}}
+  {{#response.keywords.hits.length}}
     <div class="ns-autocomplete-keywords">
       <div class="ns-autocomplete-header">
         Keywords
       </div>
       {{#response.keywords.hits}}
-        <div class="ns-autocomplete-keyword" data-ns-hit="{{#json}} {{.}} {{/json}}">
+        <div class="ns-autocomplete-keyword" data-ns-hit="{{toJson}}">
           {{#_highlight.keyword}}
             <span>{{{.}}}</span>
           {{/_highlight.keyword}}
@@ -15,18 +15,18 @@
         </div>
       {{/response.keywords.hits}}
     </div>
-  {{/hasKeywords}}
+  {{/response.keywords.hits.length}}
 
-  {{#hasProducts}}
+  {{#response.products.hits.length}}
     <div class="ns-autocomplete-products">
       <div class="ns-autocomplete-header">
         Products
       </div>
       {{#response.products.hits}}
-        <a class="ns-autocomplete-product" href="{{url}}" data-ns-hit="{{.}}">
+        <a class="ns-autocomplete-product" href="{{url}}" data-ns-hit="{{toJson}}">
           <img
               class="ns-autocomplete-product-image"
-              src="{{#hit.imageUrl}}{{ hit.imageUrl }}{{/hit.imageUrl}}{{^hit.imageUrl}}{{imagePlaceHolder}}{{/hit.imageUrl}}"
+              src="{{#imageUrl}}{{ imageUrl }}{{/imageUrl}}{{^imageUrl}}{{ imagePlaceholder }}{{/imageUrl}}"
               alt="{{name}}"
               width="60"
               height="40"
@@ -54,15 +54,15 @@
         </a>
       {{/response.products.hits}}
     </div>
-  {{/hasProducts}}
+  {{/response.products.hits.length}}
 
-  {{#hasHistory}}
+  {{#history.length}}
     <div class="ns-autocomplete-history">
       <div class="ns-autocomplete-header">
         Recently searched
       </div>
       {{#history}}
-        <div class="ns-autocomplete-history-item" data-ns-hit="{{.}}">
+        <div class="ns-autocomplete-history-item" data-ns-hit="{{toJson}}">
           {{item}}
           <a href="javascript:void(0)" class="ns-autocomplete-history-item-remove" data-ns-remove-history="{{item}}">
             &#x2715;
@@ -75,13 +75,13 @@
         Clear history
       </button>
     </div>
-  {{/hasHistory}}
+  {{/history.length}}
 
-  {{#hasKeywords}}{{#hasProducts}}
+  {{#response.keywords.hits.length}}{{#response.products.hits.length}}
     <div class="ns-autocomplete-submit">
       <button type="submit" class="ns-autocomplete-button">
         See all search results
       </button>
     </div>
-  {{/hasProducts}}{{/hasKeywords}}
+  {{/response.products.hits.length}}{{/response.keywords.hits.length}}
 </div>
