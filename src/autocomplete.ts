@@ -34,9 +34,21 @@ export function autocomplete<State = DefaultState>(
                 input: inputElement,
             })
 
+            const submit = (value: string) => {
+                if (historyEnabled) {
+                    actions.addHistoryItem(value)
+                }
+                if (typeof config?.submit === 'function') {
+                    config.submit(value)
+                }
+            }
+
             const dropdown = createInputDropdown({
                 input: inputElement,
-                config,
+                config: {
+                    ...config,
+                    submit,
+                },
                 actions,
             })
 
@@ -64,6 +76,9 @@ export function autocomplete<State = DefaultState>(
                         }
                     }
                 },
+                onClick() {
+                    dropdown.resetHighlight()
+                },
                 onFocus() {
                     dropdown.show()
                 },
@@ -71,29 +86,7 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onSubmit() {
-                    if (historyEnabled) {
-                        actions.addHistoryItem(inputElement.value)
-                    }
-
-                    if (dropdown.hasHighlight()) {
-                        dropdown.handleSubmit()
-                    } else {
-                        if (typeof config?.submit === 'function') {
-                            config.submit(inputElement.value)
-                        }
-                    }
-
-                    dropdown.hide()
-                },
-                onSubmitButton() {
-                    if (historyEnabled) {
-                        actions.addHistoryItem(inputElement.value)
-                    }
-
-                    if (typeof config?.submit === 'function') {
-                        config.submit(inputElement.value)
-                    }
-
+                    submit(inputElement.value)
                     dropdown.hide()
                 },
                 onKeyDown(_, key) {
@@ -108,6 +101,12 @@ export function autocomplete<State = DefaultState>(
                     } else if (key === 'ArrowUp') {
                         if (dropdown.isOpen()) {
                             dropdown.goUp()
+                        }
+                    } else if (key === 'Enter') {
+                        if (dropdown.isOpen() && dropdown.hasHighlight()) {
+                            dropdown.handleSubmit()
+                        } else {
+                            submit(inputElement.value)
                         }
                     }
                 },

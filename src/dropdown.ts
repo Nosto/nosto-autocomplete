@@ -141,13 +141,6 @@ export class Dropdown<State> {
         }
     }
 
-    private resetHighlight(): void {
-        if (this.hasHighlight()) {
-            this.elements[this.selectedIndex]?.classList.remove('selected')
-            this.selectedIndex = -1
-        }
-    }
-
     private dispose(): void {
         this.resetHighlight()
         this.elements = []
@@ -232,6 +225,13 @@ export class Dropdown<State> {
 
     hasHighlight(): boolean {
         return this.selectedIndex > -1
+    }
+
+    resetHighlight(): void {
+        if (this.hasHighlight()) {
+            this.elements[this.selectedIndex]?.classList.remove('selected')
+            this.selectedIndex = -1
+        }
     }
 
     destroy(): void {

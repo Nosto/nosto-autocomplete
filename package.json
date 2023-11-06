@@ -136,9 +136,6 @@
     "schema": "https://search.nosto.com/v1/graphql",
     "generates": {
       "src/api/search/generated.ts": {
-        "plugins": [
-          "typescript"
-        ],
         "config": {
           "enumsAsTypes": true,
           "defaultScalarType": "unknown",
