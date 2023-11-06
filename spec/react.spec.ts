@@ -1,6 +1,5 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import type { Root } from 'react-dom/client'
+import React, { Attributes } from 'react'
+import { Root, createRoot } from 'react-dom/client'
 import {
     screen,
     waitFor,
@@ -9,6 +8,16 @@ import {
 import userEvent from '@testing-library/user-event'
 import { autocomplete } from '../src'
 import '@testing-library/jest-dom'
+import { Autocomplete } from './components/Autocomplete'
+
+declare global {
+    interface Window {
+        React?: typeof React
+        ReactDOM?: {
+            createRoot: typeof createRoot
+        }
+    }
+}
 
 function setup() {
     document.body.innerHTML = `
@@ -32,203 +41,23 @@ function setup() {
     }
     document.body.appendChild(script)
 
+    const resctScript = document.createElement('script')
+    resctScript.src = 'https://unpkg.com/react@18/umd/react.production.min.js'
+    document.body.appendChild(resctScript)
+
+    const reactDomScript = document.createElement('script')
+    reactDomScript.src =
+        'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js'
+    document.body.appendChild(reactDomScript)
+
     const babelScript = document.createElement('script')
     babelScript.src = 'https://unpkg.com/babel-standalone@6/babel.min.js'
     document.body.appendChild(babelScript)
-    const jsxScript = document.createElement('script')
-    jsxScript.type = 'text/babel'
-}
-
-interface AutocompleteProps {
-    response?: {
-        keywords: {
-            hits: {
-                keyword: any
-                _highlight: any
-                item: string
-            }[]
-        }
-        products: {
-            hits: {
-                listPrice: any
-                price: any
-                brand: any
-                name: any
-                imageUrl: any
-                url: any
-                item: string
-            }[]
-        }
-    }
-    history?: {
-        item: string
-    }[]
-}
-
-const Autocomplete = ({ response, history }: AutocompleteProps) => {
-    setup()
-    const hasKeywords =
-        response &&
-        response.keywords &&
-        response.keywords.hits &&
-        response.keywords.hits.length > 0
-    const hasProducts =
-        response &&
-        response.products &&
-        response.products.hits &&
-        response.products.hits.length > 0
-    const hasHistory = history && history.length > 0
-
-    if (!hasKeywords && !hasProducts && !hasHistory) {
-        return null
-    }
-
-    console.log('AUTOCOMPLETE HERE', hasKeywords, hasProducts, hasHistory)
-
-    const renderHistory = () => {
-        const jsxScript = document.createElement('script')
-        jsxScript.type = 'text/babel'
-        return [
-            (jsxScript.textContent = `
-            <div class="ns-autocomplete-history">
-                <div class="ns-autocomplete-header">
-                    Recently searched
-                </div>
-                ${history?.map((hit) => {
-                    return `
-                        <div
-                            class="ns-autocomplete-history-item"
-                            data-ns-hit=${JSON.stringify(hit)}
-                        >
-                            ${hit.item}
-                            <a
-                                href="javascript:void(0)"
-                                class="ns-autocomplete-history-item-remove"
-                                data-ns-remove-history=${hit.item}
-                            >
-                                &#x2715;
-                            </a>
-                        </div> 
-                    `
-                })}
-            </div>,
-            <div class="ns-autocomplete-history-clear">
-                <button
-                    type="button"
-                    class="ns-autocomplete-button"
-                    data-ns-remove-history="all"
-                >
-                    Clear history
-                </button>
-            </div>`),
-        ]
-    }
-
-    const renderKeywords = () => {
-        const jsxScript = document.createElement('script')
-        jsxScript.type = 'text/babel'
-        return (jsxScript.textContent = `
-            <div className="ns-autocomplete-keywords">
-                <div className="ns-autocomplete-header">Keywords</div>
-                ${response?.keywords.hits.map(
-                    (hit) =>
-                        `<div className="ns-autocomplete-keyword" key=${
-                            hit.keyword
-                        } data-ns-hit=${JSON.stringify(hit)}>
-                        ${
-                            hit._highlight && hit._highlight.keyword
-                                ? `<span dangerouslySetInnerHTML=${{
-                                      __html: hit._highlight.keyword,
-                                  }}></span>`
-                                : `<span>${hit.keyword}</span>
-                        `
-                        }
-                    </div>`,
-                )}
-            </div>
-        `)
-    }
-
-    const renderProducts = () => {
-        const jsxScript = document.createElement('script')
-        jsxScript.type = 'text/babel'
-        return (jsxScript.textContent = `
-            ${
-                hasProducts &&
-                `
-                <div class="ns-autocomplete-products">
-                    <div class="ns-autocomplete-header">
-                        Products
-                    </div>
-                    ${response.products.hits.map((hit) => {
-                        return `<a
-                                class="ns-autocomplete-product"
-                                href=${hit.url}
-                                data-ns-hit=${JSON.stringify(hit)}
-                            >
-                                <img
-                                    class="ns-autocomplete-product-image"
-                                    src=${hit.imageUrl}
-                                    alt=${hit.name}
-                                    width="60"
-                                    height="40"
-                                />
-                                <div class="ns-autocomplete-product-info">
-                                    ${
-                                        hit.brand &&
-                                        `<div class="ns-autocomplete-product-brand">
-                                            ${hit.brand}
-                                        </div>`
-                                    }
-                                    <div class="ns-autocomplete-product-name">
-                                        ${hit.name}
-                                    </div>
-                                    <div>
-                                        <span>
-                                            ${hit.price}&euro;
-                                        </span>
-                                        ${
-                                            hit.listPrice &&
-                                            `<span class="ns-autocomplete-product-list-price">
-                                                ${hit.listPrice}
-                                                &euro;
-                                            </span>`
-                                        }
-                                    </div>
-                                </div>
-                            </a>`
-                    })}
-                </div>`
-            }`)
-    }
-    const jsxScript = document.createElement('script')
-    jsxScript.type = 'text/babel'
-    return (jsxScript.textContent = `
-        <div className="ns-autocomplete-results">
-       ${!hasKeywords && !hasProducts && hasHistory && renderHistory()}
-        ${
-            (hasKeywords || hasProducts) &&
-            `
-            <>
-                ${renderKeywords()}
-                ${renderProducts()}
-                <div className="ns-autocomplete-submit">
-                    <button
-                        type="submit"
-                        className="ns-autocomplete-button"
-                    >
-                        See all search results
-                    </button>
-                </div>
-            </>
-            `
-        }
-    </div>
-    `)
 }
 
 const handleAutocomplete = () => {
     let reactRoot: Root | null = null
+
     autocomplete({
         fetch: {
             products: {
@@ -255,9 +84,11 @@ const handleAutocomplete = () => {
         dropdownSelector: '#search-results',
         render: function (container, state) {
             if (!reactRoot) {
-                reactRoot = createRoot(container)
+                reactRoot = window.ReactDOM?.createRoot(container)
             }
-            reactRoot.render(React.createElement(Autocomplete))
+            reactRoot?.render(
+                window.React?.createElement(Autocomplete, state as Attributes),
+            )
         },
         submit: (query) => {
             // Handle search submit
@@ -311,7 +142,12 @@ describe('autocomplete', () => {
     it('renders autocomplete', async () => {
         const user = userEvent.setup()
 
-        handleAutocomplete()
+        await waitFor(
+            () => {
+                return handleAutocomplete()
+            },
+            { timeout: 2000 },
+        )
 
         await waitFor(
             () => {
@@ -362,7 +198,7 @@ describe('history', () => {
 
     it('should see results after typing', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.type(screen.getByTestId('input'), 're')
         await waitFor(
@@ -383,7 +219,7 @@ describe('history', () => {
 
     it('should see history on empty input', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -398,7 +234,7 @@ describe('history', () => {
 
     it('should show history keyword', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -412,7 +248,7 @@ describe('history', () => {
 
     it('should navigate and select history keywords with keyboard', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         // Mock console.log
         const consoleSpy = jest.spyOn(console, 'log')
@@ -445,7 +281,7 @@ describe('history', () => {
 
     it('should show two history keywords', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -466,7 +302,7 @@ describe('history', () => {
 
     it('should clear history keyword', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
 
@@ -501,7 +337,7 @@ describe('history', () => {
 
     it('should clear history', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -520,7 +356,7 @@ describe('history', () => {
 
     it('should highlight history keyword with keyboard navigation', async () => {
         const user = userEvent.setup()
-        // handleAutocomplete()
+        handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')

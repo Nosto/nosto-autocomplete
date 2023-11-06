@@ -1,71 +1,14 @@
 import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
-import {
-    DefaultState,
-    autocomplete,
-    fromLiquidTemplate,
-    fromRemoteLiquidTemplate,
-} from '../src'
+import { DefaultState, autocomplete } from '../src'
 
 import '@testing-library/jest-dom'
 import { AnyPromise } from '../src/utils/promise'
-
-const handleAutocomplete = () => {
-    autocomplete({
-        fetch: {
-            products: {
-                fields: [
-                    'name',
-                    'url',
-                    'imageUrl',
-                    'price',
-                    'listPrice',
-                    'brand',
-                ],
-                size: 5,
-            },
-            keywords: {
-                size: 5,
-                fields: ['keyword', '_highlight.keyword'],
-                highlight: {
-                    preTag: `<strong>`,
-                    postTag: '</strong>',
-                },
-            },
-        },
-        inputSelector: '#search',
-        dropdownSelector: '#search-results',
-        render: fromLiquidTemplate(template),
-        submit: (query) => {
-            // Handle search submit
-            console.log(`Submitted search with query: ${query}`)
-        },
-    })
-}
-
-function setup() {
-    document.body.innerHTML = `
-        <form id="search-form">
-            <input type="text" id="search" placeholder="search" data-testid="input" />
-            <button type="submit" data-testid="search-button">Search</button>
-            <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
-        </form>
-    `
-
-    const w = window as any
-    w.nostojs = (cb: any) => {
-        w.nostojs.q = w.nostojs.q || ([] as any[])
-        w.nostojs.q.push(cb)
-    }
-
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
-    script.onload = () => {
-        w.nosto.reload({ site: location.hostname, searchEnabled: false })
-    }
-    document.body.appendChild(script)
-}
+import {
+    fromLiquidTemplate,
+    fromRemoteLiquidTemplate,
+} from '../src/entries/liquid'
 
 const template = `
     {% assign hasKeywords = response.keywords.hits.length > 0 %}
@@ -166,6 +109,67 @@ const template = `
     </div>
 `
 
+const handleAutocomplete = () => {
+    autocomplete({
+        fetch: {
+            products: {
+                fields: [
+                    'name',
+                    'url',
+                    'imageUrl',
+                    'price',
+                    'listPrice',
+                    'brand',
+                ],
+                size: 5,
+            },
+            keywords: {
+                size: 5,
+                fields: ['keyword', '_highlight.keyword'],
+                highlight: {
+                    preTag: `<strong>`,
+                    postTag: '</strong>',
+                },
+            },
+        },
+        inputSelector: '#search',
+        dropdownSelector: '#search-results',
+        render: fromLiquidTemplate(template),
+        submit: (query) => {
+            // Handle search submit
+            console.log(`Submitted search with query: ${query}`)
+        },
+    })
+}
+
+function setup() {
+    document.body.innerHTML = `
+        <form id="search-form">
+            <input type="text" id="search" placeholder="search" data-testid="input" />
+            <button type="submit" data-testid="search-button">Search</button>
+            <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
+        </form>
+    `
+
+    const w = window as any
+    w.nostojs = (cb: any) => {
+        w.nostojs.q = w.nostojs.q || ([] as any[])
+        w.nostojs.q.push(cb)
+    }
+
+    const liquidScript = document.createElement('script')
+    liquidScript.src =
+        'https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js'
+    document.body.appendChild(liquidScript)
+
+    const script = document.createElement('script')
+    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
+    script.onload = () => {
+        w.nosto.reload({ site: location.hostname, searchEnabled: false })
+    }
+    document.body.appendChild(script)
+}
+
 describe('fromLiquidTemplate', () => {
     beforeAll(() => {
         setup()
@@ -179,7 +183,12 @@ describe('fromLiquidTemplate', () => {
     it('uses local liquid template', async () => {
         const user = userEvent.setup()
 
-        handleAutocomplete()
+        await waitFor(
+            () => {
+                return handleAutocomplete()
+            },
+            { timeout: 2000 },
+        )
 
         await waitFor(
             () => {
@@ -374,27 +383,12 @@ describe('fromRemoteLiquidTemplate', () => {
     })
 
     describe('history', () => {
-        // beforeEach(() => {
-        //     setup()
-        // })
-    
-        // afterEach(() => {
-        //     jest.restoreAllMocks()
-    
-        //     const dropdown = screen.getByTestId('dropdown')
-        //     const newElement = dropdown.cloneNode(true)
-        //     dropdown?.parentNode?.replaceChild(newElement, dropdown)
-    
-        //     const w = window as any
-        //     w.nostojs = undefined
-        //     w.nosto = undefined
-        // })
         it('should see results after typing', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
 
             await user.type(screen.getByTestId('input'), 're')
-            
+
             await waitFor(
                 () => {
                     expect(screen.getByTestId('dropdown')).toBeVisible()
@@ -457,10 +451,10 @@ describe('fromRemoteLiquidTemplate', () => {
 
             consoleSpy.mockClear()
 
-            await user.keyboard('{arrowdown}') 
-            await user.keyboard('{arrowdown}') 
-            await user.keyboard('{arrowup}') 
-            await user.keyboard('{enter}') 
+            await user.keyboard('{arrowdown}')
+            await user.keyboard('{arrowdown}')
+            await user.keyboard('{arrowup}')
+            await user.keyboard('{enter}')
 
             expect(consoleSpy).toHaveBeenCalledWith(
                 'Submitted search with query: re',
@@ -540,7 +534,7 @@ describe('fromRemoteLiquidTemplate', () => {
         it('should highlight history keyword with keyboard navigation', async () => {
             const user = userEvent.setup()
             handleAutocomplete()
-    
+
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
@@ -548,20 +542,18 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.type(screen.getByTestId('input'), 'black')
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
-    
+
             await waitFor(() => {
                 expect(screen.getByText('black')).toBeVisible()
                 expect(screen.getByText('re')).toBeVisible()
             })
-    
+
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowup}')
-    
+
             await waitFor(() => {
-                expect(screen.getByText('black')).toHaveClass(
-                    'selected',
-                )
+                expect(screen.getByText('black')).toHaveClass('selected')
             })
         })
     })
