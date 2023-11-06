@@ -85,6 +85,17 @@ export function autocomplete<State = DefaultState>(
 
                     dropdown.hide()
                 },
+                onSubmitButton() {
+                    if (historyEnabled) {
+                        actions.addHistoryItem(inputElement.value)
+                    }
+
+                    if (typeof config?.submit === 'function') {
+                        config.submit(inputElement.value)
+                    }
+
+                    dropdown.hide()
+                },
                 onKeyDown(_, key) {
                     if (key === 'Escape') {
                         dropdown.hide()

@@ -142,7 +142,7 @@ export class Dropdown<State> {
     }
 
     private resetHighlight(): void {
-        if (this.selectedIndex > -1) {
+        if (this.hasHighlight()) {
             this.elements[this.selectedIndex]?.classList.remove('selected')
             this.selectedIndex = -1
         }
@@ -204,7 +204,7 @@ export class Dropdown<State> {
     }
 
     goUp(): void {
-        if (this.selectedIndex > -1) {
+        if (this.hasHighlight()) {
             let prevIndex = this.selectedIndex
 
             if (this.selectedIndex === 0) {
@@ -223,7 +223,7 @@ export class Dropdown<State> {
     handleSubmit(): void {
         if (
             this.isOpen() &&
-            this.selectedIndex > -1 &&
+            this.hasHighlight() &&
             this.elements[this.selectedIndex]
         ) {
             this.handleElementSubmit(this.elements[this.selectedIndex])

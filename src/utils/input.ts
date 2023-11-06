@@ -4,6 +4,7 @@ export function bindInput(
     selector: string | HTMLInputElement,
     callbacks: {
         onSubmit?: (value: string) => void
+        onSubmitButton?: (value: string) => void
         onInput?: (value: string) => void
         onFocus?: (value: string) => void
         onBlur?: (value: string) => void
@@ -51,7 +52,13 @@ export function bindInput(
                 cbs.push(() => {
                     form?.removeEventListener('submit', onSubmit)
                 })
+            }
+        }
 
+        if (callbacks.onSubmitButton) {
+            const form = el.form
+
+            if (form) {
                 const buttons = findAll(form.querySelectorAll('[type=submit]'))
                 buttons.forEach((button) => {
                     const onClick = (event: Event) => {
