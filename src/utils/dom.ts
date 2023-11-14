@@ -48,10 +48,12 @@ export function parents(target: Selector, selector?: string): Element[] {
     )
 }
 
+type WithMsMatchesSelector = { msMatchesSelector?: typeof Element.prototype.matches }
+
 export function matches(target: Selector, selector: string): boolean {
     const matchesFunc =
         Element.prototype.matches ||
-        (Element.prototype as any).msMatchesSelector ||
+        (Element.prototype as WithMsMatchesSelector).msMatchesSelector ||
         Element.prototype.webkitMatchesSelector
     return findAll(target).some((element) =>
         matchesFunc.call(element, selector),

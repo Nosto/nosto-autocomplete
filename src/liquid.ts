@@ -5,13 +5,13 @@ import { Liquid as LiquidJS } from 'liquidjs'
 declare global {
     interface Window {
         liquidjs?: {
-            Liquid: any
+            Liquid: { new(): LiquidJS }
         }
     }
 }
 
-const Liquid = 'liquidjs' in window ? window.liquidjs?.Liquid : undefined
-const engine: LiquidJS | undefined = Liquid !== undefined ? new Liquid() : undefined
+const Liquid = window.liquidjs?.Liquid
+const engine = Liquid ? new Liquid() : undefined
 
 /**
  * Render a liquid template into a container
