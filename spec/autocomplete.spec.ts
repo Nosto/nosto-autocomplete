@@ -1,9 +1,9 @@
-import { screen, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
 
-import { autocomplete } from '../src'
+import { autocomplete } from "../src"
 
-import '@testing-library/jest-dom'
+import "@testing-library/jest-dom"
 
 beforeAll(() => {
     document.body.innerHTML = `
@@ -20,51 +20,51 @@ beforeAll(() => {
         w.nostojs.q.push(cb)
     }
 
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
+    const script = document.createElement("script")
+    script.src = "https://connect.nosto.com/include/shopify-9758212174"
     script.onload = () => {
         w.nosto.reload({ site: location.hostname, searchEnabled: false })
     }
     document.body.appendChild(script)
 })
 
-describe('autocomplete', () => {
-    it('renders autocomplete', async () => {
+describe("autocomplete", () => {
+    it("renders autocomplete", async () => {
         const user = userEvent.setup()
 
         function escapeHtml(unsafe: string): string {
             return unsafe
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;')
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
         }
 
         autocomplete({
             fetch: {
                 products: {
                     fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
+                        "name",
+                        "url",
+                        "imageUrl",
+                        "price",
+                        "listPrice",
+                        "brand",
                     ],
                     size: 5,
                 },
                 keywords: {
                     size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
+                    fields: ["keyword", "_highlight.keyword"],
                     highlight: {
                         preTag: `<strong>`,
-                        postTag: '</strong>',
+                        postTag: "</strong>",
                     },
                 },
             },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
+            inputSelector: "#search",
+            dropdownSelector: "#search-results",
             render: function (container, state) {
                 var response = state.response
                 var history = state.history
@@ -94,19 +94,19 @@ describe('autocomplete', () => {
                                           hit.item +
                                               '<a href="javascript:void(0)"' +
                                               `class="ns-autocomplete-history-item-remove" data-ns-remove-history="${hit.item}">` +
-                                              '&#x2715;</a>',
-                                          '</div>',
-                                      ].join('')
+                                              "&#x2715;</a>",
+                                          "</div>",
+                                      ].join("")
                                   })
-                                  .join(''),
-                              '</div>',
+                                  .join(""),
+                              "</div>",
                               '<div class="ns-autocomplete-history-clear">',
                               '<button type="button" class="ns-autocomplete-button" data-ns-remove-history="all">',
-                              'Clear history',
-                              '</button>',
-                              '</div>',
-                          ].join('')
-                        : ''
+                              "Clear history",
+                              "</button>",
+                              "</div>",
+                          ].join("")
+                        : ""
                 }
 
                 function renderKeywords() {
@@ -125,14 +125,14 @@ describe('autocomplete', () => {
                                           '<div class="ns-autocomplete-keyword" data-ns-hit="' +
                                               escapeHtml(JSON.stringify(hit)) +
                                               '" data-testid="keyword">',
-                                          '<span>' + keyword + '</span>',
-                                          '</div>',
-                                      ].join('')
+                                          "<span>" + keyword + "</span>",
+                                          "</div>",
+                                      ].join("")
                                   })
-                                  .join(''),
-                              '</div>',
-                          ].join('')
-                        : ''
+                                  .join(""),
+                              "</div>",
+                          ].join("")
+                        : ""
                 }
 
                 function renderProducts() {
@@ -158,32 +158,32 @@ describe('autocomplete', () => {
                                               ? [
                                                     '<div class="ns-autocomplete-product-brand">',
                                                     hit.brand,
-                                                    '</div>',
-                                                ].join('')
-                                              : '',
+                                                    "</div>",
+                                                ].join("")
+                                              : "",
                                           '<div class="ns-autocomplete-product-name">',
                                           hit.name,
-                                          '</div>',
-                                          '<div>',
-                                          '<span>',
-                                          hit.price + '€',
-                                          '</span>',
+                                          "</div>",
+                                          "<div>",
+                                          "<span>",
+                                          hit.price + "€",
+                                          "</span>",
                                           hit.listPrice && hit.listPrice > 0
                                               ? [
                                                     '<span class="ns-autocomplete-product-list-price">',
-                                                    hit.listPrice + '€',
-                                                    '</span>',
-                                                ].join('')
-                                              : '',
-                                          '</div>',
-                                          '</div>',
-                                          '</a>',
-                                      ].join('')
+                                                    hit.listPrice + "€",
+                                                    "</span>",
+                                                ].join("")
+                                              : "",
+                                          "</div>",
+                                          "</div>",
+                                          "</a>",
+                                      ].join("")
                                   })
-                                  .join(''),
-                              '</div>',
-                          ].join('')
-                        : ''
+                                  .join(""),
+                              "</div>",
+                          ].join("")
+                        : ""
                 }
 
                 container.innerHTML = [
@@ -197,45 +197,45 @@ describe('autocomplete', () => {
                                   renderProducts(),
                                   '<div class="ns-autocomplete-submit">',
                                   '<button type="submit" class="ns-autocomplete-button">',
-                                  'See all search results',
-                                  '</button>',
-                                  '</div>',
-                              ].join('')
-                            : '',
+                                  "See all search results",
+                                  "</button>",
+                                  "</div>",
+                              ].join("")
+                            : "",
                     ],
-                    '</div>',
-                ].join('')
+                    "</div>",
+                ].join("")
             },
-            submit: (query) => {
+            submit: query => {
                 // Handle search submit
-                console.log('Submitting search with query: ', query)
+                console.log("Submitting search with query: ", query)
             },
         })
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "re")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 })

@@ -1,4 +1,4 @@
-import { InputSearchQueryWithFields } from './api/search'
+import { InputSearchQueryWithFields } from "./api/search"
 
 /**
  * @group Autocomplete
@@ -15,7 +15,7 @@ export interface AutocompleteConfig<State> {
     dropdownSelector:
         | (string | Element | Element[] | NodeListOf<Element>)
         | ((
-              input: HTMLInputElement,
+              input: HTMLInputElement
           ) => string | Element | Element[] | NodeListOf<Element>)
     /**
      * The function to use to render the dropdown

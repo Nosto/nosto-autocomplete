@@ -1,6 +1,6 @@
-export { autocomplete } from '../autocomplete'
-export { AutocompleteConfig } from '../config'
-export { DefaultState } from '../state'
+export { autocomplete } from "../autocomplete"
+export { AutocompleteConfig } from "../config"
+export { DefaultState } from "../state"
 
 export {
     getNostoClient,
@@ -13,7 +13,7 @@ export {
     Purchase,
     Recommendation,
     SKU,
-} from '../api/client'
+} from "../api/client"
 
 export {
     InputSearchQueryWithFields,
@@ -59,5 +59,5 @@ export {
     SearchSortOrder,
     SearchStatsFacet,
     SearchTermsFacet,
-    SearchVariationValue
-} from '../api/search'
+    SearchVariationValue,
+} from "../api/search"

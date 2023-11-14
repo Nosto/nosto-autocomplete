@@ -1,9 +1,9 @@
-import { InputSearchQuery, SearchResult } from './api/search/generated'
+import { InputSearchQuery, SearchResult } from "./api/search/generated"
 
-import { AutocompleteConfig } from '.'
-import { getNostoClient } from './api/client'
-import { History } from './history'
-import { AnyPromise, Cancellable, makeCancellable } from './utils/promise'
+import { AutocompleteConfig } from "."
+import { getNostoClient } from "./api/client"
+import { History } from "./history"
+import { AnyPromise, Cancellable, makeCancellable } from "./utils/promise"
 
 /**
  * @group Autocomplete
@@ -45,7 +45,7 @@ export const getStateActions = <State>({
     let cancellable: Cancellable<State> | undefined
 
     const fetchState = (value: string, config: AutocompleteConfig<State>) => {
-        if (typeof config.fetch === 'function') {
+        if (typeof config.fetch === "function") {
             return config.fetch(value)
         } else {
             const query = {
@@ -53,17 +53,17 @@ export const getStateActions = <State>({
                 ...config.fetch,
             }
             return getNostoClient()
-                .then((api) => {
+                .then(api => {
                     return api.search(query, {
-                        track: 'autocomplete',
+                        track: "autocomplete",
                     })
                 })
                 .then(
-                    (response) =>
+                    response =>
                         ({
                             query,
                             response,
-                        }) as State,
+                        }) as State
                 )
         }
     }
@@ -74,7 +74,7 @@ export const getStateActions = <State>({
                 query,
             },
             history: history?.getItems(),
-        }).then((s) => s as State)
+        }).then(s => s as State)
     }
 
     return {
@@ -84,22 +84,22 @@ export const getStateActions = <State>({
             if (inputValue && inputValue.length >= minQueryLength) {
                 cancellable = makeCancellable(fetchState(inputValue, config))
                 return cancellable.promise.then(
-                    (s) => s as State,
-                    (e) => {
+                    s => s as State,
+                    e => {
                         throw e
-                    },
+                    }
                 )
             } else if (history) {
-                return getHistoryState(inputValue ?? '')
+                return getHistoryState(inputValue ?? "")
             }
 
             return (
                 cancellable?.promise.then(
-                    (s) => s as State,
-                    (e) => {
+                    s => s as State,
+                    e => {
                         throw e
-                    },
-                ) ?? AnyPromise.resolve({}).then((s) => s as State)
+                    }
+                ) ?? AnyPromise.resolve({}).then(s => s as State)
             )
         },
         addHistoryItem: (item: string) => {
