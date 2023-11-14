@@ -5,7 +5,7 @@ type Callback<T> = () => PromiseLike<T>
 interface Event<T> {
     getPromise?: Callback<T>
     resolve: (result?: T) => void
-    reject: (...args: any[]) => void
+    reject: (...args: unknown[]) => void
     number: number
 }
 
@@ -38,18 +38,19 @@ export class Limiter<T = void> {
                 resolve,
                 reject,
                 number: this.currentNumber,
-            }
+            } as Event<T>
             this.removeOldEvents()
             if (this.events.length < this.noLimitCount) {
-                this.execute(event as any)
+                this.execute(event)
             } else {
                 if (this.lastEvent !== undefined) {
                     this.lastEvent.reject(
                         new LimiterError('rate limit exceeded'),
                     )
                 }
-                this.lastEvent = event as any
+                this.lastEvent = event
                 if (this.timeout === undefined) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     this.timeout = setTimeout(() => {
                         this.timeoutAction()
@@ -91,7 +92,7 @@ export class Limiter<T = void> {
                         event.reject(new LimiterError('Got newer event'))
                     }
                 },
-                (...args: any[]) => {
+                (...args: unknown[]) => {
                     event.reject(...args)
                 },
             )

@@ -2,10 +2,10 @@ export class SimplePromise<T> implements PromiseLike<T> {
     private status: string
     private value: T
     private onFulfilledCallbacks: Array<(value: T) => void>
-    private onRejectedCallbacks: Array<(value: any) => void>
+    private onRejectedCallbacks: Array<(value: unknown) => void>
 
     constructor(
-        handler: (resolve: (value: T) => void, reject: (reason?: any) => void) => void
+        handler: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void
     ) {
         this.value = null as T
         this.status = 'pending'
@@ -20,17 +20,17 @@ export class SimplePromise<T> implements PromiseLike<T> {
             }
         }
 
-        const reject = (value: T) => {
+        const reject = (value: unknown) => {
             if (this.status === 'pending') {
                 this.status = 'rejected'
-                this.value = value
+                this.value = value as T
                 this.onRejectedCallbacks.forEach((fn) => fn(value))
             }
         }
 
         try {
             handler(resolve, reject)
-        } catch (err: any) {
+        } catch (err: unknown) {
             reject(err)
         }
     }
@@ -41,7 +41,7 @@ export class SimplePromise<T> implements PromiseLike<T> {
             | undefined
             | null,
         onrejected?:
-            | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+            | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
             | undefined
             | null,
     ): PromiseLike<TResult1 | TResult2> {
@@ -112,7 +112,7 @@ export class SimplePromise<T> implements PromiseLike<T> {
     }
 }
 
-export let AnyPromise = 'Promise' in window ? window.Promise : SimplePromise
+export const AnyPromise = 'Promise' in window ? window.Promise : SimplePromise
 
 export type Cancellable<T> = { promise: PromiseLike<T>; cancel: () => void }
 

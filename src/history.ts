@@ -34,7 +34,7 @@ export class History {
     add(item: string): void {
         this.items = [
             { item },
-            ...this.items?.filter((v) => v.item !== item),
+            ...this.items?.filter((v) => v.item !== item) || [],
         ].slice(0, this.size)
         this.set(this.items)
     }
