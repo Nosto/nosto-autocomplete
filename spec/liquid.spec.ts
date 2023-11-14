@@ -10,6 +10,9 @@ import {
     fromRemoteLiquidTemplate,
 } from '../src/entries/liquid'
 
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const template = `
     {% assign hasKeywords = response.keywords.hits.length > 0 %}
     {% assign hasProducts = response.products.hits.length > 0 %}
@@ -109,7 +112,8 @@ const template = `
     </div>
 `
 
-const handleAutocomplete = () => {
+const handleAutocomplete = async (render: any) => {
+    await wait(500)
     autocomplete({
         fetch: {
             products: {
@@ -134,7 +138,7 @@ const handleAutocomplete = () => {
         },
         inputSelector: '#search',
         dropdownSelector: '#search-results',
-        render: fromLiquidTemplate(template),
+        render,
         submit: (query) => {
             // Handle search submit
             console.log(`Submitted search with query: ${query}`)
@@ -184,8 +188,8 @@ describe('fromLiquidTemplate', () => {
         const user = userEvent.setup()
 
         await waitFor(
-            () => {
-                return handleAutocomplete()
+            async () => {
+                return handleAutocomplete(fromLiquidTemplate(template))
             },
             { timeout: 2000 },
         )
@@ -219,7 +223,7 @@ describe('fromLiquidTemplate', () => {
 })
 
 describe('fromRemoteLiquidTemplate', () => {
-    beforeEach(() => {
+    beforeAll(() => {
         setup()
     })
 
@@ -262,36 +266,7 @@ describe('fromRemoteLiquidTemplate', () => {
             return sendSpy.mock.calls[0]
         })
 
-        autocomplete({
-            fetch: {
-                products: {
-                    fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
-                    ],
-                    size: 5,
-                },
-                keywords: {
-                    size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
-                    highlight: {
-                        preTag: `<strong>`,
-                        postTag: '</strong>',
-                    },
-                },
-            },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
-            render,
-            submit: (query) => {
-                // Handle search submit
-                console.log(`Submitted search with query: ${query}`)
-            },
-        })
+        await handleAutocomplete(render)
 
         await waitFor(
             () => {
@@ -324,36 +299,7 @@ describe('fromRemoteLiquidTemplate', () => {
             })
         }
 
-        autocomplete({
-            fetch: {
-                products: {
-                    fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
-                    ],
-                    size: 5,
-                },
-                keywords: {
-                    size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
-                    highlight: {
-                        preTag: `<strong>`,
-                        postTag: '</strong>',
-                    },
-                },
-            },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
-            render: mockRender,
-            submit: (query) => {
-                // Handle search submit
-                console.log(`Submitted search with query: ${query}`)
-            },
-        })
+        await handleAutocomplete(mockRender)
 
         await waitFor(
             () => {
@@ -385,7 +331,7 @@ describe('fromRemoteLiquidTemplate', () => {
     describe('history', () => {
         it('should see results after typing', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.type(screen.getByTestId('input'), 're')
 
@@ -407,7 +353,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should see history on empty input', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -422,7 +368,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should show history keyword', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -436,7 +382,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should navigate and select history keywords with keyboard', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             // Mock console.log
             const consoleSpy = jest.spyOn(console, 'log')
@@ -467,7 +413,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should show two history keywords', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -489,7 +435,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should clear history keyword', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -514,7 +460,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should clear history', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -533,7 +479,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should highlight history keyword with keyboard navigation', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')

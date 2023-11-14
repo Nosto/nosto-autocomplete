@@ -1,6 +1,5 @@
 import { DefaultState } from './state'
 import { AnyPromise } from './utils/promise'
-import type { Liquid as LiquidJS } from 'liquidjs'
 
 declare global {
     interface Window {
@@ -8,6 +7,10 @@ declare global {
             Liquid: any
         }
     }
+}
+
+type LiquidJS = {
+    parseAndRenderSync(html: string, scope?: unknown, renderOptions?: unknown): any;
 }
 
 /**

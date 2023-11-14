@@ -1,5 +1,4 @@
-import React, { Attributes } from 'react'
-import { Root, createRoot } from 'react-dom/client'
+
 import {
     screen,
     waitFor,
@@ -12,11 +11,17 @@ import { Autocomplete } from './components/Autocomplete'
 
 declare global {
     interface Window {
-        React?: typeof React
+        React?: {
+            createElement: (el: any, props: unknown) => unknown
+        }
         ReactDOM?: {
-            createRoot: typeof createRoot
+            createRoot: (el: HTMLElement) => Root
         }
     }
+}
+
+type Root = {
+    render: (el: unknown) => void
 }
 
 function setup() {
@@ -84,10 +89,10 @@ const handleAutocomplete = () => {
         dropdownSelector: '#search-results',
         render: function (container, state) {
             if (!reactRoot) {
-                reactRoot = window.ReactDOM?.createRoot(container)
+                reactRoot = window.ReactDOM?.createRoot(container) ?? null
             }
             reactRoot?.render(
-                window.React?.createElement(Autocomplete, state as Attributes),
+                window.React?.createElement(Autocomplete, state as unknown),
             )
         },
         submit: (query) => {
