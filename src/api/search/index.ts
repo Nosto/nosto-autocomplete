@@ -1,24 +1,22 @@
-import { InputMaybe, InputSearchQuery } from "./generated"
+import { InputSearchQuery } from "./generated"
 
 /**
  * @group Nosto Client
  * @category Search Types
  */
 export interface InputSearchQueryWithFields extends InputSearchQuery {
-    products?: InputMaybe<{
+    products?: {
         /**
          * The fields to return in the response.
          */
-        fields?: InputMaybe<string[]>
-    }> &
-        InputSearchQuery["products"]
-    keywords?: InputMaybe<{
+        fields?: string[]
+    } & InputSearchQuery["products"]
+    keywords?: {
         /**
          * The fields to return in the response.
          */
-        fields?: InputMaybe<string[]>
-    }> &
-        InputSearchQuery["keywords"]
+        fields?: string[]
+    } & InputSearchQuery["keywords"]
 }
 
 export * from "./generated"

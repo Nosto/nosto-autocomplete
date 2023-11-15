@@ -58,7 +58,7 @@
     "build:docs": "typedoc src/index.ts",
     "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r./docs ./site && cp -r./examples ./site/examples && cp -r./coverage ./site/coverage",
     "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
-    "prettify": "prettier --write \"{src,spec}/**/*.ts\"",
+    "prettify": "node cleanup.js && prettier --write \"{src,spec}/**/*.ts\"",
     "test": "jest spec",
     "test:cov": "jest --coverage spec && make-coverage-badge",
     "codegen": "graphql-codegen",
