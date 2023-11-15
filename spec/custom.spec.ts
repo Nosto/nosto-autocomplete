@@ -1,10 +1,10 @@
-import { screen, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
 
-import { autocomplete } from '../src'
+import { autocomplete } from "../src"
 
-import '@testing-library/jest-dom'
-import { AnyPromise, SimplePromise } from '../src/utils/promise'
+import "@testing-library/jest-dom"
+import { AnyPromise, SimplePromise } from "../src/utils/promise"
 
 beforeAll(() => {
     document.body.innerHTML = `
@@ -16,65 +16,65 @@ beforeAll(() => {
     `
 })
 
-describe('autocomplete', () => {
-    it('supports custom fetch function', async () => {
+describe("autocomplete", () => {
+    it("supports custom fetch function", async () => {
         const user = userEvent.setup()
 
         autocomplete({
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
+            inputSelector: "#search",
+            dropdownSelector: "#search-results",
             fetch(input) {
                 return Promise.resolve({
-                    items: [input, 'blue'],
+                    items: [input, "blue"],
                 })
             },
             render: (container, state) => {
                 container.innerHTML =
                     state?.items?.length > 0
                         ? state.items
-                              .map((item) => `<div>keyword ${item}</div>`)
-                              .join('')
-                        : ''
+                              .map(item => `<div>keyword ${item}</div>`)
+                              .join("")
+                        : ""
             },
-            submit: (query) => {
+            submit: query => {
                 // Handle search submit
-                console.log('Submitting search with query: ', query)
+                console.log("Submitting search with query: ", query)
             },
         })
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 'red')
+        await user.type(screen.getByTestId("input"), "red")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
             },
             {
                 timeout: 4000,
-            },
+            }
         )
 
-        expect(screen.getByText('keyword red')).toBeVisible()
-        expect(screen.getByText('keyword blue')).toBeVisible()
+        expect(screen.getByText("keyword red")).toBeVisible()
+        expect(screen.getByText("keyword blue")).toBeVisible()
     })
 })
 
-describe('SimplePromise', () => {
-    it('has resolve and reject callbacks', async () => {
+describe("SimplePromise", () => {
+    it("has resolve and reject callbacks", async () => {
         const promise = new SimplePromise((resolve, reject) => {
             // expect resolve and reject to be defined and to be functions which acceps one argument
             expect(resolve).toBeDefined()
             expect(reject).toBeDefined()
-            expect(typeof resolve).toBe('function')
-            expect(typeof reject).toBe('function')
+            expect(typeof resolve).toBe("function")
+            expect(typeof reject).toBe("function")
 
             // resolve promise with value of 1
             setTimeout(() => {
@@ -85,63 +85,70 @@ describe('SimplePromise', () => {
         await promise
     })
 
-    it('resolve() corectly returns value in .then block', async () => {
-        const promise = new SimplePromise((resolve) => {
+    it("resolve() corectly returns value in .then block", async () => {
+        const promise = new SimplePromise(resolve => {
             setTimeout(() => {
-                resolve('promise')
+                resolve("promise")
             }, 0)
         })
 
-        let value;
-        promise.then((v) => {
+        let value
+        promise.then(v => {
             value = v
         })
         await promise
 
-        expect(value).toBe('promise')
+        expect(value).toBe("promise")
     })
 
-    it('reject() correctly rejects with a value in .then block', async () => {
+    it("reject() correctly rejects with a value in .then block", async () => {
         const promise = new SimplePromise((_, reject) => {
             setTimeout(() => {
-                reject('error')
+                reject("error")
             }, 0)
         })
 
-        let error: any;
+        let error: any
 
+        promise.then(
+            () => {
+                return
+            },
+            err => {
+                error = err
+                return
+            }
+        )
 
-        promise.then(() => {
-            return
-        }, (err) => {
-            error = err
-            return
-        })
-
-        await waitFor(() => {
-            expect(error).toBe('error')
-        }, {
-            timeout: 1000
-        })
+        await waitFor(
+            () => {
+                expect(error).toBe("error")
+            },
+            {
+                timeout: 1000,
+            }
+        )
     })
 
-    it('resolves promise in .then block', async () => {
-        const promise = new SimplePromise((resolve) => {
+    it("resolves promise in .then block", async () => {
+        const promise = new SimplePromise(resolve => {
             setTimeout(() => {
-                resolve('promise')
+                resolve("promise")
             }, 0)
         })
 
-        let value;
-        promise.then(() => {
-            return new SimplePromise((resolve) => {
-                resolve('promise2')
+        let value
+        promise
+            .then(() => {
+                return new SimplePromise(resolve => {
+                    resolve("promise2")
+                })
             })
-        }).then((v) => {
-            value = v
-        })
+            .then(v => {
+                value = v
+            })
 
-        await promise;
-        expect(value).toBe('promise2')
+        await promise
+        expect(value).toBe("promise2")
     })
 })

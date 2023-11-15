@@ -1,5 +1,5 @@
-import { AnyPromise } from '../utils/promise'
-import { InputSearchQuery, SearchResult } from './search/generated'
+import { AnyPromise } from "../utils/promise"
+import { InputSearchQuery, SearchResult } from "./search/generated"
 
 /**
  * @group Nosto Client
@@ -39,9 +39,9 @@ export interface NostoClient {
     search(
         query: InputSearchQuery,
         options?: {
-            track?: 'autocomplete' | 'category' | 'serp'
+            track?: "autocomplete" | "category" | "serp"
             redirect?: boolean
-        },
+        }
     ): PromiseLike<SearchResult>
 }
 
@@ -51,12 +51,12 @@ export interface NostoClient {
  */
 export function getNostoClient(): PromiseLike<NostoClient> {
     return new AnyPromise((resolve, reject) => {
-        if ('nostojs' in window && typeof window.nostojs === 'function') {
+        if ("nostojs" in window && typeof window.nostojs === "function") {
             window.nostojs((api: NostoClient) => {
                 resolve(api)
             })
         } else {
-            reject('nostojs not found')
+            reject("nostojs not found")
         }
     })
 }
@@ -142,7 +142,7 @@ export interface SKU {
     url: URL
     imageUrl: URL
     gtin?: string
-    availability: 'InStock' | 'OutOfStock'
+    availability: "InStock" | "OutOfStock"
     customFields?: { [key: string]: string }
 }
 
@@ -152,7 +152,7 @@ export interface SKU {
  */
 export interface Product {
     alternateImageUrls?: URL[]
-    availability: 'InStock' | 'OutOfStock'
+    availability: "InStock" | "OutOfStock"
     brand?: string
     category: string[]
     categoryIds?: string[]

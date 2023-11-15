@@ -1,15 +1,15 @@
-import { screen, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
 
 import {
     DefaultState,
     autocomplete,
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
-} from '../src'
+} from "../src"
 
-import '@testing-library/jest-dom'
-import { AnyPromise } from '../src/utils/promise'
+import "@testing-library/jest-dom"
+import { AnyPromise } from "../src/utils/promise"
 
 function setup() {
     document.body.innerHTML = `
@@ -26,8 +26,8 @@ function setup() {
         w.nostojs.q.push(cb)
     }
 
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
+    const script = document.createElement("script")
+    script.src = "https://connect.nosto.com/include/shopify-9758212174"
     script.onload = () => {
         w.nosto.reload({ site: location.hostname, searchEnabled: false })
     }
@@ -133,79 +133,79 @@ const template = `
     </div>
 `
 
-describe('fromLiquidTemplate', () => {
+describe("fromLiquidTemplate", () => {
     beforeAll(() => {
         setup()
     })
 
     afterAll(() => {
         jest.restoreAllMocks()
-        document.body.innerHTML = ''
+        document.body.innerHTML = ""
     })
 
-    it('uses local liquid template', async () => {
+    it("uses local liquid template", async () => {
         const user = userEvent.setup()
 
         autocomplete({
             fetch: {
                 products: {
                     fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
+                        "name",
+                        "url",
+                        "imageUrl",
+                        "price",
+                        "listPrice",
+                        "brand",
                     ],
                     size: 5,
                 },
                 keywords: {
                     size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
+                    fields: ["keyword", "_highlight.keyword"],
                     highlight: {
                         preTag: `<strong>`,
-                        postTag: '</strong>',
+                        postTag: "</strong>",
                     },
                 },
             },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
+            inputSelector: "#search",
+            dropdownSelector: "#search-results",
             render: fromLiquidTemplate(template),
-            submit: (query) => {
+            submit: query => {
                 // Handle search submit
-                console.log('Submitting search with query: ', query)
+                console.log("Submitting search with query: ", query)
             },
         })
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "re")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 })
 
-describe('fromRemoteLiquidTemplate', () => {
+describe("fromRemoteLiquidTemplate", () => {
     beforeEach(() => {
         setup()
     })
@@ -213,7 +213,7 @@ describe('fromRemoteLiquidTemplate', () => {
     afterEach(() => {
         jest.restoreAllMocks()
 
-        const dropdown = screen.getByTestId('dropdown')
+        const dropdown = screen.getByTestId("dropdown")
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
 
@@ -222,11 +222,11 @@ describe('fromRemoteLiquidTemplate', () => {
         w.nosto = undefined
     })
 
-    it('fetches remote templates url', async () => {
-        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
-        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
+    it("fetches remote templates url", async () => {
+        const openSpy = jest.spyOn(XMLHttpRequest.prototype, "open")
+        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, "send")
 
-        const mockUrl = 'template.liquid'
+        const mockUrl = "template.liquid"
         const render = fromRemoteLiquidTemplate(mockUrl)
 
         const mockXhr = {
@@ -253,58 +253,58 @@ describe('fromRemoteLiquidTemplate', () => {
             fetch: {
                 products: {
                     fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
+                        "name",
+                        "url",
+                        "imageUrl",
+                        "price",
+                        "listPrice",
+                        "brand",
                     ],
                     size: 5,
                 },
                 keywords: {
                     size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
+                    fields: ["keyword", "_highlight.keyword"],
                     highlight: {
                         preTag: `<strong>`,
-                        postTag: '</strong>',
+                        postTag: "</strong>",
                     },
                 },
             },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
+            inputSelector: "#search",
+            dropdownSelector: "#search-results",
             render,
-            submit: (query) => {
+            submit: query => {
                 // Handle search submit
-                console.log('Submitting search with query: ', query)
+                console.log("Submitting search with query: ", query)
             },
         })
 
         await waitFor(
             () => {
-                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
+                expect(openSpy).toHaveBeenCalledWith("GET", mockUrl)
                 expect(sendSpy).toHaveBeenCalled()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
     })
 
-    it('it renders autocomplete from remote templates', async () => {
+    it("it renders autocomplete from remote templates", async () => {
         const user = userEvent.setup()
 
         const mockRender: (
             container: HTMLElement,
-            state: DefaultState,
+            state: DefaultState
         ) => void | PromiseLike<void> = (
             container: HTMLElement,
-            state: DefaultState,
+            state: DefaultState
         ) => {
-            return new AnyPromise((resolve) => {
+            return new AnyPromise(resolve => {
                 fromLiquidTemplate(template)(
-                    screen.getByTestId('dropdown'),
-                    state,
+                    screen.getByTestId("dropdown"),
+                    state
                 ).then(() => {
                     resolve(undefined)
                 })
@@ -315,57 +315,57 @@ describe('fromRemoteLiquidTemplate', () => {
             fetch: {
                 products: {
                     fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
+                        "name",
+                        "url",
+                        "imageUrl",
+                        "price",
+                        "listPrice",
+                        "brand",
                     ],
                     size: 5,
                 },
                 keywords: {
                     size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
+                    fields: ["keyword", "_highlight.keyword"],
                     highlight: {
                         preTag: `<strong>`,
-                        postTag: '</strong>',
+                        postTag: "</strong>",
                     },
                 },
             },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
+            inputSelector: "#search",
+            dropdownSelector: "#search-results",
             render: mockRender,
-            submit: (query) => {
+            submit: query => {
                 // Handle search submit
-                console.log('Submitting search with query: ', query)
+                console.log("Submitting search with query: ", query)
             },
         })
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "re")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 })

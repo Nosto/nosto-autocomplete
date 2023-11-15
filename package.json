@@ -65,8 +65,9 @@
     "dev:docs": "typedoc --watch src/index.ts"
   },
   "prettier": {
+    "trailingComma": "es5",
     "semi": false,
-    "singleQuote": true
+    "arrowParens": "avoid"
   },
   "release": {
     "branches": [
