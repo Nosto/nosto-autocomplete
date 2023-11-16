@@ -5,36 +5,54 @@ import { InputSearchQuery, SearchResult } from "./search/generated"
  * @group Nosto Client
  * @category Core
  */
-export interface NostoClient {
-    addOrder(order: { purchase: Purchase }): NostoClient
-    defaultSession(): NostoClient
-    setAutoLoad(autoload: boolean): NostoClient
-    setCart(cart?: Cart): NostoClient
-    setCustomer(customer?: Customer): NostoClient
-    setPlacements(placements: string[]): NostoClient
-    setResponseMode(mode: string): NostoClient
-    setVariation(variation: string): NostoClient
-    viewCategory(category: string): NostoClient
-    viewProduct(product: string): NostoClient
-    viewFrontPage(): NostoClient
-    viewNotFound(): NostoClient
-    viewOther(): NostoClient
-    viewSearch(query: string): NostoClient
-    viewCart(): NostoClient
-    load(): PromiseLike<{
-        affinities: Record<
-            string,
-            {
-                name: string
-                score: number
-            }[]
-        >
+export interface Affinity {
+    name: string
+    score: number
+}
+
+/**
+ * @group Nosto Client
+ * @category Core
+ */
+export interface SessionAction {
+    setPlacements(placements: string[]): SessionAction
+    load(): Promise<{
+        affinities: Record<string, Affinity[]>
         geo_location?: string[]
         page_views: number
         recommendations: Recommendation[]
     }>
+}
+
+/**
+ * @group Nosto Client
+ * @category Core
+ */
+export interface NostoSession {
+    setCart(cart?: Cart): NostoSession
+    setCustomer(customer?: Customer): NostoSession
+    setResponseMode(mode: string): NostoSession
+    setVariation(variation?: string): NostoSession
+    addOrder(order: { purchase: Purchase }): SessionAction
+    viewCategory(category: string): SessionAction
+    viewProduct(product: string): SessionAction
+    viewFrontPage(): SessionAction
+    viewNotFound(): SessionAction
+    viewOther(): SessionAction
+    viewSearch(query: string): SessionAction
+    viewCart(): SessionAction
+  }
+
+/**
+ * @group Nosto Client
+ * @category Core
+ */
+export interface NostoClient {
+    setAutoLoad(autoload: boolean): NostoClient
+    defaultSession(): NostoSession
     placements: {
         getPlacements(): string[]
+        injectCampaigns(recommendations: Record<string, Recommendation>): void
     }
     search(
         query: InputSearchQuery,
