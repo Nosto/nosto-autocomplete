@@ -1,5 +1,5 @@
-import { screen, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
 
 import { DefaultState, autocomplete } from '../src'
 
@@ -192,7 +192,7 @@ describe('fromLiquidTemplate', () => {
         document.body.innerHTML = ''
     })
 
-    it('uses local liquid template', async () => {
+    it("uses local liquid template", async () => {
         const user = userEvent.setup()
 
         await waitFor(
@@ -204,28 +204,28 @@ describe('fromLiquidTemplate', () => {
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "re")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 })
@@ -243,11 +243,11 @@ describe('fromRemoteLiquidTemplate', () => {
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
     })
 
-    it('fetches remote templates url', async () => {
-        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
-        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
+    it("fetches remote templates url", async () => {
+        const openSpy = jest.spyOn(XMLHttpRequest.prototype, "open")
+        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, "send")
 
-        const mockUrl = 'template.liquid'
+        const mockUrl = "template.liquid"
         const render = fromRemoteLiquidTemplate(mockUrl)
 
         const mockXhr = {
@@ -275,29 +275,29 @@ describe('fromRemoteLiquidTemplate', () => {
 
         await waitFor(
             () => {
-                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
+                expect(openSpy).toHaveBeenCalledWith("GET", mockUrl)
                 expect(sendSpy).toHaveBeenCalled()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
     })
 
-    it('it renders autocomplete from remote templates', async () => {
+    it("it renders autocomplete from remote templates", async () => {
         const user = userEvent.setup()
 
         const mockRender: (
             container: HTMLElement,
-            state: DefaultState,
+            state: DefaultState
         ) => void | PromiseLike<void> = (
             container: HTMLElement,
-            state: DefaultState,
+            state: DefaultState
         ) => {
-            return new AnyPromise((resolve) => {
+            return new AnyPromise(resolve => {
                 fromLiquidTemplate(template)(
-                    screen.getByTestId('dropdown'),
-                    state,
+                    screen.getByTestId("dropdown"),
+                    state
                 ).then(() => {
                     resolve(undefined)
                 })
@@ -309,28 +309,28 @@ describe('fromRemoteLiquidTemplate', () => {
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
+                expect(screen.getByTestId("dropdown")).not.toBeVisible()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
 
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "re")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 

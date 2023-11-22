@@ -1,18 +1,19 @@
-import { AutocompleteConfig } from '.'
-import { defaultConfig } from './config'
-import { Dropdown } from './dropdown'
-import { DefaultState, StateActions, getStateActions } from './state'
-import { bindClickOutside, findAll } from './utils/dom'
-import { bindInput } from './utils/input'
-import { History } from './history'
-import { Limiter, LimiterError } from './utils/limiter'
+import { AutocompleteConfig } from "."
+import { defaultConfig } from "./config"
+import { Dropdown } from "./dropdown"
+import { DefaultState, StateActions, getStateActions } from "./state"
+import { bindClickOutside, findAll } from "./utils/dom"
+import { bindInput } from "./utils/input"
+import { History } from "./history"
+import { Limiter, LimiterError } from "./utils/limiter"
+import { CancellableError } from "./utils/promise"
 
 /**
  * @group Autocomplete
  * @category Core
  */
 export function autocomplete<State = DefaultState>(
-    config: AutocompleteConfig<State>,
+    config: AutocompleteConfig<State>
 ): {
     destroy(): void
     open(): void
@@ -26,7 +27,7 @@ export function autocomplete<State = DefaultState>(
     const limiter = new Limiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
-        (inputElement) => {
+        inputElement => {
             const actions = getStateActions({
                 config,
                 minQueryLength,
@@ -56,22 +57,21 @@ export function autocomplete<State = DefaultState>(
                 return
             }
 
-            let lastRenderTime = Date.now()
-
             const input = bindInput(inputElement, {
-                onInput: async (value) => {
-                    const requestTime = Date.now()
-
+                onInput: async value => {
                     try {
                         await limiter.limited(() => {
-                            return actions.updateState(value).then((state) => {
-                                if (requestTime >= lastRenderTime) {
-                                    dropdown.update(state)
-                                }
+                            return actions.updateState(value).then(state => {
+                                dropdown.update(state)
                             })
                         })
                     } catch (err) {
-                        if (!(err instanceof LimiterError)) {
+                        if (
+                            !(
+                                err instanceof LimiterError ||
+                                err instanceof CancellableError
+                            )
+                        ) {
                             throw err
                         }
                     }
@@ -90,15 +90,15 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onKeyDown(_, key) {
-                    if (key === 'Escape') {
+                    if (key === "Escape") {
                         dropdown.hide()
-                    } else if (key === 'ArrowDown') {
+                    } else if (key === "ArrowDown") {
                         if (dropdown.isOpen()) {
                             dropdown.goDown()
                         } else {
                             dropdown.show()
                         }
-                    } else if (key === 'ArrowUp') {
+                    } else if (key === "ArrowUp") {
                         if (dropdown.isOpen()) {
                             dropdown.goUp()
                         }
@@ -116,7 +116,7 @@ export function autocomplete<State = DefaultState>(
                 [dropdown.container, inputElement],
                 () => {
                     dropdown.hide()
-                },
+                }
             )
 
             return {
@@ -132,18 +132,18 @@ export function autocomplete<State = DefaultState>(
                     dropdown.destroy()
                 },
             }
-        },
+        }
     )
 
     return {
         destroy() {
-            dropdowns.forEach((dropdown) => dropdown?.destroy())
+            dropdowns.forEach(dropdown => dropdown?.destroy())
         },
         open() {
-            dropdowns.forEach((dropdown) => dropdown?.open())
+            dropdowns.forEach(dropdown => dropdown?.open())
         },
         close() {
-            dropdowns.forEach((dropdown) => dropdown?.close())
+            dropdowns.forEach(dropdown => dropdown?.close())
         },
     }
 }
@@ -158,7 +158,7 @@ function createInputDropdown<State = DefaultState>({
     actions: StateActions<State>
 }): Dropdown<State> | undefined {
     const dropdownElements =
-        typeof config.dropdownSelector === 'function'
+        typeof config.dropdownSelector === "function"
             ? findAll(config.dropdownSelector(input), HTMLElement)
             : findAll(config.dropdownSelector, HTMLElement)
 
@@ -167,7 +167,7 @@ function createInputDropdown<State = DefaultState>({
         return
     } else if (dropdownElements.length > 1) {
         console.error(
-            `Multiple dropdown elements found for input ${input}, using the first element`,
+            `Multiple dropdown elements found for input ${input}, using the first element`
         )
     }
 
@@ -178,15 +178,15 @@ function createInputDropdown<State = DefaultState>({
         actions.updateState(input.value),
         config.render,
         config.submit,
-        (value) => (input.value = value),
+        value => (input.value = value),
         {
             removeHistory: function (data) {
-                if (data === 'all') {
+                if (data === "all") {
                     return actions.clearHistory()
                 } else if (data) {
                     return actions.removeHistoryItem(data)
                 }
             },
-        },
+        }
     )
 }

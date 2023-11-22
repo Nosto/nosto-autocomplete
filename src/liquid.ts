@@ -4,7 +4,7 @@ import { AnyPromise } from './utils/promise'
 declare global {
     interface Window {
         liquidjs?: {
-            Liquid: any
+            Liquid: { new (): LiquidJS }
         }
     }
 }
@@ -22,7 +22,7 @@ type LiquidJS = {
  * @category Liquid
  */
 export function fromLiquidTemplate<State extends object = DefaultState>(
-    template: string,
+    template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     const Liquid = 'liquidjs' in window ? window.liquidjs?.Liquid : undefined
     const engine: LiquidJS | undefined =
@@ -30,7 +30,7 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
 
     if (engine === undefined) {
         throw new Error(
-            'Liquid is not defined. Please include the Liquid library in your page.',
+            "Liquid is not defined. Please include the Liquid library in your page."
         )
     }
 
@@ -50,32 +50,32 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
  * @category Liquid
  */
 export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
-    url: string,
+    url: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     return (container, state) => {
         return new AnyPromise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
-            xhr.open('GET', url)
+            xhr.open("GET", url)
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     fromLiquidTemplate(xhr.responseText)(container, state).then(
                         () => {
                             resolve(undefined)
-                        },
+                        }
                     )
                 } else {
                     reject(
                         new Error(
-                            `Failed to fetch remote liquid template: ${xhr.statusText}`,
-                        ),
+                            `Failed to fetch remote liquid template: ${xhr.statusText}`
+                        )
                     )
                 }
             }
             xhr.onerror = () => {
                 reject(
                     new Error(
-                        `Failed to fetch remote liquid template: ${xhr.statusText}`,
-                    ),
+                        `Failed to fetch remote liquid template: ${xhr.statusText}`
+                    )
                 )
             }
             xhr.send()

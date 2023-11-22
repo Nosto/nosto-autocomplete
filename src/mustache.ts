@@ -26,14 +26,14 @@ declare global {
 export function fromMustacheTemplate(template: string) {
     if (window.Mustache === undefined) {
         throw new Error(
-            'Mustache is not defined. Please include the Mustache library in your page.',
+            "Mustache is not defined. Please include the Mustache library in your page."
         )
     }
 
     return (container: HTMLElement, state: object) => {
         container.innerHTML = (window.Mustache as Mustache).render(template, {
             ...state,
-            imagePlaceholder: 'https://cdn.nosto.com/nosto/9/mock',
+            imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
             toJson: function () {
                 return JSON.stringify(this)
             },
@@ -52,33 +52,33 @@ export function fromMustacheTemplate(template: string) {
  * @category Mustache
  */
 export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
-    url: string,
+    url: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     return (container, state) => {
         return new AnyPromise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
-            xhr.open('GET', url)
+            xhr.open("GET", url)
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     fromMustacheTemplate(xhr.responseText)(
                         container,
-                        state,
+                        state
                     ).then(() => {
                         resolve(undefined)
                     })
                 } else {
                     reject(
                         new Error(
-                            `Failed to fetch remote mustache template: ${xhr.statusText}`,
-                        ),
+                            `Failed to fetch remote mustache template: ${xhr.statusText}`
+                        )
                     )
                 }
             }
             xhr.onerror = () => {
                 reject(
                     new Error(
-                        `Failed to fetch remote mustache template: ${xhr.statusText}`,
-                    ),
+                        `Failed to fetch remote mustache template: ${xhr.statusText}`
+                    )
                 )
             }
             xhr.send()

@@ -1,4 +1,4 @@
-import { AnyPromise } from './utils/promise'
+import { AnyPromise } from "./utils/promise"
 
 export class Dropdown<State> {
     private elements: HTMLElement[] = []
@@ -12,19 +12,19 @@ export class Dropdown<State> {
         protected initialState: PromiseLike<State>,
         protected render: (
             container: HTMLElement,
-            state: State,
+            state: State
         ) => void | PromiseLike<void>,
         protected submit: (inputValue: string) => unknown,
         protected updateInput: (inputValue: string) => void,
         protected onClickBindings?: {
             [key: string]: (
                 data: string | undefined,
-                el: HTMLElement,
+                el: HTMLElement
             ) => PromiseLike<State> | undefined
-        },
+        }
     ) {
         AnyPromise.resolve(initialState)
-            .then((state) => this.render(this.container, state as State))
+            .then(state => this.render(this.container, state as State))
             .then(() => {
                 // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
                 setTimeout(() => {
@@ -57,7 +57,7 @@ export class Dropdown<State> {
                     location.href = parsedHit.url
                 }
             } catch (error) {
-                console.error('Could not parse [data-ns-hit]', error)
+                console.error("Could not parse [data-ns-hit]", error)
             }
         }
     }
@@ -67,8 +67,8 @@ export class Dropdown<State> {
 
         if (!this.isEmpty) {
             this.elements = Array.from<HTMLElement>(
-                this.container.querySelectorAll('[data-ns-hit]'),
-            ).map((el) => {
+                this.container.querySelectorAll("[data-ns-hit]")
+            ).map(el => {
                 this.bindElementSubmit(el)
                 return el
             })
@@ -79,22 +79,22 @@ export class Dropdown<State> {
         Object.entries(this.onClickBindings ?? {}).map(([key, callback]) => {
             // Convert camelCase to kebab-case
             const dataKey = `[data-ns-${key
-                .replace(/([A-Z])/g, '-$1')
+                .replace(/([A-Z])/g, "-$1")
                 .toLowerCase()}]`
 
             Array.from<HTMLElement>(
-                this.container.querySelectorAll(dataKey),
-            ).map((el) => {
+                this.container.querySelectorAll(dataKey)
+            ).map(el => {
                 const data =
                     el?.dataset?.[
                         `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
                     ]
                 const onClick = () => {
-                    callback(data, el)?.then((state) => this.update(state))
+                    callback(data, el)?.then(state => this.update(state))
                 }
-                el.addEventListener('click', onClick)
+                el.addEventListener("click", onClick)
                 this.unbindCallbacks.push(() => {
-                    el.removeEventListener('click', onClick)
+                    el.removeEventListener("click", onClick)
                 })
             })
         })
@@ -105,19 +105,19 @@ export class Dropdown<State> {
             this.handleElementSubmit(el)
         }
 
-        el.addEventListener('click', onSubmit)
+        el.addEventListener("click", onSubmit)
         this.unbindCallbacks.push(() => {
-            el.removeEventListener('click', onSubmit)
+            el.removeEventListener("click", onSubmit)
         })
     }
 
     private highlight(index: number, prevIndex?: number): void {
-        if (typeof prevIndex === 'number' && this.elements[prevIndex]) {
-            this.elements[prevIndex].classList.remove('selected')
+        if (typeof prevIndex === "number" && this.elements[prevIndex]) {
+            this.elements[prevIndex].classList.remove("selected")
         }
 
-        if (typeof index === 'number' && this.elements[index]) {
-            this.elements[index]?.classList.add('selected')
+        if (typeof index === "number" && this.elements[index]) {
+            this.elements[index]?.classList.add("selected")
 
             const hit = this.elements[index]?.dataset?.nsHit
 
@@ -135,7 +135,7 @@ export class Dropdown<State> {
                         return
                     }
                 } catch (error) {
-                    console.error('Could not parse [data-ns-hit]', error)
+                    console.error("Could not parse [data-ns-hit]", error)
                 }
             }
         }
@@ -144,7 +144,7 @@ export class Dropdown<State> {
     private dispose(): void {
         this.resetHighlight()
         this.elements = []
-        this.unbindCallbacks.forEach((v) => v())
+        this.unbindCallbacks.forEach(v => v())
         this.unbindCallbacks = []
     }
 
@@ -163,12 +163,12 @@ export class Dropdown<State> {
 
     hide(): void {
         this.resetHighlight()
-        this.container.style.display = 'none'
+        this.container.style.display = "none"
     }
 
     show(): void {
         if (!this.isEmpty) {
-            this.container.style.display = ''
+            this.container.style.display = ""
         } else {
             this.hide()
         }
@@ -181,7 +181,7 @@ export class Dropdown<State> {
     }
 
     isOpen(): boolean {
-        return this.container.style.display !== 'none'
+        return this.container.style.display !== "none"
     }
 
     goDown(): void {
@@ -237,6 +237,6 @@ export class Dropdown<State> {
     destroy(): void {
         this.dispose()
         this.isEmpty = true
-        this.container.innerHTML = ''
+        this.container.innerHTML = ""
     }
 }

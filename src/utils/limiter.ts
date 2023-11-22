@@ -1,11 +1,11 @@
-import { AnyPromise } from './promise'
+import { AnyPromise } from "./promise"
 
 type Callback<T> = () => PromiseLike<T>
 
 interface Event<T> {
     getPromise?: Callback<T>
     resolve: (result?: T) => void
-    reject: (...args: any[]) => void
+    reject: (...args: unknown[]) => void
     number: number
 }
 
@@ -38,18 +38,19 @@ export class Limiter<T = void> {
                 resolve,
                 reject,
                 number: this.currentNumber,
-            }
+            } as Event<T>
             this.removeOldEvents()
             if (this.events.length < this.noLimitCount) {
-                this.execute(event as any)
+                this.execute(event)
             } else {
                 if (this.lastEvent !== undefined) {
                     this.lastEvent.reject(
-                        new LimiterError('rate limit exceeded'),
+                        new LimiterError("rate limit exceeded")
                     )
                 }
-                this.lastEvent = event as any
+                this.lastEvent = event
                 if (this.timeout === undefined) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     this.timeout = setTimeout(() => {
                         this.timeoutAction()
@@ -68,7 +69,7 @@ export class Limiter<T = void> {
 
     protected removeOldEvents(): void {
         const t = new Date().getTime() - this.interval * this.noLimitCount
-        this.events = this.events.filter((v) => v >= t)
+        this.events = this.events.filter(v => v >= t)
     }
 
     protected timeoutAction(): void {
@@ -83,17 +84,17 @@ export class Limiter<T = void> {
         this.events.push(new Date().getTime())
         if (event.getPromise !== undefined) {
             event.getPromise().then(
-                (result) => {
+                result => {
                     if (event.number > this.lastCompletedNumber) {
                         this.lastCompletedNumber = event.number
                         event.resolve(result)
                     } else {
-                        event.reject(new LimiterError('Got newer event'))
+                        event.reject(new LimiterError("Got newer event"))
                     }
                 },
-                (...args: any[]) => {
+                (...args: unknown[]) => {
                     event.reject(...args)
-                },
+                }
             )
         } else {
             event.resolve()

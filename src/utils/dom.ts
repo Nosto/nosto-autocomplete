@@ -2,7 +2,7 @@ type Selector = string | Element | Element[] | NodeListOf<Element>
 
 export function findAll<T extends Element>(
     selector: Selector,
-    filterType?: { new (): T },
+    filterType?: { new (): T }
 ): T[] {
     const elements = (() => {
         if (!selector) {
@@ -18,16 +18,16 @@ export function findAll<T extends Element>(
     })()
 
     return elements.filter((v): v is T =>
-        filterType ? v instanceof filterType : true,
+        filterType ? v instanceof filterType : true
     )
 }
 
 export async function DOMReady(): Promise<void> {
-    return new Promise((resolve) => {
-        if (document.readyState !== 'loading') {
+    return new Promise(resolve => {
+        if (document.readyState !== "loading") {
             resolve()
         } else {
-            window.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener("DOMContentLoaded", () => {
                 resolve()
             })
         }
@@ -36,7 +36,7 @@ export async function DOMReady(): Promise<void> {
 
 export function parents(target: Selector, selector?: string): Element[] {
     let parentList: Element[] = []
-    findAll(target).forEach((element) => {
+    findAll(target).forEach(element => {
         const parent = element.parentNode
         if (parent !== document && parent instanceof Element) {
             parentList.push(parent)
@@ -44,23 +44,25 @@ export function parents(target: Selector, selector?: string): Element[] {
         }
     })
     return parentList.filter(
-        (element) => selector === undefined || matches(element, selector),
+        element => selector === undefined || matches(element, selector)
     )
+}
+
+type WithMsMatchesSelector = {
+    msMatchesSelector?: typeof Element.prototype.matches
 }
 
 export function matches(target: Selector, selector: string): boolean {
     const matchesFunc =
         Element.prototype.matches ||
-        (Element.prototype as any).msMatchesSelector ||
+        (Element.prototype as WithMsMatchesSelector).msMatchesSelector ||
         Element.prototype.webkitMatchesSelector
-    return findAll(target).some((element) =>
-        matchesFunc.call(element, selector),
-    )
+    return findAll(target).some(element => matchesFunc.call(element, selector))
 }
 
 export function bindClickOutside(
     [element, input]: Array<HTMLElement>,
-    callback: () => void,
+    callback: () => void
 ) {
     const onClick = (event: MouseEvent) => {
         const target = event.target
@@ -76,11 +78,11 @@ export function bindClickOutside(
         }
     }
 
-    document.addEventListener('click', onClick)
+    document.addEventListener("click", onClick)
 
     return {
         destroy: () => {
-            document.removeEventListener('click', onClick)
+            document.removeEventListener("click", onClick)
         },
     }
 }
