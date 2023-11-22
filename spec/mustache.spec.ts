@@ -100,7 +100,10 @@ const template = `
 </div>
 `
 
-const handleAutocomplete = () => {
+const handleAutocomplete = (
+    render: any,
+    submit: (query: string) => any = () => ({}),
+) => {
     autocomplete({
         fetch: {
             products: {
@@ -125,11 +128,8 @@ const handleAutocomplete = () => {
         },
         inputSelector: '#search',
         dropdownSelector: '#search-results',
-        render: fromMustacheTemplate(template),
-        submit: (query) => {
-            // Handle search submit
-            console.log(`Submitted search with query: ${query}`)
-        },
+        render,
+        submit,
     })
 }
 
@@ -175,7 +175,7 @@ describe('fromMustacheTemplate', () => {
 
         await waitFor(
             () => {
-                return handleAutocomplete()
+                return handleAutocomplete(fromMustacheTemplate(template))
             },
             { timeout: 2000 },
         )
@@ -252,36 +252,7 @@ describe('fromRemoteMustacheTemplate', () => {
             return sendSpy.mock.calls[0]
         })
 
-        autocomplete({
-            fetch: {
-                products: {
-                    fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
-                    ],
-                    size: 5,
-                },
-                keywords: {
-                    size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
-                    highlight: {
-                        preTag: `<strong>`,
-                        postTag: '</strong>',
-                    },
-                },
-            },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
-            render,
-            submit: (query) => {
-                // Handle search submit
-                console.log(`Submitted search with query: ${query}`)
-            },
-        })
+        await handleAutocomplete(render)
 
         await waitFor(
             () => {
@@ -314,36 +285,7 @@ describe('fromRemoteMustacheTemplate', () => {
             })
         }
 
-        autocomplete({
-            fetch: {
-                products: {
-                    fields: [
-                        'name',
-                        'url',
-                        'imageUrl',
-                        'price',
-                        'listPrice',
-                        'brand',
-                    ],
-                    size: 5,
-                },
-                keywords: {
-                    size: 5,
-                    fields: ['keyword', '_highlight.keyword'],
-                    highlight: {
-                        preTag: `<strong>`,
-                        postTag: '</strong>',
-                    },
-                },
-            },
-            inputSelector: '#search',
-            dropdownSelector: '#search-results',
-            render: mockRender,
-            submit: (query) => {
-                // Handle search submit
-                console.log(`Submitted search with query: ${query}`)
-            },
-        })
+        await handleAutocomplete(mockRender)
 
         await waitFor(
             () => {
@@ -375,7 +317,7 @@ describe('fromRemoteMustacheTemplate', () => {
     describe('history', () => {
         it('should see results after typing', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.type(screen.getByTestId('input'), 're')
 
@@ -397,7 +339,7 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should see history on empty input', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -412,7 +354,7 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should show history keyword', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -426,10 +368,11 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should navigate and select history keywords with keyboard', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
-
-            // Mock console.log
-            const consoleSpy = jest.spyOn(console, 'log')
+            const expectedQuery = 're'
+            let exactQuery = ''
+            await handleAutocomplete(fromMustacheTemplate(template), query => {
+                exactQuery = query
+            })
 
             await user.type(screen.getByTestId('input'), 're')
             await user.click(screen.getByTestId('search-button'))
@@ -439,25 +382,17 @@ describe('fromRemoteMustacheTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            consoleSpy.mockClear()
-
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowup}')
             await user.keyboard('{enter}')
 
-            expect(consoleSpy).toHaveBeenCalledWith(
-                'Submitted search with query: re',
-            )
-
-            expect(consoleSpy).toHaveBeenCalledTimes(1)
-
-            consoleSpy.mockRestore()
+            expect(exactQuery).toBe(expectedQuery)
         })
 
         it('should show two history keywords', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -479,7 +414,7 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should clear history keyword', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -504,7 +439,7 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should clear history', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')
@@ -523,7 +458,7 @@ describe('fromRemoteMustacheTemplate', () => {
 
         it('should highlight history keyword with keyboard navigation', async () => {
             const user = userEvent.setup()
-            handleAutocomplete()
+            await handleAutocomplete(fromMustacheTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
             await user.type(screen.getByTestId('input'), 're')

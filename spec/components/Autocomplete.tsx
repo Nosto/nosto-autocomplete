@@ -166,9 +166,9 @@ export function Autocomplete({ response, history }: AutocompleteProps) {
             {!hasKeywords && !hasProducts && hasHistory
                 ? renderHistory()
                 : hasKeywords || hasProducts
-                ? [
-                      renderKeywords(),
-                      renderProducts(),
+                ? <>
+                      {renderKeywords()}
+                      {renderProducts()}
                       <div className="ns-autocomplete-submit">
                           <button
                               type="submit"
@@ -177,7 +177,7 @@ export function Autocomplete({ response, history }: AutocompleteProps) {
                               See all search results
                           </button>
                       </div>,
-                  ]
+                  </>
                 : null}
         </div>
     )

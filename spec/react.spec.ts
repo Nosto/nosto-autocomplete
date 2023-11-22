@@ -1,4 +1,3 @@
-
 import {
     screen,
     waitFor,
@@ -42,7 +41,14 @@ function setup() {
     const script = document.createElement('script')
     script.src = 'https://connect.nosto.com/include/shopify-9758212174'
     script.onload = () => {
-        w.nosto.reload({ site: location.hostname, searchEnabled: false })
+        setTimeout(
+            () =>
+                w.nosto.reload({
+                    site: location.hostname,
+                    searchEnabled: false,
+                }),
+            1000,
+        )
     }
     document.body.appendChild(script)
 
@@ -60,7 +66,7 @@ function setup() {
     document.body.appendChild(babelScript)
 }
 
-const handleAutocomplete = () => {
+const handleAutocomplete = (submit: (query: string) => any = () => ({})) => {
     let reactRoot: Root | null = null
 
     autocomplete({
@@ -95,42 +101,17 @@ const handleAutocomplete = () => {
                 window.React?.createElement(Autocomplete, state as unknown),
             )
         },
-        submit: (query) => {
-            // Handle search submit
-            console.log(`Submitted search with query: ${query}`)
-        },
+        submit,
     })
 }
 
 beforeAll(async () => {
-    document.body.innerHTML = `
-        <form id="search-form">
-            <input type="text" id="search" placeholder="search" data-testid="input"/>
-            <button type="submit" id="search-button" data-testid="search-button">Search</button>
-            <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
-        </form>
-    `
-
-    const w = window as any
-    w.nostojs = (cb: any) => {
-        w.nostojs.q = w.nostojs.q || ([] as any[])
-        w.nostojs.q.push(cb)
-    }
-
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
-    script.onload = () => {
-        w.nosto.reload({ site: location.hostname, searchEnabled: false })
-    }
-    document.body.appendChild(script)
+    setup()
 })
 
 describe('autocomplete', () => {
     beforeEach(() => {
-        // Reset the entire DOM and perform necessary setup steps
-        document.body.innerHTML = ''
         jest.clearAllMocks()
-        setup()
     })
 
     afterEach(() => {
@@ -139,20 +120,12 @@ describe('autocomplete', () => {
         const dropdown = screen.getByTestId('dropdown')
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
-        const w = window as any
-        w.nostojs = undefined
-        w.nosto = undefined
     })
 
     it('renders autocomplete', async () => {
         const user = userEvent.setup()
 
-        await waitFor(
-            () => {
-                return handleAutocomplete()
-            },
-            { timeout: 2000 },
-        )
+        await handleAutocomplete()
 
         await waitFor(
             () => {
@@ -185,9 +158,7 @@ describe('autocomplete', () => {
 describe('history', () => {
     beforeEach(() => {
         // Reset the entire DOM and perform necessary setup steps
-        document.body.innerHTML = ''
         jest.clearAllMocks()
-        setup()
     })
 
     afterEach(() => {
@@ -196,14 +167,11 @@ describe('history', () => {
         const dropdown = screen.getByTestId('dropdown')
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
-        const w = window as any
-        w.nostojs = undefined
-        w.nosto = undefined
     })
 
     it('should see results after typing', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.type(screen.getByTestId('input'), 're')
         await waitFor(
@@ -224,7 +192,7 @@ describe('history', () => {
 
     it('should see history on empty input', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -239,7 +207,7 @@ describe('history', () => {
 
     it('should show history keyword', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -253,10 +221,11 @@ describe('history', () => {
 
     it('should navigate and select history keywords with keyboard', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
-
-        // Mock console.log
-        const consoleSpy = jest.spyOn(console, 'log')
+        const expectedQuery = 're'
+        let exactQuery = ''
+        await handleAutocomplete((query) => {
+            exactQuery = query
+        })
 
         await user.type(screen.getByTestId('input'), 're')
         await user.click(screen.getByTestId('search-button'))
@@ -266,27 +235,17 @@ describe('history', () => {
         await user.click(screen.getByTestId('search-button'))
         await user.clear(screen.getByTestId('input'))
 
-        consoleSpy.mockClear()
-
         await user.keyboard('{arrowdown}')
         await user.keyboard('{arrowdown}')
         await user.keyboard('{arrowup}')
         await user.keyboard('{enter}')
 
-        waitFor(() => {
-            expect(consoleSpy).toHaveBeenCalledWith(
-                'Submitted search with query: re',
-            )
-
-            expect(consoleSpy).toHaveBeenCalledTimes(1)
-        })
-
-        consoleSpy.mockRestore()
+        expect(exactQuery).toBe(expectedQuery)
     })
 
     it('should show two history keywords', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -307,7 +266,7 @@ describe('history', () => {
 
     it('should clear history keyword', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
 
@@ -342,7 +301,7 @@ describe('history', () => {
 
     it('should clear history', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')
@@ -361,7 +320,7 @@ describe('history', () => {
 
     it('should highlight history keyword with keyboard navigation', async () => {
         const user = userEvent.setup()
-        handleAutocomplete()
+        await handleAutocomplete()
 
         await user.clear(screen.getByTestId('input'))
         await user.type(screen.getByTestId('input'), 're')

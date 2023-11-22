@@ -10,7 +10,6 @@ import {
     fromRemoteLiquidTemplate,
 } from '../src/entries/liquid'
 
-
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const template = `
@@ -112,8 +111,10 @@ const template = `
     </div>
 `
 
-const handleAutocomplete = async (render: any) => {
-    await wait(500)
+const handleAutocomplete = async (
+    render: any,
+    submit: (query: string) => any = () => ({}),
+) => {
     autocomplete({
         fetch: {
             products: {
@@ -139,10 +140,7 @@ const handleAutocomplete = async (render: any) => {
         inputSelector: '#search',
         dropdownSelector: '#search-results',
         render,
-        submit: (query) => {
-            // Handle search submit
-            console.log(`Submitted search with query: ${query}`)
-        },
+        submit,
     })
 }
 
@@ -169,7 +167,14 @@ function setup() {
     const script = document.createElement('script')
     script.src = 'https://connect.nosto.com/include/shopify-9758212174'
     script.onload = () => {
-        w.nosto.reload({ site: location.hostname, searchEnabled: false })
+        setTimeout(
+            () =>
+                w.nosto.reload({
+                    site: location.hostname,
+                    searchEnabled: false,
+                }),
+            1000,
+        )
     }
     document.body.appendChild(script)
 }
@@ -181,6 +186,9 @@ describe('fromLiquidTemplate', () => {
 
     afterAll(() => {
         jest.restoreAllMocks()
+        const dropdown = screen.getByTestId('dropdown')
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
         document.body.innerHTML = ''
     })
 
@@ -224,19 +232,15 @@ describe('fromLiquidTemplate', () => {
 
 describe('fromRemoteLiquidTemplate', () => {
     beforeAll(() => {
+        document.body.innerHTML = ''
         setup()
     })
 
     afterEach(() => {
         jest.restoreAllMocks()
-
         const dropdown = screen.getByTestId('dropdown')
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
-
-        const w = window as any
-        w.nostojs = undefined
-        w.nosto = undefined
     })
 
     it('fetches remote templates url', async () => {
@@ -266,6 +270,7 @@ describe('fromRemoteLiquidTemplate', () => {
             return sendSpy.mock.calls[0]
         })
 
+        await wait(500)
         await handleAutocomplete(render)
 
         await waitFor(
@@ -299,6 +304,7 @@ describe('fromRemoteLiquidTemplate', () => {
             })
         }
 
+        await wait(500)
         await handleAutocomplete(mockRender)
 
         await waitFor(
@@ -331,6 +337,7 @@ describe('fromRemoteLiquidTemplate', () => {
     describe('history', () => {
         it('should see results after typing', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.type(screen.getByTestId('input'), 're')
@@ -353,6 +360,7 @@ describe('fromRemoteLiquidTemplate', () => {
 
         it('should see history on empty input', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -362,12 +370,13 @@ describe('fromRemoteLiquidTemplate', () => {
 
             await waitFor(() => {
                 const historyElement = screen.getByText('Recently searched')
-                expect(historyElement).toBeVisible()
+                return expect(historyElement).toBeVisible()
             })
         })
 
         it('should show history keyword', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -375,19 +384,19 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            await waitFor(() => {
-                expect(screen.getByText('re')).toBeVisible()
-            })
+            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
         })
 
         it('should navigate and select history keywords with keyboard', async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromLiquidTemplate(template))
+            const expectedQuery = 're'
+            let exactQuery = ''
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template), (query) => {
+                exactQuery = query
+            })
 
-            // Mock console.log
-            const consoleSpy = jest.spyOn(console, 'log')
-
-            await user.type(screen.getByTestId('input'), 're')
+            await user.type(screen.getByTestId('input'), expectedQuery)
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
@@ -395,24 +404,17 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            consoleSpy.mockClear()
-
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowup}')
             await user.keyboard('{enter}')
 
-            expect(consoleSpy).toHaveBeenCalledWith(
-                'Submitted search with query: re',
-            )
-
-            expect(consoleSpy).toHaveBeenCalledTimes(1)
-
-            consoleSpy.mockRestore()
+            expect(exactQuery).toBe(expectedQuery)
         })
 
         it('should show two history keywords', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -424,17 +426,13 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            await waitFor(
-                () => {
-                    expect(screen.getByText('black')).toBeVisible()
-                    expect(screen.getByText('re')).toBeVisible()
-                },
-                { timeout: 4000 },
-            )
+            await waitFor(() => expect(screen.getByText('black')).toBeVisible())
+            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
         })
 
         it('should clear history keyword', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -451,15 +449,16 @@ describe('fromRemoteLiquidTemplate', () => {
                 )
                 if (removeHistoryElement) {
                     userEvent.click(removeHistoryElement)
-                    await waitFor(() => {
-                        expect(screen.queryByText('black')).toBeNull()
-                    })
+                    return waitFor(() =>
+                        expect(screen.queryByText('black')).toBeNull(),
+                    )
                 }
             })
         })
 
         it('should clear history', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -471,14 +470,13 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.clear(screen.getByTestId('input'))
             await user.click(screen.getByText('Clear history'))
 
-            await waitFor(() => {
-                expect(screen.queryByText('black')).toBeNull()
-                expect(screen.queryByText('re')).toBeNull()
-            })
+            await waitFor(() => expect(screen.queryByText('black')).toBeNull())
+            await waitFor(() => expect(screen.queryByText('re')).toBeNull())
         })
 
         it('should highlight history keyword with keyboard navigation', async () => {
             const user = userEvent.setup()
+            await wait(500)
             await handleAutocomplete(fromLiquidTemplate(template))
 
             await user.clear(screen.getByTestId('input'))
@@ -489,18 +487,16 @@ describe('fromRemoteLiquidTemplate', () => {
             await user.click(screen.getByTestId('search-button'))
             await user.clear(screen.getByTestId('input'))
 
-            await waitFor(() => {
-                expect(screen.getByText('black')).toBeVisible()
-                expect(screen.getByText('re')).toBeVisible()
-            })
+            await waitFor(() => expect(screen.getByText('black')).toBeVisible())
+            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
 
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowdown}')
             await user.keyboard('{arrowup}')
 
-            await waitFor(() => {
-                expect(screen.getByText('black')).toHaveClass('selected')
-            })
+            await waitFor(() =>
+                expect(screen.getByText('black')).toHaveClass('selected'),
+            )
         })
     })
 })
