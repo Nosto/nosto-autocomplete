@@ -39,7 +39,7 @@ export function autocomplete<State = DefaultState>(
                 if (historyEnabled) {
                     actions.addHistoryItem(value)
                 }
-                if (typeof config?.submit === 'function') {
+                if (typeof config?.submit === "function") {
                     config.submit(value)
                 }
             }
@@ -102,7 +102,7 @@ export function autocomplete<State = DefaultState>(
                         if (dropdown.isOpen()) {
                             dropdown.goUp()
                         }
-                    } else if (key === 'Enter') {
+                    } else if (key === "Enter") {
                         if (dropdown.isOpen() && dropdown.hasHighlight()) {
                             dropdown.handleSubmit()
                         } else {
@@ -175,7 +175,10 @@ function createInputDropdown<State = DefaultState>({
 
     return new Dropdown<State>(
         dropdownElement,
-        actions.updateState(input.value),
+        actions.updateState(input.value).then(
+            state => state,
+            () => ({}) as State
+        ),
         config.render,
         config.submit,
         value => (input.value = value),

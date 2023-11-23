@@ -167,6 +167,9 @@ describe('fromMustacheTemplate', () => {
 
     afterAll(() => {
         jest.restoreAllMocks()
+        const dropdown = screen.getByTestId("dropdown")
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
         document.body.innerHTML = ''
     })
 
@@ -179,113 +182,6 @@ describe('fromMustacheTemplate', () => {
             },
             { timeout: 2000 },
         )
-
-        await waitFor(
-            () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
-            },
-            {
-                timeout: 1000,
-            },
-        )
-
-        await user.type(screen.getByTestId('input'), 're')
-
-        await waitFor(
-            () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
-
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
-
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
-            },
-            {
-                timeout: 4000,
-            },
-        )
-    })
-})
-
-describe('fromRemoteMustacheTemplate', () => {
-    beforeEach(() => {
-        setup()
-    })
-
-    afterEach(() => {
-        jest.restoreAllMocks()
-
-        const dropdown = screen.getByTestId('dropdown')
-        const newElement = dropdown.cloneNode(true)
-        dropdown?.parentNode?.replaceChild(newElement, dropdown)
-
-        const w = window as any
-        w.nostojs = undefined
-        w.nosto = undefined
-    })
-
-    it('fetches remote templates url', async () => {
-        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
-        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
-
-        const mockUrl = 'template.mustache'
-        const render = fromRemoteMustacheTemplate(mockUrl)
-
-        const mockXhr = {
-            open: jest.fn(),
-            send: jest.fn(),
-            status: 200,
-            responseText: template,
-            onload: jest.fn(),
-            onerror: jest.fn(),
-        }
-
-        openSpy.mockImplementation((method, url) => {
-            if (url === mockUrl) {
-                return mockXhr.open(method, url)
-            }
-            return openSpy.mock.calls[0]
-        })
-
-        sendSpy.mockImplementation(() => {
-            return sendSpy.mock.calls[0]
-        })
-
-        await handleAutocomplete(render)
-
-        await waitFor(
-            () => {
-                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
-                expect(sendSpy).toHaveBeenCalled()
-            },
-            {
-                timeout: 1000,
-            },
-        )
-    })
-
-    it('it renders autocomplete from remote templates', async () => {
-        const user = userEvent.setup()
-
-        const mockRender: (
-            container: HTMLElement,
-            state: DefaultState,
-        ) => void | PromiseLike<void> = (
-            container: HTMLElement,
-            state: DefaultState,
-        ) => {
-            return new AnyPromise((resolve) => {
-                fromMustacheTemplate(template)(
-                    screen.getByTestId('dropdown'),
-                    state,
-                ).then(() => {
-                    resolve(undefined)
-                })
-            })
-        }
-
-        await handleAutocomplete(mockRender)
 
         await waitFor(
             () => {
@@ -481,5 +377,58 @@ describe('fromRemoteMustacheTemplate', () => {
                 expect(screen.getByText('black')).toHaveClass('selected')
             })
         })
+    })
+})
+
+describe('fromRemoteMustacheTemplate', () => {
+    beforeAll(() => {
+        setup()
+    })
+
+    afterEach(() => {
+        jest.restoreAllMocks()
+        const dropdown = screen.getByTestId('dropdown')
+        const newElement = dropdown.cloneNode(true)
+        dropdown?.parentNode?.replaceChild(newElement, dropdown)
+    })
+
+    it('fetches remote templates url', async () => {
+        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
+        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
+
+        const mockUrl = 'template.mustache'
+        const render = fromRemoteMustacheTemplate(mockUrl)
+
+        const mockXhr = {
+            open: jest.fn(),
+            send: jest.fn(),
+            status: 200,
+            responseText: template,
+            onload: jest.fn(),
+            onerror: jest.fn(),
+        }
+
+        openSpy.mockImplementation((method, url) => {
+            if (url === mockUrl) {
+                return mockXhr.open(method, url)
+            }
+            return openSpy.mock.calls[0]
+        })
+
+        sendSpy.mockImplementation(() => {
+            return sendSpy.mock.calls[0]
+        })
+
+        await handleAutocomplete(render)
+
+        await waitFor(
+            () => {
+                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
+                expect(sendSpy).toHaveBeenCalled()
+            },
+            {
+                timeout: 1000,
+            },
+        )
     })
 })

@@ -1,16 +1,15 @@
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 
-import { DefaultState, autocomplete } from '../src'
+import { autocomplete } from "../src"
 
-import '@testing-library/jest-dom'
-import { AnyPromise } from '../src/utils/promise'
+import "@testing-library/jest-dom"
 import {
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
-} from '../src/entries/liquid'
+} from "../src/entries/liquid"
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const template = `
     {% assign hasKeywords = response.keywords.hits.length > 0 %}
@@ -113,32 +112,32 @@ const template = `
 
 const handleAutocomplete = async (
     render: any,
-    submit: (query: string) => any = () => ({}),
+    submit: (query: string) => any = () => ({})
 ) => {
     autocomplete({
         fetch: {
             products: {
                 fields: [
-                    'name',
-                    'url',
-                    'imageUrl',
-                    'price',
-                    'listPrice',
-                    'brand',
+                    "name",
+                    "url",
+                    "imageUrl",
+                    "price",
+                    "listPrice",
+                    "brand",
                 ],
                 size: 5,
             },
             keywords: {
                 size: 5,
-                fields: ['keyword', '_highlight.keyword'],
+                fields: ["keyword", "_highlight.keyword"],
                 highlight: {
                     preTag: `<strong>`,
-                    postTag: '</strong>',
+                    postTag: "</strong>",
                 },
             },
         },
-        inputSelector: '#search',
-        dropdownSelector: '#search-results',
+        inputSelector: "#search",
+        dropdownSelector: "#search-results",
         render,
         submit,
     })
@@ -159,13 +158,13 @@ function setup() {
         w.nostojs.q.push(cb)
     }
 
-    const liquidScript = document.createElement('script')
+    const liquidScript = document.createElement("script")
     liquidScript.src =
-        'https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js'
+        "https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js"
     document.body.appendChild(liquidScript)
 
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
+    const script = document.createElement("script")
+    script.src = "https://connect.nosto.com/include/shopify-9758212174"
     script.onload = () => {
         setTimeout(
             () =>
@@ -173,23 +172,23 @@ function setup() {
                     site: location.hostname,
                     searchEnabled: false,
                 }),
-            1000,
+            1000
         )
     }
     document.body.appendChild(script)
 }
 
-describe('fromLiquidTemplate', () => {
+describe("fromLiquidTemplate", () => {
     beforeAll(() => {
         setup()
     })
 
     afterAll(() => {
         jest.restoreAllMocks()
-        const dropdown = screen.getByTestId('dropdown')
+        const dropdown = screen.getByTestId("dropdown")
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
-        document.body.innerHTML = ''
+        document.body.innerHTML = ""
     })
 
     it("uses local liquid template", async () => {
@@ -199,7 +198,7 @@ describe('fromLiquidTemplate', () => {
             async () => {
                 return handleAutocomplete(fromLiquidTemplate(template))
             },
-            { timeout: 2000 },
+            { timeout: 2000 }
         )
 
         await waitFor(
@@ -228,17 +227,183 @@ describe('fromLiquidTemplate', () => {
             }
         )
     })
+
+    describe("history", () => {
+        it("should see results after typing", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.type(screen.getByTestId("input"), "re")
+
+            await waitFor(
+                () => {
+                    expect(screen.getByTestId("dropdown")).toBeVisible()
+
+                    expect(screen.getByText("Keywords")).toBeVisible()
+                    expect(screen.getAllByTestId("keyword")).toHaveLength(5)
+
+                    expect(screen.getByText("Products")).toBeVisible()
+                    expect(screen.getAllByTestId("product")).toHaveLength(5)
+                },
+                {
+                    timeout: 4000,
+                }
+            )
+        })
+
+        it("should see history on empty input", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await waitFor(() => {
+                const historyElement = screen.getByText("Recently searched")
+                return expect(historyElement).toBeVisible()
+            })
+        })
+
+        it("should show history keyword", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await waitFor(() => expect(screen.getByText("re")).toBeVisible())
+        })
+
+        it("should navigate and select history keywords with keyboard", async () => {
+            const user = userEvent.setup()
+            const expectedQuery = "re"
+            let exactQuery = ""
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template), query => {
+                exactQuery = query
+            })
+
+            await user.type(screen.getByTestId("input"), expectedQuery)
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await user.type(screen.getByTestId("input"), "white")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowup}")
+            await user.keyboard("{enter}")
+
+            expect(exactQuery).toBe(expectedQuery)
+        })
+
+        it("should show two history keywords", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.click(screen.getByTestId("search-button"))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await waitFor(() => expect(screen.getByText("black")).toBeVisible())
+            await waitFor(() => expect(screen.getByText("re")).toBeVisible())
+        })
+
+        it("should clear history keyword", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.keyboard("{enter}")
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.keyboard("{enter}")
+            await user.clear(screen.getByTestId("input"))
+
+            await waitFor(async () => {
+                const removeHistoryElement = screen.queryByTestId(
+                    "remove-history-black"
+                )
+                if (removeHistoryElement) {
+                    userEvent.click(removeHistoryElement)
+                    return waitFor(() =>
+                        expect(screen.queryByText("black")).toBeNull()
+                    )
+                }
+            })
+        })
+
+        it("should clear history", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.click(screen.getByText("Clear history"))
+
+            await waitFor(() => expect(screen.queryByText("black")).toBeNull())
+            await waitFor(() => expect(screen.queryByText("re")).toBeNull())
+        })
+
+        it("should highlight history keyword with keyboard navigation", async () => {
+            const user = userEvent.setup()
+            await wait(500)
+            await handleAutocomplete(fromLiquidTemplate(template))
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "re")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+
+            await waitFor(() => expect(screen.getByText("black")).toBeVisible())
+            await waitFor(() => expect(screen.getByText("re")).toBeVisible())
+
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowup}")
+
+            await waitFor(() =>
+                expect(screen.getByText("black")).toHaveClass("selected")
+            )
+        })
+    })
 })
 
-describe('fromRemoteLiquidTemplate', () => {
+describe("fromRemoteLiquidTemplate", () => {
     beforeAll(() => {
-        document.body.innerHTML = ''
+        document.body.innerHTML = ""
         setup()
     })
 
     afterEach(() => {
-        jest.restoreAllMocks()
-        const dropdown = screen.getByTestId('dropdown')
+        jest.resetAllMocks()
+        const dropdown = screen.getByTestId("dropdown")
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
     })
@@ -282,221 +447,5 @@ describe('fromRemoteLiquidTemplate', () => {
                 timeout: 1000,
             }
         )
-    })
-
-    it("it renders autocomplete from remote templates", async () => {
-        const user = userEvent.setup()
-
-        const mockRender: (
-            container: HTMLElement,
-            state: DefaultState
-        ) => void | PromiseLike<void> = (
-            container: HTMLElement,
-            state: DefaultState
-        ) => {
-            return new AnyPromise(resolve => {
-                fromLiquidTemplate(template)(
-                    screen.getByTestId("dropdown"),
-                    state
-                ).then(() => {
-                    resolve(undefined)
-                })
-            })
-        }
-
-        await wait(500)
-        await handleAutocomplete(mockRender)
-
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).not.toBeVisible()
-            },
-            {
-                timeout: 1000,
-            }
-        )
-
-        await user.type(screen.getByTestId("input"), "re")
-
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).toBeVisible()
-
-                expect(screen.getByText("Keywords")).toBeVisible()
-                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
-
-                expect(screen.getByText("Products")).toBeVisible()
-                expect(screen.getAllByTestId("product")).toHaveLength(5)
-            },
-            {
-                timeout: 4000,
-            }
-        )
-    })
-
-    describe('history', () => {
-        it('should see results after typing', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.type(screen.getByTestId('input'), 're')
-
-            await waitFor(
-                () => {
-                    expect(screen.getByTestId('dropdown')).toBeVisible()
-
-                    expect(screen.getByText('Keywords')).toBeVisible()
-                    expect(screen.getAllByTestId('keyword')).toHaveLength(5)
-
-                    expect(screen.getByText('Products')).toBeVisible()
-                    expect(screen.getAllByTestId('product')).toHaveLength(5)
-                },
-                {
-                    timeout: 4000,
-                },
-            )
-        })
-
-        it('should see history on empty input', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await waitFor(() => {
-                const historyElement = screen.getByText('Recently searched')
-                return expect(historyElement).toBeVisible()
-            })
-        })
-
-        it('should show history keyword', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
-        })
-
-        it('should navigate and select history keywords with keyboard', async () => {
-            const user = userEvent.setup()
-            const expectedQuery = 're'
-            let exactQuery = ''
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template), (query) => {
-                exactQuery = query
-            })
-
-            await user.type(screen.getByTestId('input'), expectedQuery)
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await user.type(screen.getByTestId('input'), 'white')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowup}')
-            await user.keyboard('{enter}')
-
-            expect(exactQuery).toBe(expectedQuery)
-        })
-
-        it('should show two history keywords', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await waitFor(() => expect(screen.getByText('black')).toBeVisible())
-            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
-        })
-
-        it('should clear history keyword', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.keyboard('{enter}')
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.keyboard('{enter}')
-            await user.clear(screen.getByTestId('input'))
-
-            await waitFor(async () => {
-                const removeHistoryElement = screen.queryByTestId(
-                    'remove-history-black',
-                )
-                if (removeHistoryElement) {
-                    userEvent.click(removeHistoryElement)
-                    return waitFor(() =>
-                        expect(screen.queryByText('black')).toBeNull(),
-                    )
-                }
-            })
-        })
-
-        it('should clear history', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.click(screen.getByText('Clear history'))
-
-            await waitFor(() => expect(screen.queryByText('black')).toBeNull())
-            await waitFor(() => expect(screen.queryByText('re')).toBeNull())
-        })
-
-        it('should highlight history keyword with keyboard navigation', async () => {
-            const user = userEvent.setup()
-            await wait(500)
-            await handleAutocomplete(fromLiquidTemplate(template))
-
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-
-            await waitFor(() => expect(screen.getByText('black')).toBeVisible())
-            await waitFor(() => expect(screen.getByText('re')).toBeVisible())
-
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowup}')
-
-            await waitFor(() =>
-                expect(screen.getByText('black')).toHaveClass('selected'),
-            )
-        })
     })
 })
