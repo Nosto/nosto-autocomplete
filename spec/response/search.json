@@ -1,0 +1,96 @@
+{
+    "query": "black",
+    "redirect": null,
+    "products": {
+        "hits": [
+            {
+                "productId": "6853920686158",
+                "name": "Slim Fit Washable Suit Pant",
+                "url": "https://www.perryellis.com/products/slim-fit-washable-suit-pant-black-4isb4316rt-010",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0097/5821/2174/products/Perry-Ellis-mens-Slim-Fit-Washable-Suit-Pant-Suit-Pants-Black-black.jpg?v=1675970770",
+                "price": 40,
+                "listPrice": 150,
+                "brand": "Brand"
+            },
+            {
+                "productId": "6871551017038",
+                "name": "Slim Fit Neat Knit Stretch Suit Pant",
+                "url": "https://www.perryellis.com/products/slim-fit-neat-knit-stretch-pant-black-4hhb4310rt-010",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0097/5821/2174/files/Perry-Ellis-mens-Slim-Fit-Neat-Knit-Stretch-Suit-Pant-Suit-Pants-Black-black.jpg?v=1686943195",
+                "price": 49,
+                "listPrice": 98.5,
+                "brand": "Brand"
+            },
+            {
+                "productId": "6864203284558",
+                "name": "ICON Polo",
+                "url": "https://www.perryellis.com/products/jersey-polo-black-4hfk7175rt-010",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0097/5821/2174/files/Perry-Ellis-mens-ICON-Polo-Polos-Black-black_d6a35524-e786-42db-9cbd-0b32052f99ed.jpg?v=1695842791",
+                "price": 24.99,
+                "listPrice": 69.5,
+                "brand": "Brand"
+            },
+            {
+                "productId": "6844547301454",
+                "name": "ICON Polo",
+                "url": "https://www.perryellis.com/products/icon-polo-black-4hrk7125rt-010",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0097/5821/2174/files/Perry-Ellis-mens-ICON-Polo-Polos-Black-black_b3330e58-62df-4e78-88c8-f1a822484e9e.jpg?v=1692816732",
+                "price": 24.99,
+                "listPrice": 69.5,
+                "brand": "Brand"
+            },
+            {
+                "productId": "6726419775566",
+                "name": "Slim Fit Performance Tech Suit Jacket",
+                "url": "https://www.perryellis.com/products/slim-fit-performance-tech-suit-jacket-black-4hsj7710rt-010",
+                "imageUrl": "https://cdn.shopify.com/s/files/1/0097/5821/2174/products/Perry-Ellis-mens-Slim-Fit-Performance-Tech-Suit-Jacket-Suit-Jackets-Black-black.jpg?v=1649286465",
+                "price": 100,
+                "listPrice": 225,
+                "brand": "Brand"
+            }
+        ],
+        "total": 1113,
+        "size": 5,
+        "from": null,
+        "collapse": null,
+        "fuzzy": null,
+        "categoryId": null,
+        "categoryPath": null
+    },
+    "keywords": {
+        "hits": [
+            {
+                "keyword": "black",
+                "_highlight": {
+                    "keyword": "<strong>black</strong>"
+                }
+            },
+            {
+                "keyword": "black performance tech",
+                "_highlight": {
+                    "keyword": "<strong>black</strong> performance tech"
+                }
+            },
+            {
+                "keyword": "black leather belt",
+                "_highlight": {
+                    "keyword": "<strong>black</strong> leather belt"
+                }
+            },
+            {
+                "keyword": "black performance",
+                "_highlight": {
+                    "keyword": "<strong>black</strong> performance"
+                }
+            },
+            {
+                "keyword": "fit black",
+                "_highlight": {
+                    "keyword": "fit <strong>black</strong>"
+                }
+            }
+        ],
+        "total": 6,
+        "size": 5
+    }
+}

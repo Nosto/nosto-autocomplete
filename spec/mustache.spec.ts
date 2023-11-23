@@ -1,14 +1,14 @@
-import { screen, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
+import { screen, waitFor } from "@testing-library/dom"
+import userEvent from "@testing-library/user-event"
+import searchResponse from "./response/search.json"
 
-import { DefaultState, autocomplete } from '../src'
+import { autocomplete } from "../src"
 
-import '@testing-library/jest-dom'
-import { AnyPromise } from '../src/utils/promise'
+import "@testing-library/jest-dom"
 import {
     fromMustacheTemplate,
     fromRemoteMustacheTemplate,
-} from '../src/mustache'
+} from "../src/mustache"
 
 const template = `
 <div class="ns-autocomplete-results">
@@ -102,32 +102,32 @@ const template = `
 
 const handleAutocomplete = (
     render: any,
-    submit: (query: string) => any = () => ({}),
+    submit: (query: string) => any = () => ({})
 ) => {
     autocomplete({
         fetch: {
             products: {
                 fields: [
-                    'name',
-                    'url',
-                    'imageUrl',
-                    'price',
-                    'listPrice',
-                    'brand',
+                    "name",
+                    "url",
+                    "imageUrl",
+                    "price",
+                    "listPrice",
+                    "brand",
                 ],
                 size: 5,
             },
             keywords: {
                 size: 5,
-                fields: ['keyword', '_highlight.keyword'],
+                fields: ["keyword", "_highlight.keyword"],
                 highlight: {
                     preTag: `<strong>`,
-                    postTag: '</strong>',
+                    postTag: "</strong>",
                 },
             },
         },
-        inputSelector: '#search',
-        dropdownSelector: '#search-results',
+        inputSelector: "#search",
+        dropdownSelector: "#search-results",
         render,
         submit,
     })
@@ -142,261 +142,281 @@ function setup() {
         </form>
     `
 
-    const w = window as any
-    w.nostojs = (cb: any) => {
-        w.nostojs.q = w.nostojs.q || ([] as any[])
-        w.nostojs.q.push(cb)
-    }
-
-    const mustacheScript = document.createElement('script')
-    mustacheScript.src = 'https://unpkg.com/mustache@4.2.0/mustache.min.js'
+    const mustacheScript = document.createElement("script")
+    mustacheScript.src = "https://unpkg.com/mustache@4.2.0/mustache.min.js"
     document.body.appendChild(mustacheScript)
-
-    const script = document.createElement('script')
-    script.src = 'https://connect.nosto.com/include/shopify-9758212174'
-    script.onload = () => {
-        w.nosto.reload({ site: location.hostname, searchEnabled: false })
-    }
-    document.body.appendChild(script)
 }
 
-describe('fromMustacheTemplate', () => {
+describe("fromMustacheTemplate", () => {
+    const w = window as any
+
     beforeAll(() => {
         setup()
     })
 
-    afterAll(() => {
+    beforeEach(() => {
+        const searchSpy = jest.fn(() => Promise.resolve(searchResponse))
+        w.nostojs = jest.fn((callback: (api: any) => unknown) =>
+            callback({
+                search: searchSpy,
+            })
+        )
+    })
+
+    afterEach(() => {
         jest.restoreAllMocks()
         const dropdown = screen.getByTestId("dropdown")
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
-        document.body.innerHTML = ''
     })
 
-    it('uses local mustache template', async () => {
+    afterAll(() => {
+        document.body.innerHTML = ""
+    })
+
+    it("uses local mustache template", async () => {
         const user = userEvent.setup()
 
-        await waitFor(
-            () => {
-                return handleAutocomplete(fromMustacheTemplate(template))
-            },
-            { timeout: 2000 },
+        await waitFor(() => handleAutocomplete(fromMustacheTemplate(template)))
+
+        await waitFor(() =>
+            expect(screen.getByTestId("dropdown")).not.toBeVisible()
         )
 
-        await waitFor(
-            () => {
-                expect(screen.getByTestId('dropdown')).not.toBeVisible()
-            },
-            {
-                timeout: 1000,
-            },
-        )
-
-        await user.type(screen.getByTestId('input'), 're')
+        await user.type(screen.getByTestId("input"), "black")
 
         await waitFor(
             () => {
-                expect(screen.getByTestId('dropdown')).toBeVisible()
+                expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText('Keywords')).toBeVisible()
-                expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                expect(screen.getByText("Keywords")).toBeVisible()
+                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText('Products')).toBeVisible()
-                expect(screen.getAllByTestId('product')).toHaveLength(5)
+                expect(screen.getByText("Products")).toBeVisible()
+                expect(screen.getAllByTestId("product")).toHaveLength(5)
             },
             {
                 timeout: 4000,
-            },
+            }
         )
     })
 
-    describe('history', () => {
-        it('should see results after typing', async () => {
+    describe("history", () => {
+        it("should see results after typing", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.type(screen.getByTestId('input'), 're')
+            await user.type(screen.getByTestId("input"), "black")
 
             await waitFor(
                 () => {
-                    expect(screen.getByTestId('dropdown')).toBeVisible()
+                    expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                    expect(screen.getByText('Keywords')).toBeVisible()
-                    expect(screen.getAllByTestId('keyword')).toHaveLength(5)
+                    expect(screen.getByText("Keywords")).toBeVisible()
+                    expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                    expect(screen.getByText('Products')).toBeVisible()
-                    expect(screen.getAllByTestId('product')).toHaveLength(5)
+                    expect(screen.getByText("Products")).toBeVisible()
+                    expect(screen.getAllByTestId("product")).toHaveLength(5)
                 },
                 {
                     timeout: 4000,
-                },
+                }
             )
         })
 
-        it('should see history on empty input', async () => {
+        it("should see history on empty input", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
             await waitFor(() => {
-                const historyElement = screen.getByText('Recently searched')
+                const historyElement = screen.getByText("Recently searched")
                 expect(historyElement).toBeVisible()
             })
         })
 
-        it('should show history keyword', async () => {
+        it("should show history keyword", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
-            await waitFor(() => {
-                expect(screen.getByText('re')).toBeVisible()
-            })
+            await waitFor(() => expect(screen.getByText("black")).toBeVisible())
         })
 
-        it('should navigate and select history keywords with keyboard', async () => {
+        it("should navigate and select history keywords with keyboard", async () => {
             const user = userEvent.setup()
-            const expectedQuery = 're'
-            let exactQuery = ''
-            await handleAutocomplete(fromMustacheTemplate(template), query => {
-                exactQuery = query
-            })
+            const expectedQuery = "black"
+            let exactQuery = ""
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template), query => {
+                    exactQuery = query
+                })
+            )
 
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
-            await user.type(screen.getByTestId('input'), 'white')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.type(screen.getByTestId("input"), "white")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowup}')
-            await user.keyboard('{enter}')
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowup}")
+            await user.keyboard("{enter}")
 
             expect(exactQuery).toBe(expectedQuery)
         })
 
-        it('should show two history keywords', async () => {
+        it("should show two history keywords", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "red")
+            await user.click(screen.getByTestId("search-button"))
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
             await waitFor(
                 () => {
-                    expect(screen.getByText('black')).toBeVisible()
-                    expect(screen.getByText('re')).toBeVisible()
+                    expect(screen.getByText("black")).toBeVisible()
+                    expect(screen.getByText("red")).toBeVisible()
                 },
-                { timeout: 4000 },
+                { timeout: 4000 }
             )
         })
 
-        it('should clear history keyword', async () => {
+        it("should clear history keyword", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.keyboard('{enter}')
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.keyboard('{enter}')
-            await user.clear(screen.getByTestId('input'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "red")
+            await user.keyboard("{enter}")
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.keyboard("{enter}")
+            await user.clear(screen.getByTestId("input"))
 
             await waitFor(async () => {
                 const removeHistoryElement = screen.queryByTestId(
-                    'remove-history-black',
+                    "remove-history-black"
                 )
                 if (removeHistoryElement) {
                     userEvent.click(removeHistoryElement)
                     await waitFor(() => {
-                        expect(screen.queryByText('black')).toBeNull()
+                        expect(screen.queryByText("black")).toBeNull()
                     })
                 }
             })
         })
 
-        it('should clear history', async () => {
+        it("should clear history", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.click(screen.getByText('Clear history'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "red")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.click(screen.getByText("Clear history"))
 
             await waitFor(() => {
-                expect(screen.queryByText('black')).toBeNull()
-                expect(screen.queryByText('re')).toBeNull()
+                expect(screen.queryByText("black")).toBeNull()
+                expect(screen.queryByText("red")).toBeNull()
             })
         })
 
-        it('should highlight history keyword with keyboard navigation', async () => {
+        it("should highlight history keyword with keyboard navigation", async () => {
             const user = userEvent.setup()
-            await handleAutocomplete(fromMustacheTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromMustacheTemplate(template))
+            )
 
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 're')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
-            await user.type(screen.getByTestId('input'), 'black')
-            await user.click(screen.getByTestId('search-button'))
-            await user.clear(screen.getByTestId('input'))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "red")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+            await user.clear(screen.getByTestId("input"))
 
             await waitFor(() => {
-                expect(screen.getByText('black')).toBeVisible()
-                expect(screen.getByText('re')).toBeVisible()
+                expect(screen.getByText("black")).toBeVisible()
+                expect(screen.getByText("red")).toBeVisible()
             })
 
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowdown}')
-            await user.keyboard('{arrowup}')
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowup}")
 
             await waitFor(() => {
-                expect(screen.getByText('black')).toHaveClass('selected')
+                expect(screen.getByText("black")).toHaveClass("selected")
             })
         })
     })
 })
 
-describe('fromRemoteMustacheTemplate', () => {
+describe("fromRemoteMustacheTemplate", () => {
+    const w = window as any
+
     beforeAll(() => {
         setup()
     })
 
+    beforeEach(() => {
+        const searchSpy = jest.fn(() => Promise.resolve(searchResponse))
+        w.nostojs = jest.fn((callback: (api: any) => unknown) =>
+            callback({
+                search: searchSpy,
+            })
+        )
+    })
+
     afterEach(() => {
         jest.restoreAllMocks()
-        const dropdown = screen.getByTestId('dropdown')
+        const dropdown = screen.getByTestId("dropdown")
         const newElement = dropdown.cloneNode(true)
         dropdown?.parentNode?.replaceChild(newElement, dropdown)
     })
 
-    it('fetches remote templates url', async () => {
-        const openSpy = jest.spyOn(XMLHttpRequest.prototype, 'open')
-        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, 'send')
+    afterAll(() => {
+        document.body.innerHTML = ""
+    })
 
-        const mockUrl = 'template.mustache'
+    it("fetches remote templates url", async () => {
+        const openSpy = jest.spyOn(XMLHttpRequest.prototype, "open")
+        const sendSpy = jest.spyOn(XMLHttpRequest.prototype, "send")
+
+        const mockUrl = "template.mustache"
         const render = fromRemoteMustacheTemplate(mockUrl)
 
         const mockXhr = {
@@ -419,16 +439,16 @@ describe('fromRemoteMustacheTemplate', () => {
             return sendSpy.mock.calls[0]
         })
 
-        await handleAutocomplete(render)
+        await waitFor(() => handleAutocomplete(render))
 
         await waitFor(
             () => {
-                expect(openSpy).toHaveBeenCalledWith('GET', mockUrl)
+                expect(openSpy).toHaveBeenCalledWith("GET", mockUrl)
                 expect(sendSpy).toHaveBeenCalled()
             },
             {
                 timeout: 1000,
-            },
+            }
         )
     })
 })
