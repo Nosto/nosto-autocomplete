@@ -186,12 +186,7 @@ describe("fromLiquidTemplate", () => {
     it("uses local liquid template", async () => {
         const user = userEvent.setup()
 
-        await waitFor(
-            async () => {
-                return handleAutocomplete(fromLiquidTemplate(template))
-            },
-            { timeout: 2000 }
-        )
+        await waitFor(() => handleAutocomplete(fromLiquidTemplate(template)))
 
         await waitFor(
             () => {
@@ -223,7 +218,9 @@ describe("fromLiquidTemplate", () => {
     describe("history", () => {
         it("should see results after typing", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.type(screen.getByTestId("input"), "black")
 
@@ -245,7 +242,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should see history on empty input", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "black")
@@ -260,7 +259,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should show history keyword", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "black")
@@ -274,9 +275,11 @@ describe("fromLiquidTemplate", () => {
             const user = userEvent.setup()
             const expectedQuery = "black"
             let exactQuery = ""
-            handleAutocomplete(fromLiquidTemplate(template), query => {
-                exactQuery = query
-            })
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template), query => {
+                    exactQuery = query
+                })
+            )
 
             await user.type(screen.getByTestId("input"), expectedQuery)
             await user.click(screen.getByTestId("search-button"))
@@ -296,7 +299,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should show two history keywords", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "red")
@@ -313,7 +318,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should clear history keyword", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "red")
@@ -338,7 +345,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should clear history", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "red")
@@ -355,7 +364,9 @@ describe("fromLiquidTemplate", () => {
 
         it("should highlight history keyword with keyboard navigation", async () => {
             const user = userEvent.setup()
-            handleAutocomplete(fromLiquidTemplate(template))
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
 
             await user.clear(screen.getByTestId("input"))
             await user.type(screen.getByTestId("input"), "red")
@@ -433,7 +444,7 @@ describe("fromRemoteLiquidTemplate", () => {
             return sendSpy.mock.calls[0]
         })
 
-        handleAutocomplete(render)
+        await waitFor(() => handleAutocomplete(render))
 
         await waitFor(
             () => {
