@@ -10,7 +10,7 @@ declare global {
 }
 
 type LiquidJS = {
-    parseAndRenderSync(html: string, scope?: unknown, renderOptions?: unknown): any;
+    parseAndRenderSync(html: string, scope?: unknown, renderOptions?: unknown): string;
 }
 
 /**
