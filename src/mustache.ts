@@ -1,8 +1,7 @@
-import { AnyPromise } from "./utils/promise"
-import { DefaultState } from "./state"
-import Mustache from "mustache"
+import { AnyPromise } from './utils/promise'
+import { DefaultState } from './state'
+import Mustache from 'mustache'
 
-// define window.Mustache type
 declare global {
     interface Window {
         Mustache?: typeof Mustache

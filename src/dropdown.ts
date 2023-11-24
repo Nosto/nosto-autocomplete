@@ -141,13 +141,6 @@ export class Dropdown<State> {
         }
     }
 
-    private resetHighlight(): void {
-        if (this.selectedIndex > -1) {
-            this.elements[this.selectedIndex]?.classList.remove("selected")
-            this.selectedIndex = -1
-        }
-    }
-
     private dispose(): void {
         this.resetHighlight()
         this.elements = []
@@ -204,7 +197,7 @@ export class Dropdown<State> {
     }
 
     goUp(): void {
-        if (this.selectedIndex > -1) {
+        if (this.hasHighlight()) {
             let prevIndex = this.selectedIndex
 
             if (this.selectedIndex === 0) {
@@ -223,7 +216,7 @@ export class Dropdown<State> {
     handleSubmit(): void {
         if (
             this.isOpen() &&
-            this.selectedIndex > -1 &&
+            this.hasHighlight() &&
             this.elements[this.selectedIndex]
         ) {
             this.handleElementSubmit(this.elements[this.selectedIndex])
@@ -232,6 +225,13 @@ export class Dropdown<State> {
 
     hasHighlight(): boolean {
         return this.selectedIndex > -1
+    }
+
+    resetHighlight(): void {
+        if (this.hasHighlight()) {
+            this.elements[this.selectedIndex]?.classList.remove('selected')
+            this.selectedIndex = -1
+        }
     }
 
     destroy(): void {

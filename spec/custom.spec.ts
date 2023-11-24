@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event"
 import { autocomplete } from "../src"
 
 import "@testing-library/jest-dom"
-import { AnyPromise, SimplePromise } from "../src/utils/promise"
+import { SimplePromise } from "../src/utils/promise"
 
 beforeAll(() => {
     document.body.innerHTML = `
@@ -14,6 +14,10 @@ beforeAll(() => {
             <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
         </form>
     `
+})
+
+afterAll(() => {
+    document.body.innerHTML = ""
 })
 
 describe("autocomplete", () => {
@@ -108,7 +112,7 @@ describe("SimplePromise", () => {
             }, 0)
         })
 
-        let error: any
+        let error: unknown
 
         promise.then(
             () => {

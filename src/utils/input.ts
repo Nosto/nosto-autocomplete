@@ -23,14 +23,11 @@ export function bindInput(
         if (callbacks.onSubmit) {
             const onKeyDown = (event: KeyboardEvent) => {
                 callbacks.onKeyDown?.(el.value, event.key)
-                if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                    event.preventDefault()
-                }
-
-                if (event.key === "Enter") {
-                    if (el.value !== "" && !event.repeat) {
-                        callbacks.onSubmit?.(el.value)
-                    }
+                if (
+                    event.key === 'ArrowDown' ||
+                    event.key === 'ArrowUp' ||
+                    event.key === 'Enter'
+                ) {
                     event.preventDefault()
                 }
             }

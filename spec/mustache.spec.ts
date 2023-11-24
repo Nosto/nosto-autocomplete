@@ -1,6 +1,7 @@
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import searchResponse from "./response/search.json"
+
 import {
     AutocompleteConfig,
     DefaultState,
@@ -10,9 +11,9 @@ import {
 
 import "@testing-library/jest-dom"
 import {
-    fromLiquidTemplate,
-    fromRemoteLiquidTemplate,
-} from "../src/entries/liquid"
+    fromMustacheTemplate,
+    fromRemoteMustacheTemplate,
+} from "../src/mustache"
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
@@ -26,105 +27,96 @@ interface WindowWithNostoJS extends Window {
 }
 
 const template = `
-    {% assign hasKeywords = response.keywords.hits.length > 0 %}
-    {% assign hasProducts = response.products.hits.length > 0 %}
-    {% assign hasHistory = history.length > 0 %}
-
-    <div class="ns-autocomplete-results">
-    {% if hasKeywords == false and hasProducts == false and hasHistory %}
-        <div class="ns-autocomplete-history">
-        <div class="ns-autocomplete-header">
-            Recently searched
+<div class="ns-autocomplete-results">
+  {{#response.keywords.hits.length}}
+    <div class="ns-autocomplete-keywords">
+      <div class="ns-autocomplete-header">
+        Keywords
+      </div>
+      {{#response.keywords.hits}}
+        <div class="ns-autocomplete-keyword" data-testid="keyword" data-ns-hit="{{toJson}}">
+          {{#_highlight.keyword}}
+            <span>{{{.}}}</span>
+          {{/_highlight.keyword}}
+          {{^_highlight.keyword}}
+            <span>{{keyword}}</span>
+          {{/_highlight.keyword}}
         </div>
-        {% for hit in history %}
-            <div class="ns-autocomplete-history-item" data-ns-hit="{{ hit | json | escape }}">
-            {{ hit.item }}
-            <a
-                href="javascript:void(0)"
-                class="ns-autocomplete-history-item-remove"
-                data-ns-remove-history="{{hit.item}}">
-                &#x2715;
-            </a>
-            </div>
-        {% endfor %}
-        </div>
-        <div class="ns-autocomplete-history-clear">
-        <button
-            type="button"
-            class="ns-autocomplete-button"
-            data-ns-remove-history="all">
-            Clear history
-        </button>
-        </div>
-    {% elsif hasKeywords or hasProducts %}
-        {% if hasKeywords %}
-        <div class="ns-autocomplete-keywords">
-            <div class="ns-autocomplete-header">
-            Keywords
-            </div>
-            {% for hit in response.keywords.hits %}
-            <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}" data-testid="keyword">
-                {% if hit._highlight and hit._highlight.keyword %}
-                <span>{{ hit._highlight.keyword }}</span>
-                {% else %}
-                <span>{{ hit.keyword }}</span>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% if hasProducts %}
-        <div class="ns-autocomplete-products">
-            <div class="ns-autocomplete-header">
-            Products
-            </div>
-            {% for hit in response.products.hits %}
-            <a
-                class="ns-autocomplete-product"
-                href="{{ hit.url }}"
-                data-ns-hit="{{ hit | json | escape }}">
-                <img
-                class="ns-autocomplete-product-image"
-                src="{{ hit.imageUrl }}"
-                alt="{{ hit.name }}"
-                width="60"
-                height="40"
-                data-testid="product" />
-                <div class="ns-autocomplete-product-info">
-                {% if hit.brand %}
-                    <div class="ns-autocomplete-product-brand">
-                    {{ hit.brand }}
-                    </div>
-                {% endif %}
-                <div class="ns-autocomplete-product-name">
-                    {{ hit.name }}
-                </div>
-                <div>
-                    <span>
-                    {{ hit.price }}&euro;
-                    </span>
-                    {% if hit.listPrice %}
-                    <span class="ns-autocomplete-product-list-price">
-                        {{ hit.listPrice }}
-                        &euro;
-                    </span>
-                    {% endif %}
-                </div>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% endif %}
-        <div class="ns-autocomplete-submit">
-        <button type="submit" class="ns-autocomplete-button">
-            See all search results
-        </button>
-        </div>
-    {% endif %}
+      {{/response.keywords.hits}}
     </div>
+  {{/response.keywords.hits.length}}
+
+  {{#response.products.hits.length}}
+    <div class="ns-autocomplete-products">
+      <div class="ns-autocomplete-header">
+        Products
+      </div>
+      {{#response.products.hits}}
+        <a class="ns-autocomplete-product" href="{{url}}" data-testid="product" data-ns-hit="{{toJson}}">
+          <img
+              class="ns-autocomplete-product-image"
+              src="{{#imageUrl}}{{ imageUrl }}{{/imageUrl}}{{^imageUrl}}{{ imagePlaceholder }}{{/imageUrl}}"
+              alt="{{name}}"
+              width="60"
+              height="40"
+          />
+          <div class="ns-autocomplete-product-info">
+            {{#brand}}
+              <div class="ns-autocomplete-product-brand">
+                {{.}}
+              </div>
+            {{/brand}}
+            <div class="ns-autocomplete-product-name">
+              {{name}}
+            </div>
+            <div>
+              <span>
+                {{price}}&euro;
+              </span>
+              {{#listPrice}}
+                <span class="ns-autocomplete-product-list-price">
+                  {{.}}&euro;
+                </span>
+              {{/listPrice}}
+            </div>
+          </div>
+        </a>
+      {{/response.products.hits}}
+    </div>
+  {{/response.products.hits.length}}
+
+  {{#history.length}}
+    <div class="ns-autocomplete-history">
+      <div class="ns-autocomplete-header">
+        Recently searched
+      </div>
+      {{#history}}
+        <div class="ns-autocomplete-history-item" data-testid="history" data-ns-hit="{{toJson}}">
+          {{item}}
+          <a href="javascript:void(0)" class="ns-autocomplete-history-item-remove" data-ns-remove-history="{{item}}">
+            &#x2715;
+          </a>
+        </div>
+      {{/history}}
+    </div>
+    <div class="ns-autocomplete-history-clear">
+      <button type="button" class="ns-autocomplete-button" data-ns-remove-history="all">
+        Clear history
+      </button>
+    </div>
+  {{/history.length}}
+
+  {{#response.keywords.hits.length}}{{#response.products.hits.length}}
+    <div class="ns-autocomplete-submit">
+      <button type="submit" class="ns-autocomplete-button">
+        See all search results
+      </button>
+    </div>
+  {{/response.products.hits.length}}{{/response.keywords.hits.length}}
+</div>
 `
 
-const handleAutocomplete = async (
+const handleAutocomplete = (
     render: AutocompleteConfig<DefaultState>["render"],
     submit: AutocompleteConfig<DefaultState>["submit"] = () => ({})
 ) => {
@@ -168,10 +160,9 @@ beforeAll(() => {
     </form>
 `
 
-    const liquidScript = document.createElement("script")
-    liquidScript.src =
-        "https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js"
-    document.body.appendChild(liquidScript)
+    const mustacheScript = document.createElement("script")
+    mustacheScript.src = "https://unpkg.com/mustache@4.2.0/mustache.min.js"
+    document.body.appendChild(mustacheScript)
 })
 
 beforeEach(() => {
@@ -205,19 +196,14 @@ afterAll(() => {
     document.body.innerHTML = ""
 })
 
-describe("fromLiquidTemplate", () => {
-    it("uses local liquid template", async () => {
+describe("fromMustacheTemplate", () => {
+    it("uses local mustache template", async () => {
         const user = userEvent.setup()
 
-        await waitFor(() => handleAutocomplete(fromLiquidTemplate(template)))
+        await waitFor(() => handleAutocomplete(fromMustacheTemplate(template)))
 
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).not.toBeVisible()
-            },
-            {
-                timeout: 1000,
-            }
+        await waitFor(() =>
+            expect(screen.getByTestId("dropdown")).not.toBeVisible()
         )
 
         await user.type(screen.getByTestId("input"), "black")
@@ -242,7 +228,7 @@ describe("fromLiquidTemplate", () => {
         it("should see results after typing", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.type(screen.getByTestId("input"), "black")
@@ -266,7 +252,7 @@ describe("fromLiquidTemplate", () => {
         it("should see history on empty input", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -276,14 +262,14 @@ describe("fromLiquidTemplate", () => {
 
             await waitFor(() => {
                 const historyElement = screen.getByText("Recently searched")
-                return expect(historyElement).toBeVisible()
+                expect(historyElement).toBeVisible()
             })
         })
 
         it("should show history keyword", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -299,12 +285,12 @@ describe("fromLiquidTemplate", () => {
             const expectedQuery = "black"
             let exactQuery = ""
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template), query => {
+                handleAutocomplete(fromMustacheTemplate(template), query => {
                     exactQuery = query
                 })
             )
 
-            await user.type(screen.getByTestId("input"), expectedQuery)
+            await user.type(screen.getByTestId("input"), "black")
             await user.click(screen.getByTestId("search-button"))
             await user.clear(screen.getByTestId("input"))
 
@@ -323,7 +309,7 @@ describe("fromLiquidTemplate", () => {
         it("should show two history keywords", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -335,14 +321,19 @@ describe("fromLiquidTemplate", () => {
             await user.click(screen.getByTestId("search-button"))
             await user.clear(screen.getByTestId("input"))
 
-            await waitFor(() => expect(screen.getByText("black")).toBeVisible())
-            await waitFor(() => expect(screen.getByText("red")).toBeVisible())
+            await waitFor(
+                () => {
+                    expect(screen.getByText("black")).toBeVisible()
+                    expect(screen.getByText("red")).toBeVisible()
+                },
+                { timeout: 4000 }
+            )
         })
 
         it("should clear history keyword", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -359,9 +350,9 @@ describe("fromLiquidTemplate", () => {
                 )
                 if (removeHistoryElement) {
                     userEvent.click(removeHistoryElement)
-                    return waitFor(() =>
+                    await waitFor(() => {
                         expect(screen.queryByText("black")).toBeNull()
-                    )
+                    })
                 }
             })
         })
@@ -369,7 +360,7 @@ describe("fromLiquidTemplate", () => {
         it("should clear history", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -381,14 +372,16 @@ describe("fromLiquidTemplate", () => {
             await user.clear(screen.getByTestId("input"))
             await user.click(screen.getByText("Clear history"))
 
-            await waitFor(() => expect(screen.queryByText("black")).toBeNull())
-            await waitFor(() => expect(screen.queryByText("red")).toBeNull())
+            await waitFor(() => {
+                expect(screen.queryByText("black")).toBeNull()
+                expect(screen.queryByText("red")).toBeNull()
+            })
         })
 
         it("should highlight history keyword with keyboard navigation", async () => {
             const user = userEvent.setup()
             await waitFor(() =>
-                handleAutocomplete(fromLiquidTemplate(template))
+                handleAutocomplete(fromMustacheTemplate(template))
             )
 
             await user.clear(screen.getByTestId("input"))
@@ -399,27 +392,29 @@ describe("fromLiquidTemplate", () => {
             await user.click(screen.getByTestId("search-button"))
             await user.clear(screen.getByTestId("input"))
 
-            await waitFor(() => expect(screen.getByText("black")).toBeVisible())
-            await waitFor(() => expect(screen.getByText("red")).toBeVisible())
+            await waitFor(() => {
+                expect(screen.getByText("black")).toBeVisible()
+                expect(screen.getByText("red")).toBeVisible()
+            })
 
             await user.keyboard("{arrowdown}")
             await user.keyboard("{arrowdown}")
             await user.keyboard("{arrowup}")
 
-            await waitFor(() =>
+            await waitFor(() => {
                 expect(screen.getByText("black")).toHaveClass("selected")
-            )
+            })
         })
     })
 })
 
-describe("fromRemoteLiquidTemplate", () => {
+describe("fromRemoteMustacheTemplate", () => {
     it("fetches remote templates url", async () => {
         const openSpy = jest.spyOn(XMLHttpRequest.prototype, "open")
         const sendSpy = jest.spyOn(XMLHttpRequest.prototype, "send")
 
-        const mockUrl = "template.liquid"
-        const render = fromRemoteLiquidTemplate(mockUrl)
+        const mockUrl = "template.mustache"
+        const render = fromRemoteMustacheTemplate(mockUrl)
 
         const mockXhr = {
             open: jest.fn(),

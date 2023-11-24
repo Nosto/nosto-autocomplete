@@ -41,8 +41,8 @@ export class SimplePromise<T> implements PromiseLike<T> {
     then<TResult1 = T, TResult2 = never>(
         onfulfilled?:
             | ((value: T) => TResult1 | PromiseLike<TResult1>)
-            | undefined
-            | null,
+            | null
+            | undefined,
         onrejected?:
             | ((reason: unknown) => TResult2 | PromiseLike<TResult2>)
             | undefined
