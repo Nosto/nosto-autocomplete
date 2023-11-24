@@ -1,17 +1,10 @@
 import { AnyPromise } from './utils/promise'
 import { DefaultState } from './state'
+import Mustache from 'mustache'
 
-type Mustache = {
-    render(
-        template: string,
-        view: unknown,
-        partials?: unknown,
-        config?: unknown,
-    ): string
-}
 declare global {
     interface Window {
-        Mustache?: Mustache
+        Mustache?: typeof Mustache
     }
 }
 
@@ -31,7 +24,7 @@ export function fromMustacheTemplate(template: string) {
     }
 
     return (container: HTMLElement, state: object) => {
-        container.innerHTML = (window.Mustache as Mustache).render(template, {
+        container.innerHTML = window.Mustache.render(template, {
             ...state,
             imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
             toJson: function () {

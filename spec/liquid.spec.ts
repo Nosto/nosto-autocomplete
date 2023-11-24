@@ -1,13 +1,24 @@
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import searchResponse from "./response/search.json"
-import { autocomplete } from "../src"
+import { AutocompleteConfig, DefaultState, NostoClient, autocomplete } from "../src"
 
 import "@testing-library/jest-dom"
 import {
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
 } from "../src/entries/liquid"
+
+interface WindowWithNostoJS extends Window {
+    nostojs: jest.Mock<
+        unknown,
+        [
+            callback: (api: {
+                search: jest.Mock<ReturnType<NostoClient["search"]>>
+            }) => unknown,
+        ]
+    >
+}
 
 const template = `
     {% assign hasKeywords = response.keywords.hits.length > 0 %}
@@ -109,8 +120,8 @@ const template = `
 `
 
 const handleAutocomplete = async (
-    render: any,
-    submit: (query: string) => any = () => ({})
+    render: AutocompleteConfig<DefaultState>["render"],
+    submit: AutocompleteConfig<DefaultState>["submit"] = () => ({})
 ) => {
     autocomplete({
         fetch: {
@@ -156,33 +167,44 @@ function setup() {
     document.body.appendChild(liquidScript)
 }
 
-describe("fromLiquidTemplate", () => {
-    const w = window as any
+const w = window as unknown as WindowWithNostoJS
 
-    beforeAll(() => {
-        setup()
-    })
+beforeAll(() => {
+    setup()
+})
 
-    beforeEach(() => {
-        const searchSpy = jest.fn(() => Promise.resolve(searchResponse))
-        w.nostojs = jest.fn((callback: (api: any) => unknown) =>
+beforeEach(() => {
+    const searchSpy = jest.fn(
+        () =>
+            Promise.resolve(searchResponse) as unknown as ReturnType<
+                NostoClient["search"]
+            >
+    )
+
+    w.nostojs = jest.fn(
+        (
+            callback: (api: {
+                search: jest.Mock<ReturnType<NostoClient["search"]>>
+            }) => unknown
+        ) =>
             callback({
                 search: searchSpy,
             })
-        )
-    })
+    )
+})
 
-    afterEach(() => {
-        jest.restoreAllMocks()
-        const dropdown = screen.getByTestId("dropdown")
-        const newElement = dropdown.cloneNode(true)
-        dropdown?.parentNode?.replaceChild(newElement, dropdown)
-    })
+afterEach(() => {
+    jest.restoreAllMocks()
+    const dropdown = screen.getByTestId("dropdown")
+    const newElement = dropdown.cloneNode(true)
+    dropdown?.parentNode?.replaceChild(newElement, dropdown)
+})
 
-    afterAll(() => {
-        document.body.innerHTML = ""
-    })
+afterAll(() => {
+    document.body.innerHTML = ""
+})
 
+describe("fromLiquidTemplate", () => {
     it("uses local liquid template", async () => {
         const user = userEvent.setup()
 
@@ -391,32 +413,6 @@ describe("fromLiquidTemplate", () => {
 })
 
 describe("fromRemoteLiquidTemplate", () => {
-    const w = window as any
-
-    beforeAll(() => {
-        setup()
-    })
-
-    beforeEach(() => {
-        const searchSpy = jest.fn(() => Promise.resolve(searchResponse))
-        w.nostojs = jest.fn((callback: (api: any) => unknown) =>
-            callback({
-                search: searchSpy,
-            })
-        )
-    })
-
-    afterEach(() => {
-        jest.restoreAllMocks()
-        const dropdown = screen.getByTestId("dropdown")
-        const newElement = dropdown.cloneNode(true)
-        dropdown?.parentNode?.replaceChild(newElement, dropdown)
-    })
-
-    afterAll(() => {
-        document.body.innerHTML = ""
-    })
-
     it("fetches remote templates url", async () => {
         const openSpy = jest.spyOn(XMLHttpRequest.prototype, "open")
         const sendSpy = jest.spyOn(XMLHttpRequest.prototype, "send")

@@ -108,7 +108,7 @@ describe("SimplePromise", () => {
             }, 0)
         })
 
-        let error: any
+        let error: unknown
 
         promise.then(
             () => {

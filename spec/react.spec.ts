@@ -4,24 +4,29 @@ import {
     waitForElementToBeRemoved,
 } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
-import { autocomplete } from "../src"
+import {
+    AutocompleteConfig,
+    DefaultState,
+    NostoClient,
+    autocomplete,
+} from "../src"
 import "@testing-library/jest-dom"
 import { Autocomplete } from "./components/Autocomplete"
 import searchResponse from "./response/search.json"
+import type React from "react"
+import type ReactDOM from "react-dom/client"
 
-declare global {
-    interface Window {
-        React?: {
-            createElement: (el: any, props: unknown) => unknown
-        }
-        ReactDOM?: {
-            createRoot: (el: HTMLElement) => Root
-        }
-    }
-}
-
-type Root = {
-    render: (el: unknown) => void
+interface WindowWithNostoJS extends Window {
+    React?: typeof React
+    ReactDOM?: typeof ReactDOM
+    nostojs: jest.Mock<
+        unknown,
+        [
+            callback: (api: {
+                search: jest.Mock<ReturnType<NostoClient["search"]>>
+            }) => unknown,
+        ]
+    >
 }
 
 function setup() {
@@ -47,8 +52,12 @@ function setup() {
     document.body.appendChild(babelScript)
 }
 
-const handleAutocomplete = (submit: (query: string) => any = () => ({})) => {
-    let reactRoot: Root | null = null
+const w = window as unknown as WindowWithNostoJS
+
+const handleAutocomplete = (
+    submit: AutocompleteConfig<DefaultState>["submit"] = () => ({})
+) => {
+    let reactRoot: ReactDOM.Root | null = null
 
     autocomplete({
         fetch: {
@@ -76,43 +85,51 @@ const handleAutocomplete = (submit: (query: string) => any = () => ({})) => {
         dropdownSelector: "#search-results",
         render: function (container, state) {
             if (!reactRoot) {
-                reactRoot = window.ReactDOM?.createRoot(container) ?? null
+                reactRoot = w.ReactDOM?.createRoot(container) ?? null
             }
             reactRoot?.render(
-                window.React?.createElement(Autocomplete, state as unknown)
+                w.React?.createElement(Autocomplete, {
+                    history: state.history,
+                    response: {
+                        products: {
+                            hits: state.response?.products?.hits ?? [],
+                        },
+                        keywords: {
+                            hits: state.response?.keywords?.hits ?? [],
+                        },
+                    },
+                })
             )
         },
         submit,
     })
 }
 
-describe("autocomplete", () => {
-    const w = window as any
+beforeAll(() => {
+    setup()
+})
 
-    beforeAll(() => {
-        setup()
-    })
+beforeEach(() => {
+    const searchSpy = jest.fn(
+        () =>
+            Promise.resolve(searchResponse) as unknown as ReturnType<
+                NostoClient["search"]
+            >
+    )
 
-    beforeEach(() => {
-        const searchSpy = jest.fn(() => Promise.resolve(searchResponse))
-        w.nostojs = jest.fn((callback: (api: any) => unknown) =>
+    w.nostojs = jest.fn(
+        (
+            callback: (api: {
+                search: jest.Mock<ReturnType<NostoClient["search"]>>
+            }) => unknown
+        ) =>
             callback({
                 search: searchSpy,
             })
-        )
-    })
+    )
+})
 
-    afterEach(() => {
-        jest.restoreAllMocks()
-        const dropdown = screen.getByTestId("dropdown")
-        const newElement = dropdown.cloneNode(true)
-        dropdown?.parentNode?.replaceChild(newElement, dropdown)
-    })
-
-    afterAll(() => {
-        document.body.innerHTML = ""
-    })
-
+describe("autocomplete", () => {
     it("renders autocomplete", async () => {
         const user = userEvent.setup()
 
@@ -141,19 +158,6 @@ describe("autocomplete", () => {
     })
 
     describe("history", () => {
-        beforeEach(() => {
-            // Reset the entire DOM and perform necessary setup steps
-            jest.clearAllMocks()
-        })
-
-        afterEach(() => {
-            // Clean up after each test
-            jest.restoreAllMocks()
-            const dropdown = screen.getByTestId("dropdown")
-            const newElement = dropdown.cloneNode(true)
-            dropdown?.parentNode?.replaceChild(newElement, dropdown)
-        })
-
         it("should see results after typing", async () => {
             const user = userEvent.setup()
             handleAutocomplete()
