@@ -29,35 +29,12 @@ interface WindowWithNostoJS extends Window {
     >
 }
 
-function setup() {
-    document.body.innerHTML = `
-        <form id="search-form">
-            <input type="text" id="search" placeholder="search" data-testid="input" />
-            <button type="submit" data-testid="search-button">Search</button>
-            <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
-        </form>
-    `
-
-    const resctScript = document.createElement("script")
-    resctScript.src = "https://unpkg.com/react@18/umd/react.production.min.js"
-    document.body.appendChild(resctScript)
-
-    const reactDomScript = document.createElement("script")
-    reactDomScript.src =
-        "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-    document.body.appendChild(reactDomScript)
-
-    const babelScript = document.createElement("script")
-    babelScript.src = "https://unpkg.com/babel-standalone@6/babel.min.js"
-    document.body.appendChild(babelScript)
-}
-
 const w = window as unknown as WindowWithNostoJS
 
 const handleAutocomplete = (
     submit: AutocompleteConfig<DefaultState>["submit"] = () => ({})
 ) => {
-    let reactRoot: ReactDOM.Root | null = null
+    let reactRoot: ReactDOM.Root | undefined
 
     autocomplete({
         fetch: {
@@ -85,7 +62,7 @@ const handleAutocomplete = (
         dropdownSelector: "#search-results",
         render: function (container, state) {
             if (!reactRoot) {
-                reactRoot = w.ReactDOM?.createRoot(container) ?? null
+                reactRoot = w.ReactDOM?.createRoot(container)
             }
             reactRoot?.render(
                 w.React?.createElement(Autocomplete, {
@@ -106,7 +83,26 @@ const handleAutocomplete = (
 }
 
 beforeAll(() => {
-    setup()
+    document.body.innerHTML = `
+    <form id="search-form">
+        <input type="text" id="search" placeholder="search" data-testid="input" />
+        <button type="submit" data-testid="search-button">Search</button>
+        <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
+    </form>
+`
+
+    const resctScript = document.createElement("script")
+    resctScript.src = "https://unpkg.com/react@18/umd/react.production.min.js"
+    document.body.appendChild(resctScript)
+
+    const reactDomScript = document.createElement("script")
+    reactDomScript.src =
+        "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    document.body.appendChild(reactDomScript)
+
+    const babelScript = document.createElement("script")
+    babelScript.src = "https://unpkg.com/babel-standalone@6/babel.min.js"
+    document.body.appendChild(babelScript)
 })
 
 beforeEach(() => {
@@ -127,6 +123,18 @@ beforeEach(() => {
                 search: searchSpy,
             })
     )
+})
+
+afterEach(() => {
+    jest.restoreAllMocks()
+    const dropdown = screen.getByTestId("dropdown")
+    const newElement = dropdown.cloneNode(true)
+    dropdown?.parentNode?.replaceChild(newElement, dropdown)
+})
+
+
+afterAll(() => {
+    document.body.innerHTML = ""
 })
 
 describe("autocomplete", () => {

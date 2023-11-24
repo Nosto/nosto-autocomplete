@@ -149,24 +149,20 @@ const handleAutocomplete = (
     })
 }
 
-function setup() {
+const w = window as unknown as WindowWithNostoJS
+
+beforeAll(() => {
     document.body.innerHTML = `
-        <form id="search-form">
-            <input type="text" id="search" placeholder="search" data-testid="input" />
-            <button type="submit" data-testid="search-button">Search</button>
-            <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
-        </form>
-    `
+    <form id="search-form">
+        <input type="text" id="search" placeholder="search" data-testid="input" />
+        <button type="submit" data-testid="search-button">Search</button>
+        <div id="search-results" class="ns-autocomplete" data-testid="dropdown"></div>
+    </form>
+`
 
     const mustacheScript = document.createElement("script")
     mustacheScript.src = "https://unpkg.com/mustache@4.2.0/mustache.min.js"
     document.body.appendChild(mustacheScript)
-}
-
-const w = window as unknown as WindowWithNostoJS
-
-beforeAll(() => {
-    setup()
 })
 
 beforeEach(() => {
