@@ -16,6 +16,10 @@ beforeAll(() => {
     `
 })
 
+afterAll(() => {
+    document.body.innerHTML = ""
+})
+
 describe("autocomplete", () => {
     it("supports custom fetch function", async () => {
         const user = userEvent.setup()

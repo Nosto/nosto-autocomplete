@@ -23,19 +23,17 @@ declare global {
 export function fromLiquidTemplate<State extends object = DefaultState>(
     template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-    const LiquidInstance =
-        "liquidjs" in window ? window.liquidjs?.Liquid : undefined
-    const engine =
-        LiquidInstance !== undefined ? new LiquidInstance() : undefined
+    const LiquidFactory = window.liquidjs?.Liquid
+    const instance = LiquidFactory ? new LiquidFactory() : undefined
 
-    if (engine === undefined) {
+    if (instance === undefined) {
         throw new Error(
             "Liquid is not defined. Please include the Liquid library in your page."
         )
     }
 
     return (container, state) => {
-        container.innerHTML = engine.parseAndRenderSync(template, state)
+        container.innerHTML = instance.parseAndRenderSync(template, state)
 
         return AnyPromise.resolve(undefined)
     }
