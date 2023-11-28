@@ -51,7 +51,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base",
+    "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base",
     "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/nosto-autocomplete.d.ts src/entries/base.ts",
     "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts",
     "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts",
