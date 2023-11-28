@@ -61,6 +61,11 @@ export interface NostoClient {
             redirect?: boolean
         }
     ): PromiseLike<SearchResult>
+    recordSearchClick(
+        type: "serp" | "autocomplete" | "category",
+        hit: { url?: string, keyword?: string }
+    ): void
+    recordSearchSubmit(query: string): void
 }
 
 /**

@@ -1,4 +1,4 @@
-import { AutocompleteConfig } from "."
+import { AutocompleteConfig, getNostoClient } from "."
 import { defaultConfig } from "./config"
 import { Dropdown } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "./state"
@@ -7,6 +7,7 @@ import { bindInput } from "./utils/input"
 import { History } from "./history"
 import { Limiter, LimiterError } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
+import { trackGaPageView } from "./utils/ga"
 
 /**
  * @group Autocomplete
@@ -35,10 +36,32 @@ export function autocomplete<State = DefaultState>(
                 input: inputElement,
             })
 
-            const submit = (value: string) => {
+            const submit = (
+                value: string,
+                hit?: { url?: string; keyword?: string },
+                options?: {
+                    elementClick: boolean
+                }
+            ) => {
+                const { elementClick = false } = options || {}
+
                 if (historyEnabled) {
                     actions.addHistoryItem(value)
                 }
+                if (config.nostoAnalytics) {
+                    getNostoClient().then(api => {
+                        api?.recordSearchSubmit?.(value)
+                        hit && elementClick &&
+                            api?.recordSearchClick?.("autocomplete", hit)
+                    })
+                }
+
+                if (config.googleAnalytics) {
+                    trackGaPageView({
+                        delay: true,
+                    })
+                }
+
                 if (typeof config?.submit === "function") {
                     config.submit(value)
                 }

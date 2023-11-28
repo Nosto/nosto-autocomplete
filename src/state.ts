@@ -55,7 +55,7 @@ export const getStateActions = <State>({
             return getNostoClient()
                 .then(api => {
                     return api.search(query, {
-                        track: "autocomplete",
+                        track: config.nostoAnalytics ? "autocomplete" : undefined,
                     })
                 })
                 .then(

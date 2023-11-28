@@ -41,10 +41,20 @@ export interface AutocompleteConfig<State> {
      * Max number of history items to show
      */
     historySize?: number
+    /**
+     * enable Nosto Analytics
+     */
+    nostoAnalytics?: boolean
+    /**
+     * Enable Google Analytics
+     */
+    googleAnalytics?: boolean
 }
 
 export const defaultConfig = {
     minQueryLength: 2,
     historyEnabled: true,
     historySize: 5,
+    nostoAnalytics: true,
+    googleAnalytics: true,
 }

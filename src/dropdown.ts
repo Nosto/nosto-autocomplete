@@ -14,7 +14,9 @@ export class Dropdown<State> {
             container: HTMLElement,
             state: State
         ) => void | PromiseLike<void>,
-        protected submit: (inputValue: string) => unknown,
+        protected submit: <T>(inputValue: string, hit?: T, options?: {
+            elementClick: boolean
+        }) => unknown,
         protected updateInput: (inputValue: string) => void,
         protected onClickBindings?: {
             [key: string]: (
@@ -40,20 +42,23 @@ export class Dropdown<State> {
 
         if (hit) {
             try {
-                const parsedHit = JSON.parse(hit)
+                const parsedHit:
+                    | { item?: string; keyword?: string; url?: string }
+                    | undefined
+                    | null = JSON.parse(hit)
                 this.hide()
 
-                if (parsedHit.item) {
-                    this.submit(parsedHit.item)
+                if (parsedHit?.item) {
+                    this.submit(parsedHit.item, hit, { elementClick: true })
                     return
                 }
 
-                if (parsedHit.keyword) {
-                    this.submit(parsedHit.keyword)
+                if (parsedHit?.keyword) {
+                    this.submit(parsedHit.keyword, hit, { elementClick: true })
                     return
                 }
 
-                if (parsedHit.url) {
+                if (parsedHit?.url) {
                     location.href = parsedHit.url
                 }
             } catch (error) {
@@ -229,7 +234,7 @@ export class Dropdown<State> {
 
     resetHighlight(): void {
         if (this.hasHighlight()) {
-            this.elements[this.selectedIndex]?.classList.remove('selected')
+            this.elements[this.selectedIndex]?.classList.remove("selected")
             this.selectedIndex = -1
         }
     }
