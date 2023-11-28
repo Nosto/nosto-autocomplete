@@ -1,15 +1,17 @@
 import { findAll } from "./dom"
 
+type Callbacks = {
+    onSubmit?: (value: string) => void
+    onInput?: (value: string) => void
+    onFocus?: (value: string) => void
+    onBlur?: (value: string) => void
+    onKeyDown?: (value: string, key: string) => void
+    onClick?: (value: string) => void
+}
+
 export function bindInput(
     selector: string | HTMLInputElement,
-    callbacks: {
-        onSubmit?: (value: string) => void
-        onInput?: (value: string) => void
-        onFocus?: (value: string) => void
-        onBlur?: (value: string) => void
-        onKeyDown?: (value: string, key: string) => void
-        onClick?: (value: string) => void
-    }
+    callbacks: Callbacks
 ): {
     destroy: () => void
 } {
@@ -24,9 +26,9 @@ export function bindInput(
             const onKeyDown = (event: KeyboardEvent) => {
                 callbacks.onKeyDown?.(el.value, event.key)
                 if (
-                    event.key === 'ArrowDown' ||
-                    event.key === 'ArrowUp' ||
-                    event.key === 'Enter'
+                    event.key === "ArrowDown" ||
+                    event.key === "ArrowUp" ||
+                    event.key === "Enter"
                 ) {
                     event.preventDefault()
                 }

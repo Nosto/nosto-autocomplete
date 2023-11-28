@@ -41,7 +41,7 @@ export interface NostoSession {
     viewOther(): SessionAction
     viewSearch(query: string): SessionAction
     viewCart(): SessionAction
-  }
+}
 
 /**
  * @group Nosto Client

@@ -1,11 +1,11 @@
 import { AutocompleteConfig } from "."
 import { defaultConfig } from "./config"
-import { Dropdown } from "./dropdown"
+import { createDropdown, Dropdown } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "./state"
 import { bindClickOutside, findAll } from "./utils/dom"
 import { bindInput } from "./utils/input"
-import { History } from "./history"
-import { Limiter, LimiterError } from "./utils/limiter"
+import { createHistory } from "./history"
+import { createLimiter, LimiterError } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
 
 /**
@@ -22,9 +22,9 @@ export function autocomplete<State = DefaultState>(
     const minQueryLength = config.minQueryLength ?? defaultConfig.minQueryLength
     const historyEnabled = config.historyEnabled ?? defaultConfig.historyEnabled
     const historySize = config.historySize ?? defaultConfig.historySize
-    const history = historyEnabled ? new History(historySize) : undefined
+    const history = historyEnabled ? createHistory(historySize) : undefined
 
-    const limiter = new Limiter(300, 1)
+    const limiter = createLimiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         inputElement => {
@@ -173,7 +173,7 @@ function createInputDropdown<State = DefaultState>({
 
     const dropdownElement = dropdownElements[0]
 
-    return new Dropdown<State>(
+    return createDropdown<State>(
         dropdownElement,
         actions.updateState(input.value).then(
             state => state,

@@ -2,54 +2,54 @@ import { DefaultState } from "./state"
 
 type Items = NonNullable<DefaultState["history"]>
 
-export class History {
-    private localStorageKey = "nostoAutocomplete:history"
-    private items = [] as unknown as Items
+export function createHistory(size: number) {
+    const localStorageKey = "nostoAutocomplete:history"
+    let items = get()
 
-    constructor(protected size: number) {
-        this.items = this.get()
-    }
-
-    private get(): Items {
+    function get(): Items {
         try {
             return (
-                JSON.parse(
-                    localStorage.getItem(this.localStorageKey) ?? "[]"
-                ) ?? []
+                JSON.parse(localStorage.getItem(localStorageKey) ?? "[]") ?? []
             )
         } catch (err) {
             console.error("Could not get history items.", err)
-            return [] as unknown as Items
+            return [] as Items
         }
     }
 
-    private set(data: Items): void {
+    function set(data: Items) {
         try {
-            localStorage.setItem(this.localStorageKey, JSON.stringify(data))
+            localStorage.setItem(localStorageKey, JSON.stringify(data))
         } catch (err) {
             console.error("Could not set history items.", err)
         }
     }
 
-    add(item: string): void {
-        this.items = [
+    function add(item: string) {
+        set(items = [
             { item },
-            ...(this.items?.filter(v => v.item !== item) || []),
-        ].slice(0, this.size)
-        this.set(this.items)
+            ...(items?.filter(v => v.item !== item) || []),
+        ].slice(0, size))
     }
 
-    clear(): void {
-        this.items = []
-        this.set(this.items)
+    function clear() {
+        set(items = [])
     }
 
-    remove(item: string): void {
-        this.items = this.items.filter(v => v.item !== item)
-        this.set(this.items)
+    function remove(item: string) {
+        set(items = items.filter(v => v.item !== item))
     }
 
-    getItems(): Items {
-        return this.items
+    function getItems() {
+        return items
+    }
+
+    return {
+        add,
+        clear,
+        remove,
+        getItems,
     }
 }
+
+export type History = ReturnType<typeof createHistory>
