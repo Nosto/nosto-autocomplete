@@ -14,15 +14,14 @@ export class Dropdown<State> {
             container: HTMLElement,
             state: State
         ) => void | PromiseLike<void>,
-        protected submit: <T>(inputValue: string, hit?: T, options?: {
-            elementClick: boolean
-        }) => unknown,
+        protected submit: (inputValue: string) => unknown,
         protected updateInput: (inputValue: string) => void,
         protected onClickBindings?: {
-            [key: string]: (
-                data: string | undefined,
+            [key: string]: (obj: {
+                data: string | undefined
                 el: HTMLElement
-            ) => PromiseLike<State> | undefined
+                update: (state: State) => void
+            }) => unknown
         }
     ) {
         AnyPromise.resolve(initialState)
@@ -41,28 +40,21 @@ export class Dropdown<State> {
         const hit = el?.dataset?.nsHit
 
         if (hit) {
-            try {
-                const parsedHit:
-                    | { item?: string; keyword?: string; url?: string }
-                    | undefined
-                    | null = JSON.parse(hit)
-                this.hide()
+            const parsedHit = parseHit(hit)
+            this.hide()
 
-                if (parsedHit?.item) {
-                    this.submit(parsedHit.item, hit, { elementClick: true })
-                    return
-                }
+            if (parsedHit?.item) {
+                this.submit(parsedHit.item)
+                return
+            }
 
-                if (parsedHit?.keyword) {
-                    this.submit(parsedHit.keyword, hit, { elementClick: true })
-                    return
-                }
+            if (parsedHit?.keyword) {
+                this.submit(parsedHit.keyword)
+                return
+            }
 
-                if (parsedHit?.url) {
-                    location.href = parsedHit.url
-                }
-            } catch (error) {
-                console.error("Could not parse [data-ns-hit]", error)
+            if (parsedHit?.url) {
+                location.href = parsedHit.url
             }
         }
     }
@@ -95,7 +87,11 @@ export class Dropdown<State> {
                         `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
                     ]
                 const onClick = () => {
-                    callback(data, el)?.then(state => this.update(state))
+                    callback({
+                        data,
+                        el,
+                        update: this.update.bind(this),
+                    })
                 }
                 el.addEventListener("click", onClick)
                 this.unbindCallbacks.push(() => {
@@ -127,20 +123,16 @@ export class Dropdown<State> {
             const hit = this.elements[index]?.dataset?.nsHit
 
             if (hit) {
-                try {
-                    const parsedHit = JSON.parse(hit)
+                const parsedHit = parseHit(hit)
 
-                    if (parsedHit.item) {
-                        this.updateInput(parsedHit.item)
-                        return
-                    }
+                if (parsedHit.item) {
+                    this.updateInput(parsedHit.item)
+                    return
+                }
 
-                    if (parsedHit.keyword) {
-                        this.updateInput(parsedHit.keyword)
-                        return
-                    }
-                } catch (error) {
-                    console.error("Could not parse [data-ns-hit]", error)
+                if (parsedHit.keyword) {
+                    this.updateInput(parsedHit.keyword)
+                    return
                 }
             }
         }
@@ -239,9 +231,29 @@ export class Dropdown<State> {
         }
     }
 
+    getHighlight(): HTMLElement | undefined {
+        return this.elements[this.selectedIndex]
+    }
+
     destroy(): void {
         this.dispose()
         this.isEmpty = true
         this.container.innerHTML = ""
+    }
+}
+
+interface Hit {
+    item?: string
+    keyword?: string
+    url?: string
+}
+
+export function parseHit(hit: string): Hit {
+    try {
+        const parsedHit: Hit | undefined | null = JSON.parse(hit)
+        return parsedHit ?? {}
+    } catch (error) {
+        console.warn("Could not parse hit", error)
+        return {}
     }
 }

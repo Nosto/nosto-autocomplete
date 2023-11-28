@@ -35,12 +35,10 @@ export const getStateActions = <State>({
     config,
     history,
     input,
-    minQueryLength,
 }: {
-    config: AutocompleteConfig<State>
+    config: Required<AutocompleteConfig<State>>
     history?: History
     input: HTMLInputElement
-    minQueryLength: number
 }): StateActions<State> => {
     let cancellable: Cancellable<State> | undefined
 
@@ -55,7 +53,9 @@ export const getStateActions = <State>({
             return getNostoClient()
                 .then(api => {
                     return api.search(query, {
-                        track: config.nostoAnalytics ? "autocomplete" : undefined,
+                        track: config.nostoAnalytics
+                            ? "autocomplete"
+                            : undefined,
                     })
                 })
                 .then(
@@ -81,7 +81,7 @@ export const getStateActions = <State>({
         updateState: (inputValue?: string): PromiseLike<State> => {
             cancellable?.cancel()
 
-            if (inputValue && inputValue.length >= minQueryLength) {
+            if (inputValue && inputValue.length >= config.minQueryLength) {
                 cancellable = makeCancellable(fetchState(inputValue, config))
                 return cancellable.promise.then(
                     s => s as State,

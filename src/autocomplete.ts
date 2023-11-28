@@ -1,13 +1,12 @@
 import { AutocompleteConfig, getNostoClient } from "."
 import { defaultConfig } from "./config"
-import { Dropdown } from "./dropdown"
+import { Dropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "./state"
 import { bindClickOutside, findAll } from "./utils/dom"
 import { bindInput } from "./utils/input"
 import { History } from "./history"
 import { Limiter, LimiterError } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
-import { trackGaPageView } from "./utils/ga"
 
 /**
  * @group Autocomplete
@@ -20,57 +19,45 @@ export function autocomplete<State = DefaultState>(
     open(): void
     close(): void
 } {
-    const minQueryLength = config.minQueryLength ?? defaultConfig.minQueryLength
-    const historyEnabled = config.historyEnabled ?? defaultConfig.historyEnabled
-    const historySize = config.historySize ?? defaultConfig.historySize
-    const history = historyEnabled ? new History(historySize) : undefined
+    const fullConfig: Required<AutocompleteConfig<State>> = {
+        ...defaultConfig,
+        ...config,
+    }
+
+    const history = fullConfig.historyEnabled
+        ? new History(fullConfig.historySize)
+        : undefined
 
     const limiter = new Limiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         inputElement => {
             const actions = getStateActions({
-                config,
-                minQueryLength,
+                config: fullConfig,
                 history,
                 input: inputElement,
             })
 
-            const submit = (
-                value: string,
-                hit?: { url?: string; keyword?: string },
-                options?: {
-                    elementClick: boolean
-                }
-            ) => {
-                const { elementClick = false } = options || {}
-
-                if (historyEnabled) {
+            const submit = (value: string) => {
+                if (fullConfig.historyEnabled) {
                     actions.addHistoryItem(value)
                 }
-                if (config.nostoAnalytics) {
+
+                if (fullConfig.nostoAnalytics) {
                     getNostoClient().then(api => {
                         api?.recordSearchSubmit?.(value)
-                        hit && elementClick &&
-                            api?.recordSearchClick?.("autocomplete", hit)
                     })
                 }
 
-                if (config.googleAnalytics) {
-                    trackGaPageView({
-                        delay: true,
-                    })
-                }
-
-                if (typeof config?.submit === "function") {
-                    config.submit(value)
+                if (typeof fullConfig?.submit === "function") {
+                    fullConfig.submit(value)
                 }
             }
 
             const dropdown = createInputDropdown({
                 input: inputElement,
                 config: {
-                    ...config,
+                    ...fullConfig,
                     submit,
                 },
                 actions,
@@ -127,6 +114,10 @@ export function autocomplete<State = DefaultState>(
                         }
                     } else if (key === "Enter") {
                         if (dropdown.isOpen() && dropdown.hasHighlight()) {
+                            const data = dropdown.getHighlight()?.dataset?.nsHit
+                            if (data) {
+                                trackClick({ config: fullConfig, data })
+                            }
                             dropdown.handleSubmit()
                         } else {
                             submit(inputElement.value)
@@ -206,13 +197,38 @@ function createInputDropdown<State = DefaultState>({
         config.submit,
         value => (input.value = value),
         {
-            removeHistory: function (data) {
+            removeHistory: function ({ data, update }) {
                 if (data === "all") {
-                    return actions.clearHistory()
+                    return actions.clearHistory().then(state => update(state))
                 } else if (data) {
-                    return actions.removeHistoryItem(data)
+                    return actions
+                        .removeHistoryItem(data)
+                        .then(state => update(state))
+                }
+            },
+            hit: function ({ data }) {
+                if (data) {
+                    trackClick({ config, data })
                 }
             },
         }
     )
+}
+
+function trackClick<State>({
+    config,
+    data,
+}: {
+    config: AutocompleteConfig<State>
+    data: string
+}) {
+    if (config.nostoAnalytics) {
+        const parsedHit = parseHit(data)
+
+        if (parsedHit) {
+            getNostoClient().then(api => {
+                api?.recordSearchClick?.("autocomplete", parsedHit)
+            })
+        }
+    }
 }
