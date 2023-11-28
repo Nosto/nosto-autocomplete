@@ -11,82 +11,71 @@ interface Event<T> {
 
 export class LimiterError extends Error {}
 
-export class Limiter<T = void> {
-    protected interval: number
-    protected noLimitCount: number
-    protected events: number[]
-    protected timeout: number | undefined
-    protected lastEvent: Event<T> | undefined
-    protected currentNumber: number
-    protected lastCompletedNumber: number
+export function createLimiter<T = void>(
+    interval: number,
+    noLimitCount: number
+) {
+    let currentNumber = 0
+    let lastCompletedNumber = 0
+    let events: number[] = []
+    let timeout: number | undefined
+    let lastEvent: Event<T> | undefined
 
-    constructor(interval: number, noLimitCount: number) {
-        this.interval = interval
-        this.noLimitCount = noLimitCount
-        this.events = []
-        this.timeout = undefined
-        this.lastEvent = undefined
-        this.currentNumber = 0
-        this.lastCompletedNumber = 0
-    }
-
-    limited(getPromise?: Callback<T>): PromiseLike<T> {
+    function limited(getPromise?: Callback<T>): PromiseLike<T> {
         return new AnyPromise<T>((resolve, reject) => {
-            this.currentNumber += 1
+            currentNumber += 1
             const event = {
                 getPromise,
                 resolve,
                 reject,
-                number: this.currentNumber,
+                number: currentNumber,
             } as Event<T>
-            this.removeOldEvents()
-            if (this.events.length < this.noLimitCount) {
-                this.execute(event)
+            removeOldEvents()
+            if (events.length < noLimitCount) {
+                execute(event)
             } else {
-                if (this.lastEvent !== undefined) {
-                    this.lastEvent.reject(
-                        new LimiterError("rate limit exceeded")
-                    )
+                if (lastEvent !== undefined) {
+                    lastEvent.reject(new LimiterError("rate limit exceeded"))
                 }
-                this.lastEvent = event
-                if (this.timeout === undefined) {
+                lastEvent = event
+                if (timeout === undefined) {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
-                    this.timeout = setTimeout(() => {
-                        this.timeoutAction()
-                    }, this.interval)
+                    timeout = setTimeout(() => {
+                        timeoutAction()
+                    }, interval)
                 }
             }
         })
     }
 
-    protected stop(): void {
-        if (this.timeout !== undefined) {
-            clearTimeout(this.timeout)
+    function stop() {
+        if (timeout !== undefined) {
+            clearTimeout(timeout)
         }
-        this.timeout = undefined
+        timeout = undefined
     }
 
-    protected removeOldEvents(): void {
-        const t = new Date().getTime() - this.interval * this.noLimitCount
-        this.events = this.events.filter(v => v >= t)
+    function removeOldEvents() {
+        const t = new Date().getTime() - interval * noLimitCount
+        events = events.filter(v => v >= t)
     }
 
-    protected timeoutAction(): void {
-        if (this.lastEvent !== undefined) {
-            this.execute(this.lastEvent)
-            this.lastEvent = undefined
-            this.stop()
+    function timeoutAction() {
+        if (lastEvent !== undefined) {
+            execute(lastEvent)
+            lastEvent = undefined
+            stop()
         }
     }
 
-    protected execute(event: Event<T>): void {
-        this.events.push(new Date().getTime())
+    function execute(event: Event<T>) {
+        events.push(new Date().getTime())
         if (event.getPromise !== undefined) {
             event.getPromise().then(
                 result => {
-                    if (event.number > this.lastCompletedNumber) {
-                        this.lastCompletedNumber = event.number
+                    if (event.number > lastCompletedNumber) {
+                        lastCompletedNumber = event.number
                         event.resolve(result)
                     } else {
                         event.reject(new LimiterError("Got newer event"))
@@ -99,5 +88,9 @@ export class Limiter<T = void> {
         } else {
             event.resolve()
         }
+    }
+
+    return {
+        limited,
     }
 }

@@ -132,7 +132,6 @@ afterEach(() => {
     dropdown?.parentNode?.replaceChild(newElement, dropdown)
 })
 
-
 afterAll(() => {
     document.body.innerHTML = ""
 })

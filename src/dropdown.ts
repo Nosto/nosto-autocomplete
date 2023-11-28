@@ -1,55 +1,41 @@
 import { AnyPromise } from "./utils/promise"
 
-export class Dropdown<State> {
-    private elements: HTMLElement[] = []
-    private unbindCallbacks: Array<() => void> = []
+type OnClickBindings<State> = {
+    [key: string]: (
+        data: string | undefined,
+        el: HTMLElement
+    ) => PromiseLike<State> | undefined
+}
 
-    protected isEmpty: boolean = true
-    protected selectedIndex: number = -1
+export function createDropdown<State>(
+    container: HTMLElement,
+    initialState: PromiseLike<State>,
+    render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
+    submit: (inputValue: string) => unknown,
+    updateInput: (inputValue: string) => void,
+    onClickBindings?: OnClickBindings<State>
+) {
+    let elements: HTMLElement[] = []
+    let unbindCallbacks: Array<() => void> = []
 
-    constructor(
-        public container: HTMLElement,
-        protected initialState: PromiseLike<State>,
-        protected render: (
-            container: HTMLElement,
-            state: State
-        ) => void | PromiseLike<void>,
-        protected submit: (inputValue: string) => unknown,
-        protected updateInput: (inputValue: string) => void,
-        protected onClickBindings?: {
-            [key: string]: (
-                data: string | undefined,
-                el: HTMLElement
-            ) => PromiseLike<State> | undefined
-        }
-    ) {
-        AnyPromise.resolve(initialState)
-            .then(state => this.render(this.container, state as State))
-            .then(() => {
-                // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
-                setTimeout(() => {
-                    this.loadElements()
-                    this.bindDataCallbacks()
-                    this.hide()
-                }, 0)
-            })
-    }
+    let isEmpty: boolean = true
+    let selectedIndex: number = -1
 
-    private handleElementSubmit(el: HTMLElement): void {
+    function handleElementSubmit(el: HTMLElement): void {
         const hit = el?.dataset?.nsHit
 
         if (hit) {
             try {
                 const parsedHit = JSON.parse(hit)
-                this.hide()
+                hide()
 
                 if (parsedHit.item) {
-                    this.submit(parsedHit.item)
+                    submit(parsedHit.item)
                     return
                 }
 
                 if (parsedHit.keyword) {
-                    this.submit(parsedHit.keyword)
+                    submit(parsedHit.keyword)
                     return
                 }
 
@@ -62,76 +48,76 @@ export class Dropdown<State> {
         }
     }
 
-    private loadElements() {
-        this.isEmpty = !this.container.innerHTML.trim()
+    function loadElements() {
+        isEmpty = !container.innerHTML.trim()
 
-        if (!this.isEmpty) {
-            this.elements = Array.from<HTMLElement>(
-                this.container.querySelectorAll("[data-ns-hit]")
+        if (!isEmpty) {
+            elements = Array.from<HTMLElement>(
+                container.querySelectorAll("[data-ns-hit]")
             ).map(el => {
-                this.bindElementSubmit(el)
+                bindElementSubmit(el)
                 return el
             })
         }
     }
 
-    private bindDataCallbacks() {
-        Object.entries(this.onClickBindings ?? {}).map(([key, callback]) => {
+    function bindDataCallbacks() {
+        Object.entries(onClickBindings ?? {}).map(([key, callback]) => {
             // Convert camelCase to kebab-case
             const dataKey = `[data-ns-${key
                 .replace(/([A-Z])/g, "-$1")
                 .toLowerCase()}]`
 
-            Array.from<HTMLElement>(
-                this.container.querySelectorAll(dataKey)
-            ).map(el => {
-                const data =
-                    el?.dataset?.[
-                        `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
-                    ]
-                const onClick = () => {
-                    callback(data, el)?.then(state => this.update(state))
+            Array.from<HTMLElement>(container.querySelectorAll(dataKey)).map(
+                el => {
+                    const data =
+                        el?.dataset?.[
+                            `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
+                        ]
+                    const onClick = () => {
+                        callback(data, el)?.then(state => update(state))
+                    }
+                    el.addEventListener("click", onClick)
+                    unbindCallbacks.push(() => {
+                        el.removeEventListener("click", onClick)
+                    })
                 }
-                el.addEventListener("click", onClick)
-                this.unbindCallbacks.push(() => {
-                    el.removeEventListener("click", onClick)
-                })
-            })
+            )
         })
     }
 
-    private bindElementSubmit(el: HTMLElement): void {
+    function bindElementSubmit(el: HTMLElement) {
         const onSubmit = () => {
-            this.handleElementSubmit(el)
+            handleElementSubmit(el)
         }
 
         el.addEventListener("click", onSubmit)
-        this.unbindCallbacks.push(() => {
+        unbindCallbacks.push(() => {
             el.removeEventListener("click", onSubmit)
         })
     }
 
-    private highlight(index: number, prevIndex?: number): void {
-        if (typeof prevIndex === "number" && this.elements[prevIndex]) {
-            this.elements[prevIndex].classList.remove("selected")
+    function highlight(index: number, prevIndex?: number) {
+        if (typeof prevIndex === "number" && elements[prevIndex]) {
+            elements[prevIndex].classList.remove("selected")
         }
 
-        if (typeof index === "number" && this.elements[index]) {
-            this.elements[index]?.classList.add("selected")
+        if (typeof index === "number" && elements[index]) {
+            elements[index]?.classList.add("selected")
 
-            const hit = this.elements[index]?.dataset?.nsHit
+            const hit = elements[index]?.dataset?.nsHit
 
             if (hit) {
                 try {
                     const parsedHit = JSON.parse(hit)
 
                     if (parsedHit.item) {
-                        this.updateInput(parsedHit.item)
+                        updateInput(parsedHit.item)
                         return
                     }
 
                     if (parsedHit.keyword) {
-                        this.updateInput(parsedHit.keyword)
+                        updateInput(parsedHit.keyword)
                         return
                     }
                 } catch (error) {
@@ -141,102 +127,126 @@ export class Dropdown<State> {
         }
     }
 
-    private dispose(): void {
-        this.resetHighlight()
-        this.elements = []
-        this.unbindCallbacks.forEach(v => v())
-        this.unbindCallbacks = []
+    function dispose() {
+        resetHighlight()
+        elements = []
+        unbindCallbacks.forEach(v => v())
+        unbindCallbacks = []
     }
 
-    update(state: State): void {
-        this.dispose()
+    function update(state: State) {
+        dispose()
 
-        AnyPromise.resolve(this.render(this.container, state)).then(() => {
+        Promise.resolve(render(container, state)).then(() => {
             // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
             setTimeout(() => {
-                this.loadElements()
-                this.bindDataCallbacks()
-                this.show()
+                loadElements()
+                bindDataCallbacks()
+                show()
             }, 0)
         })
     }
 
-    hide(): void {
-        this.resetHighlight()
-        this.container.style.display = "none"
+    function hide() {
+        resetHighlight()
+        container.style.display = "none"
     }
 
-    show(): void {
-        if (!this.isEmpty) {
-            this.container.style.display = ""
+    function show() {
+        if (!isEmpty) {
+            container.style.display = ""
         } else {
-            this.hide()
+            hide()
         }
     }
 
-    clear(): void {
-        this.dispose()
-        this.isEmpty = true
-        this.hide()
+    function clear() {
+        dispose()
+        isEmpty = true
+        hide()
     }
 
-    isOpen(): boolean {
-        return this.container.style.display !== "none"
+    function isOpen() {
+        return container.style.display !== "none"
     }
 
-    goDown(): void {
-        let prevIndex = this.selectedIndex
+    function goDown() {
+        let prevIndex = selectedIndex
 
-        if (this.selectedIndex === this.elements.length - 1) {
-            this.selectedIndex = 0
+        if (selectedIndex === elements.length - 1) {
+            selectedIndex = 0
         } else {
-            prevIndex = this.selectedIndex++
+            prevIndex = selectedIndex++
         }
 
-        this.highlight(this.selectedIndex, prevIndex)
+        highlight(selectedIndex, prevIndex)
     }
 
-    goUp(): void {
-        if (this.hasHighlight()) {
-            let prevIndex = this.selectedIndex
+    function goUp() {
+        if (hasHighlight()) {
+            let prevIndex = selectedIndex
 
-            if (this.selectedIndex === 0) {
-                this.selectedIndex = this.elements.length - 1
+            if (selectedIndex === 0) {
+                selectedIndex = elements.length - 1
             } else {
-                prevIndex = this.selectedIndex--
+                prevIndex = selectedIndex--
             }
 
-            this.highlight(this.selectedIndex, prevIndex)
+            highlight(selectedIndex, prevIndex)
         } else {
-            this.selectedIndex = this.elements.length - 1
-            this.highlight(this.selectedIndex)
+            selectedIndex = elements.length - 1
+            highlight(selectedIndex)
         }
     }
 
-    handleSubmit(): void {
-        if (
-            this.isOpen() &&
-            this.hasHighlight() &&
-            this.elements[this.selectedIndex]
-        ) {
-            this.handleElementSubmit(this.elements[this.selectedIndex])
+    function handleSubmit() {
+        if (isOpen() && hasHighlight() && elements[selectedIndex]) {
+            handleElementSubmit(elements[selectedIndex])
         }
     }
 
-    hasHighlight(): boolean {
-        return this.selectedIndex > -1
+    function hasHighlight() {
+        return selectedIndex > -1
     }
 
-    resetHighlight(): void {
-        if (this.hasHighlight()) {
-            this.elements[this.selectedIndex]?.classList.remove('selected')
-            this.selectedIndex = -1
+    function resetHighlight() {
+        if (hasHighlight()) {
+            elements[selectedIndex]?.classList.remove("selected")
+            selectedIndex = -1
         }
     }
 
-    destroy(): void {
-        this.dispose()
-        this.isEmpty = true
-        this.container.innerHTML = ""
+    function destroy() {
+        dispose()
+        isEmpty = true
+        container.innerHTML = ""
+    }
+
+    AnyPromise.resolve(initialState)
+        .then(state => render(container, state as State))
+        .then(() => {
+            // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+            setTimeout(() => {
+                loadElements()
+                bindDataCallbacks()
+                hide()
+            }, 0)
+        })
+
+    return {
+        update,
+        clear,
+        isOpen,
+        goDown,
+        goUp,
+        handleSubmit,
+        destroy,
+        show,
+        hide,
+        resetHighlight,
+        hasHighlight,
+        container
     }
 }
+
+export type Dropdown<T> = ReturnType<typeof createDropdown<T>>

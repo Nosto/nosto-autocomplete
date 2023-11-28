@@ -1,6 +1,6 @@
-import { AnyPromise } from './utils/promise'
-import { DefaultState } from './state'
-import Mustache from 'mustache'
+import { AnyPromise } from "./utils/promise"
+import { DefaultState } from "./state"
+import Mustache from "mustache"
 
 declare global {
     interface Window {
