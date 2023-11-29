@@ -4,8 +4,8 @@ type Callback<T> = () => PromiseLike<T>
 
 interface Event<T> {
     getPromise?: Callback<T>
-    resolve: (result?: T) => void
-    reject: (...args: unknown[]) => void
+    resolve(result?: T): void
+    reject(...args: unknown[]): void
     number: number
 }
 

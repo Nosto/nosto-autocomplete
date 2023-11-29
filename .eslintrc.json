@@ -16,5 +16,6 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "@typescript-eslint/method-signature-style": ["error", "method"]
     }
 }

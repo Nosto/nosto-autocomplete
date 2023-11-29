@@ -135,7 +135,10 @@ export class SimplePromise<T> implements PromiseLike<T> {
 
 export const AnyPromise = "Promise" in window ? window.Promise : SimplePromise
 
-export type Cancellable<T> = { promise: PromiseLike<T>; cancel: () => void }
+export type Cancellable<T> = { 
+    promise: PromiseLike<T>
+    cancel(): void 
+}
 
 export class CancellableError extends Error {}
 

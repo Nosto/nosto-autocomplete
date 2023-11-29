@@ -20,7 +20,7 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to render the dropdown
      */
-    render: (container: HTMLElement, state: State) => void | PromiseLike<void>
+    render(container: HTMLElement, state: State): void | PromiseLike<void>
     /**
      * Minimum length of the query before searching
      */
@@ -32,7 +32,7 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to submit the search
      */
-    submit: (query: string) => unknown
+    submit(query: string): unknown
     /**
      * Enable history
      */

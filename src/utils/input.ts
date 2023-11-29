@@ -1,19 +1,19 @@
 import { findAll } from "./dom"
 
 type Callbacks = {
-    onSubmit?: (value: string) => void
-    onInput?: (value: string) => void
-    onFocus?: (value: string) => void
-    onBlur?: (value: string) => void
-    onKeyDown?: (value: string, key: string) => void
-    onClick?: (value: string) => void
+    onSubmit?(value: string): void
+    onInput?(value: string): void
+    onFocus?(value: string): void
+    onBlur?(value: string): void
+    onKeyDown?(value: string, key: string): void
+    onClick?(value: string): void
 }
 
 export function bindInput(
     selector: string | HTMLInputElement,
     callbacks: Callbacks
 ): {
-    destroy: () => void
+    destroy(): void
 } {
     const target =
         selector instanceof HTMLInputElement
