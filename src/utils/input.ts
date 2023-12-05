@@ -1,15 +1,17 @@
 import { findAll } from "./dom"
 
+type Callbacks = {
+    onSubmit?: (value: string) => void
+    onInput?: (value: string) => void
+    onFocus?: (value: string) => void
+    onBlur?: (value: string) => void
+    onKeyDown?: (value: string, key: string) => void
+    onClick?: (value: string) => void
+}
+
 export function bindInput(
     selector: string | HTMLInputElement,
-    callbacks: {
-        onSubmit?: (value: string) => void
-        onInput?: (value: string) => void
-        onFocus?: (value: string) => void
-        onBlur?: (value: string) => void
-        onKeyDown?: (value: string, key: string) => void
-        onClick?: (value: string) => void
-    }
+    callbacks: Callbacks
 ): {
     destroy: () => void
 } {

@@ -1,13 +1,13 @@
 import { getNostoClient } from "./api/client"
 import { AutocompleteConfig, defaultConfig } from "./config"
-import { Dropdown, parseHit } from "./utils/dropdown"
+import { Dropdown, createDropdown, parseHit } from "./utils/dropdown"
 import { DefaultState, StateActions, getStateActions } from "./utils/state"
 import { bindClickOutside, findAll } from "./utils/dom"
 import { bindInput } from "./utils/input"
-import { History } from "./utils/history"
-import { Limiter, LimiterError } from "./utils/limiter"
+import { LimiterError, createLimiter } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
+import { createHistory } from './utils/history'
 
 /**
  * @group Autocomplete
@@ -26,10 +26,10 @@ export function autocomplete<State = DefaultState>(
     }
 
     const history = fullConfig.historyEnabled
-        ? new History(fullConfig.historySize)
+        ? createHistory(fullConfig.historySize)
         : undefined
 
-    const limiter = new Limiter(300, 1)
+    const limiter = createLimiter(300, 1)
 
     const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
         inputElement => {
@@ -179,7 +179,7 @@ function createInputDropdown<State = DefaultState>({
 
     const dropdownElement = dropdownElements[0]
 
-    return new Dropdown<State>(
+    return createDropdown<State>(
         dropdownElement,
         actions.updateState(input.value).then(
             state => state,
