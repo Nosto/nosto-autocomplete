@@ -1,10 +1,9 @@
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 
-import { autocomplete } from "../src"
-
 import "@testing-library/jest-dom"
 import { SimplePromise } from "../src/utils/promise"
+import { autocomplete } from '../src/autocomplete'
 
 beforeAll(() => {
     document.body.innerHTML = `

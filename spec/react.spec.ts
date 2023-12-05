@@ -4,17 +4,15 @@ import {
     waitForElementToBeRemoved,
 } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
-import {
-    AutocompleteConfig,
-    DefaultState,
-    NostoClient,
-    autocomplete,
-} from "../src"
 import "@testing-library/jest-dom"
 import { Autocomplete } from "./components/Autocomplete"
 import searchResponse from "./response/search.json"
 import type React from "react"
 import type ReactDOM from "react-dom/client"
+import { autocomplete } from '../src/autocomplete'
+import { NostoClient } from '../src/api/client'
+import { AutocompleteConfig } from '../src/config'
+import { DefaultState } from '../src/utils/state'
 
 interface WindowWithNostoJS extends Window {
     React?: typeof React

@@ -1,15 +1,13 @@
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import searchResponse from "./response/search.json"
+
+import "@testing-library/jest-dom"
 import {
     AutocompleteConfig,
     DefaultState,
     NostoClient,
     autocomplete,
-} from "../src"
-
-import "@testing-library/jest-dom"
-import {
     fromLiquidTemplate,
     fromRemoteLiquidTemplate,
 } from "../src/entries/liquid"

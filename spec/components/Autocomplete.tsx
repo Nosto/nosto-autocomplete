@@ -1,5 +1,5 @@
 import React from "react"
-import { SearchKeyword, SearchProduct } from "../../src"
+import { SearchKeyword, SearchProduct } from '../../src/api/search'
 
 interface AutocompleteProps {
     response?: {

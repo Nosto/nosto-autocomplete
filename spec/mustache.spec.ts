@@ -2,18 +2,15 @@ import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import searchResponse from "./response/search.json"
 
-import {
-    AutocompleteConfig,
-    DefaultState,
-    NostoClient,
-    autocomplete,
-} from "../src"
-
 import "@testing-library/jest-dom"
 import {
     fromMustacheTemplate,
     fromRemoteMustacheTemplate,
 } from "../src/mustache"
+import { NostoClient } from '../src/api/client'
+import { AutocompleteConfig } from '../src/config'
+import { DefaultState } from '../src/utils/state'
+import { autocomplete } from '../src/autocomplete'
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
