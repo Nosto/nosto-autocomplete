@@ -54,7 +54,7 @@
         {% for hit in response.products.hits %}
           <a
             class="ns-autocomplete-product"
-            href="{{ hit.url }}"
+            {% comment %} href="{{ hit.url }}" {% endcomment %}
             data-ns-hit="{{ hit | json | escape }}">
             <img
               class="ns-autocomplete-product-image"

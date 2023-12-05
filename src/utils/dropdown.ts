@@ -1,4 +1,4 @@
-import { AnyPromise } from "./utils/promise"
+import { AnyPromise } from "./promise"
 
 export class Dropdown<State> {
     private elements: HTMLElement[] = []
@@ -14,7 +14,7 @@ export class Dropdown<State> {
             container: HTMLElement,
             state: State
         ) => void | PromiseLike<void>,
-        protected submit: (inputValue: string) => unknown,
+        protected submit: (inputValue: string, redirect?: boolean) => unknown,
         protected updateInput: (inputValue: string) => void,
         protected onClickBindings?: {
             [key: string]: (obj: {
@@ -49,7 +49,11 @@ export class Dropdown<State> {
             }
 
             if (parsedHit?.keyword) {
-                this.submit(parsedHit.keyword)
+                this.submit(parsedHit.keyword, !!parsedHit?._redirect)
+
+                if (parsedHit?._redirect) {
+                    location.href = parsedHit._redirect
+                }
                 return
             }
 
@@ -246,6 +250,7 @@ interface Hit {
     item?: string
     keyword?: string
     url?: string
+    _redirect?: string
 }
 
 export function parseHit(hit: string): Hit {

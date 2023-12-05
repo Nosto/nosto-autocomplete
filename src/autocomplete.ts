@@ -1,12 +1,13 @@
-import { AutocompleteConfig, getNostoClient } from "."
-import { defaultConfig } from "./config"
-import { Dropdown, parseHit } from "./dropdown"
-import { DefaultState, StateActions, getStateActions } from "./state"
+import { getNostoClient } from "./api/client"
+import { AutocompleteConfig, defaultConfig } from "./config"
+import { Dropdown, parseHit } from "./utils/dropdown"
+import { DefaultState, StateActions, getStateActions } from "./utils/state"
 import { bindClickOutside, findAll } from "./utils/dom"
 import { bindInput } from "./utils/input"
-import { History } from "./history"
+import { History } from "./utils/history"
 import { Limiter, LimiterError } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
+import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
 
 /**
  * @group Autocomplete
@@ -38,28 +39,9 @@ export function autocomplete<State = DefaultState>(
                 input: inputElement,
             })
 
-            const submit = (value: string) => {
-                if (fullConfig.historyEnabled) {
-                    actions.addHistoryItem(value)
-                }
-
-                if (fullConfig.nostoAnalytics) {
-                    getNostoClient().then(api => {
-                        api?.recordSearchSubmit?.(value)
-                    })
-                }
-
-                if (typeof fullConfig?.submit === "function") {
-                    fullConfig.submit(value)
-                }
-            }
-
             const dropdown = createInputDropdown({
                 input: inputElement,
-                config: {
-                    ...fullConfig,
-                    submit,
-                },
+                config: fullConfig,
                 actions,
             })
 
@@ -96,7 +78,10 @@ export function autocomplete<State = DefaultState>(
                     dropdown.hide()
                 },
                 onSubmit() {
-                    submit(inputElement.value)
+                    submitWithContext({
+                        config: fullConfig,
+                        actions,
+                    })(inputElement.value)
                     dropdown.hide()
                 },
                 onKeyDown(_, key) {
@@ -116,11 +101,18 @@ export function autocomplete<State = DefaultState>(
                         if (dropdown.isOpen() && dropdown.hasHighlight()) {
                             const data = dropdown.getHighlight()?.dataset?.nsHit
                             if (data) {
-                                trackClick({ config: fullConfig, data })
+                                trackClick({
+                                    config: fullConfig,
+                                    data,
+                                    query: inputElement.value,
+                                })
                             }
                             dropdown.handleSubmit()
                         } else {
-                            submit(inputElement.value)
+                            submitWithContext({
+                                actions,
+                                config: fullConfig,
+                            })(inputElement.value)
                         }
                     }
                 },
@@ -194,7 +186,10 @@ function createInputDropdown<State = DefaultState>({
             () => ({}) as State
         ),
         config.render,
-        config.submit,
+        submitWithContext({
+            actions,
+            config,
+        }),
         value => (input.value = value),
         {
             removeHistory: function ({ data, update }) {
@@ -208,7 +203,7 @@ function createInputDropdown<State = DefaultState>({
             },
             hit: function ({ data }) {
                 if (data) {
-                    trackClick({ config, data })
+                    trackClick({ config, data, query: input.value })
                 }
             },
         }
@@ -218,17 +213,69 @@ function createInputDropdown<State = DefaultState>({
 function trackClick<State>({
     config,
     data,
+    query,
 }: {
     config: AutocompleteConfig<State>
     data: string
+    query: string
 }) {
-    if (config.nostoAnalytics) {
-        const parsedHit = parseHit(data)
+    if (!config.googleAnalytics && !config.nostoAnalytics) {
+        return
+    }
 
+    const parsedHit = parseHit(data)
+
+    if (config.nostoAnalytics) {
         if (parsedHit) {
             getNostoClient().then(api => {
                 api?.recordSearchClick?.("autocomplete", parsedHit)
             })
+        }
+    }
+
+    if (isGaEnabled(config)) {
+        if (parsedHit._redirect) {
+            trackGaPageView({
+                delay: true,
+                location: getGaTrackUrl(parsedHit.keyword, config),
+            })
+        }
+
+        if (parsedHit.url) {
+            trackGaPageView({
+                delay: true,
+                location: getGaTrackUrl(query, config),
+            })
+        }
+    }
+}
+
+function submitWithContext<State>(context: {
+    config: AutocompleteConfig<State>
+    actions: StateActions<State>
+}) {
+    return (value: string, redirect: boolean = false) => {
+        const { config, actions } = context
+
+        if (config.historyEnabled) {
+            actions.addHistoryItem(value)
+        }
+
+        if (config.nostoAnalytics) {
+            getNostoClient().then(api => {
+                api?.recordSearchSubmit?.(value)
+            })
+        }
+
+        if (isGaEnabled(config)) {
+            trackGaPageView({
+                delay: true,
+                location: getGaTrackUrl(value, config),
+            })
+        }
+
+        if (!redirect && typeof config?.submit === "function") {
+            config.submit(value, config)
         }
     }
 }

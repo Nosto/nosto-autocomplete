@@ -1,4 +1,4 @@
-import { DefaultState } from "./state"
+import { DefaultState } from "./utils/state"
 import { AnyPromise } from "./utils/promise"
 import { Liquid } from "liquidjs"
 

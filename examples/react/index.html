@@ -11,7 +11,7 @@
         <!-- Include default nosto code -->
         <script>
             ;(function () {
-                var name = 'nostojs'
+                var name = "nostojs"
                 window[name] =
                     window[name] ||
                     function (cb) {
@@ -70,7 +70,7 @@
                             <div class="ns-autocomplete-header">
                                 Recently searched
                             </div>
-                            {history.map((hit) => {
+                            {history.map(hit => {
                                 return (
                                     <div
                                         class="ns-autocomplete-history-item"
@@ -107,7 +107,7 @@
                                 <div class="ns-autocomplete-header">
                                     Keywords
                                 </div>
-                                {response.keywords.hits.map((hit) => {
+                                {response.keywords.hits.map(hit => {
                                     return (
                                         <div
                                             class="ns-autocomplete-keyword"
@@ -139,7 +139,7 @@
                                 <div class="ns-autocomplete-header">
                                     Products
                                 </div>
-                                {response.products.hits.map((hit) => {
+                                {response.products.hits.map(hit => {
                                     return (
                                         <a
                                             class="ns-autocomplete-product"
@@ -211,35 +211,46 @@
                     fetch: {
                         products: {
                             fields: [
-                                'name',
-                                'url',
-                                'imageUrl',
-                                'price',
-                                'listPrice',
-                                'brand',
+                                "name",
+                                "url",
+                                "imageUrl",
+                                "price",
+                                "listPrice",
+                                "brand",
                             ],
                             size: 5,
                         },
                         keywords: {
                             size: 5,
-                            fields: ['keyword', '_highlight.keyword'],
+                            fields: ["keyword", "_highlight.keyword"],
                             highlight: {
                                 preTag: `<strong>`,
-                                postTag: '</strong>',
+                                postTag: "</strong>",
                             },
                         },
                     },
-                    inputSelector: '#search',
-                    dropdownSelector: '#search-results',
+                    inputSelector: "#search",
+                    dropdownSelector: "#search-results",
                     render: function (container, state) {
                         if (!reactRoot) {
                             reactRoot = ReactDOM.createRoot(container)
                         }
                         reactRoot.render(<Autocomplete {...state} />)
                     },
-                    submit: (query) => {
+                    submit: (query, config) => {
                         // Handle search submit
-                        console.log('Submitting search with query: ', query)
+                        console.log("Submitting search with query: ", query)
+                        window.nostoAutocomplete.search(
+                            {
+                                query,
+                            },
+                            {
+                                redirect: true,
+                                track: config.nostoAnalytics
+                                    ? "serp"
+                                    : undefined,
+                            }
+                        )
                     },
                 })
             }

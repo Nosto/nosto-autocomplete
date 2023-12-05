@@ -1,3 +1,5 @@
+import { AutocompleteConfig, defaultConfig } from "../config"
+
 const localStorageKey = "nostoAutocomplete:gaEvent"
 
 type GaNamespace = {
@@ -68,6 +70,42 @@ export function trackGaPageView(options?: {
             } catch (error) {
                 console.log("Could not send pageview to GA", error)
             }
+        }
+    }
+}
+
+export const isGaEnabled = <State>(config: AutocompleteConfig<State>) =>
+    typeof config.googleAnalytics === "boolean"
+        ? config.googleAnalytics
+        : typeof config.googleAnalytics === "object" &&
+          config.googleAnalytics.enabled
+
+export const getGaTrackUrl = <State>(
+    value: string | undefined,
+    config: AutocompleteConfig<State>
+) => {
+    const gaConfig = isGaEnabled(config)
+        ? typeof config.googleAnalytics === "boolean"
+            ? defaultConfig.googleAnalytics
+            : {
+                  ...defaultConfig.googleAnalytics,
+                  ...config.googleAnalytics,
+              }
+        : undefined
+
+    if (value && gaConfig) {
+        try {
+            return new URL(
+                `${
+                    gaConfig?.serpPath || location.pathname
+                }?${`${encodeURIComponent(
+                    gaConfig.queryParamName
+                )}=${encodeURIComponent(value).replace(/%20/g, "+")}`}`,
+                window.location.origin
+            ).toString()
+        } catch (error) {
+            console.log("Could not create track url", error)
+            return undefined
         }
     }
 }

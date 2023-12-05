@@ -1,9 +1,8 @@
-import { InputSearchQuery, SearchResult } from "./api/search/generated"
-
-import { AutocompleteConfig } from "."
-import { getNostoClient } from "./api/client"
+import { InputSearchQuery, SearchResult } from "../api/search/generated"
+import { AutocompleteConfig } from "../config"
 import { History } from "./history"
-import { AnyPromise, Cancellable, makeCancellable } from "./utils/promise"
+import { AnyPromise, Cancellable, makeCancellable } from "./promise"
+import { search } from "../search"
 
 /**
  * @group Autocomplete
@@ -46,25 +45,16 @@ export const getStateActions = <State>({
         if (typeof config.fetch === "function") {
             return config.fetch(value)
         } else {
-            const query = {
-                query: value,
-                ...config.fetch,
-            }
-            return getNostoClient()
-                .then(api => {
-                    return api.search(query, {
-                        track: config.nostoAnalytics
-                            ? "autocomplete"
-                            : undefined,
-                    })
-                })
-                .then(
-                    response =>
-                        ({
-                            query,
-                            response,
-                        }) as State
-                )
+            return search<State>(
+                {
+                    query: value,
+                    ...config.fetch,
+                },
+                {
+                    track: config.nostoAnalytics ? "autocomplete" : undefined,
+                    redirect: false,
+                }
+            )
         }
     }
 

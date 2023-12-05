@@ -1,6 +1,7 @@
 export { autocomplete } from "../autocomplete"
+export { search } from "../search"
 export { AutocompleteConfig } from "../config"
-export { DefaultState } from "../state"
+export { DefaultState } from "../utils/state"
 
 export {
     getNostoClient,

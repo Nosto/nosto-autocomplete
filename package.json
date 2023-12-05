@@ -19,7 +19,7 @@
   "main": "./dist/nosto-autocomplete.cjs",
   "unpkg": "./dist/nosto-autocomplete.umd.js",
   "module": "./dist/nosto-autocomplete.module.js",
-  "source": "./src/index.ts",
+  "source": "./src/entries/base.ts",
   "types": "./dist/nosto-autocomplete.d.ts",
   "exports": {
     ".": {

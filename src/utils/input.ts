@@ -24,9 +24,9 @@ export function bindInput(
             const onKeyDown = (event: KeyboardEvent) => {
                 callbacks.onKeyDown?.(el.value, event.key)
                 if (
-                    event.key === 'ArrowDown' ||
-                    event.key === 'ArrowUp' ||
-                    event.key === 'Enter'
+                    event.key === "ArrowDown" ||
+                    event.key === "ArrowUp" ||
+                    event.key === "Enter"
                 ) {
                     event.preventDefault()
                 }
