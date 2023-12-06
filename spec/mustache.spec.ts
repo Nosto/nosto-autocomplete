@@ -7,10 +7,10 @@ import {
     fromMustacheTemplate,
     fromRemoteMustacheTemplate,
 } from "../src/mustache"
-import { NostoClient } from '../src/api/client'
-import { AutocompleteConfig } from '../src/config'
-import { DefaultState } from '../src/utils/state'
-import { autocomplete } from '../src/autocomplete'
+import { NostoClient } from "../src/api/client"
+import { AutocompleteConfig } from "../src/config"
+import { DefaultState } from "../src/utils/state"
+import { autocomplete } from "../src/autocomplete"
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
@@ -18,6 +18,12 @@ interface WindowWithNostoJS extends Window {
         [
             callback: (api: {
                 search: jest.Mock<ReturnType<NostoClient["search"]>>
+                recordSearchSubmit: jest.Mock<
+                    ReturnType<NostoClient["recordSearchSubmit"]>
+                >
+                recordSearchClick: jest.Mock<
+                    ReturnType<NostoClient["recordSearchClick"]>
+                >
             }) => unknown,
         ]
     >
@@ -146,9 +152,19 @@ const handleAutocomplete = (
     })
 }
 
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 const w = window as unknown as WindowWithNostoJS
 
-beforeAll(() => {
+let searchSpy: jest.Mock<ReturnType<NostoClient["search"]>>
+let recordSearchSubmitSpy: jest.Mock<
+    ReturnType<NostoClient["recordSearchSubmit"]>
+>
+let recordSearchClickSpy: jest.Mock<
+    ReturnType<NostoClient["recordSearchClick"]>
+>
+
+beforeEach(() => {
     document.body.innerHTML = `
     <form id="search-form">
         <input type="text" id="search" placeholder="search" data-testid="input" />
@@ -160,13 +176,25 @@ beforeAll(() => {
     const mustacheScript = document.createElement("script")
     mustacheScript.src = "https://unpkg.com/mustache@4.2.0/mustache.min.js"
     document.body.appendChild(mustacheScript)
-})
 
-beforeEach(() => {
-    const searchSpy = jest.fn(
+    searchSpy = jest.fn(
         () =>
             Promise.resolve(searchResponse) as unknown as ReturnType<
                 NostoClient["search"]
+            >
+    )
+
+    recordSearchSubmitSpy = jest.fn(
+        () =>
+            Promise.resolve() as unknown as ReturnType<
+                NostoClient["recordSearchSubmit"]
+            >
+    )
+
+    recordSearchClickSpy = jest.fn(
+        () =>
+            Promise.resolve() as unknown as ReturnType<
+                NostoClient["recordSearchClick"]
             >
     )
 
@@ -174,10 +202,18 @@ beforeEach(() => {
         (
             callback: (api: {
                 search: jest.Mock<ReturnType<NostoClient["search"]>>
+                recordSearchSubmit: jest.Mock<
+                    ReturnType<NostoClient["recordSearchSubmit"]>
+                >
+                recordSearchClick: jest.Mock<
+                    ReturnType<NostoClient["recordSearchClick"]>
+                >
             }) => unknown
         ) =>
             callback({
                 search: searchSpy,
+                recordSearchSubmit: recordSearchSubmitSpy,
+                recordSearchClick: recordSearchClickSpy,
             })
     )
 })

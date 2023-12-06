@@ -18,6 +18,12 @@ interface WindowWithNostoJS extends Window {
         [
             callback: (api: {
                 search: jest.Mock<ReturnType<NostoClient["search"]>>
+                recordSearchSubmit: jest.Mock<
+                    ReturnType<NostoClient["recordSearchSubmit"]>
+                >
+                recordSearchClick: jest.Mock<
+                    ReturnType<NostoClient["recordSearchClick"]>
+                >
             }) => unknown,
         ]
     >
@@ -79,15 +85,18 @@ const template = `
             {% for hit in response.products.hits %}
             <a
                 class="ns-autocomplete-product"
-                href="{{ hit.url }}"
-                data-ns-hit="{{ hit | json | escape }}">
+                href="javascript:void(0);"
+                data-ns-hit="{{ hit | json | escape }}"
+                data-testid="product"
+            >
+
                 <img
-                class="ns-autocomplete-product-image"
-                src="{{ hit.imageUrl }}"
-                alt="{{ hit.name }}"
-                width="60"
-                height="40"
-                data-testid="product" />
+                    class="ns-autocomplete-product-image"
+                    src="{{ hit.imageUrl }}"
+                    alt="{{ hit.name }}"
+                    width="60"
+                    height="40"
+                 />
                 <div class="ns-autocomplete-product-info">
                 {% if hit.brand %}
                     <div class="ns-autocomplete-product-brand">
@@ -155,9 +164,19 @@ const handleAutocomplete = async (
     })
 }
 
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 const w = window as unknown as WindowWithNostoJS
 
-beforeAll(() => {
+let searchSpy: jest.Mock<ReturnType<NostoClient["search"]>>
+let recordSearchSubmitSpy: jest.Mock<
+    ReturnType<NostoClient["recordSearchSubmit"]>
+>
+let recordSearchClickSpy: jest.Mock<
+    ReturnType<NostoClient["recordSearchClick"]>
+>
+
+beforeEach(() => {
     document.body.innerHTML = `
     <form id="search-form">
         <input type="text" id="search" placeholder="search" data-testid="input" />
@@ -170,13 +189,25 @@ beforeAll(() => {
     liquidScript.src =
         "https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js"
     document.body.appendChild(liquidScript)
-})
 
-beforeEach(() => {
-    const searchSpy = jest.fn(
+    searchSpy = jest.fn(
         () =>
             Promise.resolve(searchResponse) as unknown as ReturnType<
                 NostoClient["search"]
+            >
+    )
+
+    recordSearchSubmitSpy = jest.fn(
+        () =>
+            Promise.resolve() as unknown as ReturnType<
+                NostoClient["recordSearchSubmit"]
+            >
+    )
+
+    recordSearchClickSpy = jest.fn(
+        () =>
+            Promise.resolve() as unknown as ReturnType<
+                NostoClient["recordSearchClick"]
             >
     )
 
@@ -184,10 +215,18 @@ beforeEach(() => {
         (
             callback: (api: {
                 search: jest.Mock<ReturnType<NostoClient["search"]>>
+                recordSearchSubmit: jest.Mock<
+                    ReturnType<NostoClient["recordSearchSubmit"]>
+                >
+                recordSearchClick: jest.Mock<
+                    ReturnType<NostoClient["recordSearchClick"]>
+                >
             }) => unknown
         ) =>
             callback({
                 search: searchSpy,
+                recordSearchSubmit: recordSearchSubmitSpy,
+                recordSearchClick: recordSearchClickSpy,
             })
     )
 })
@@ -197,9 +236,6 @@ afterEach(() => {
     const dropdown = screen.getByTestId("dropdown")
     const newElement = dropdown.cloneNode(true)
     dropdown?.parentNode?.replaceChild(newElement, dropdown)
-})
-
-afterAll(() => {
     document.body.innerHTML = ""
 })
 
@@ -407,6 +443,159 @@ describe("fromLiquidTemplate", () => {
             await waitFor(() =>
                 expect(screen.getByText("black")).toHaveClass("selected")
             )
+        })
+    })
+
+    describe("analytics", () => {
+        it("should record search submit", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+
+            await waitFor(() =>
+                expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black")
+            )
+        })
+
+        it("should record search submit with keyboard", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.type(screen.getByTestId("input"), "black")
+            await user.keyboard("{enter}")
+
+            await waitFor(() =>
+                expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black")
+            )
+        })
+
+        it("should record search click on keyword click", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.clear(screen.getByTestId("input"))
+            await user.type(screen.getByTestId("input"), "black")
+
+            await waitFor(async () => {
+                await user.click(screen.getAllByTestId("keyword")?.[0])
+                expect(recordSearchClickSpy).toHaveBeenCalledWith(
+                    "autocomplete",
+                    {
+                        _highlight: {
+                            keyword: "<strong>black</strong>",
+                        },
+                        keyword: "black",
+                    }
+                )
+            })
+        })
+
+        it("should record search click on product click", async () => {
+            const user = userEvent.setup()
+
+            const oldLocation = w.location
+            // @ts-expect-error: mock location
+            delete w.location
+            w.location = { ...oldLocation, assign: jest.fn(() => ({})) }
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.type(screen.getByTestId("input"), "black")
+            await wait(500)
+            await user.click(screen.getAllByTestId("product")?.[0])
+
+            await waitFor(() => {
+                expect(recordSearchClickSpy).toHaveBeenCalledWith(
+                    "autocomplete",
+                    {
+                        brand: "Brand",
+                        imageUrl:
+                            "https://cdn.shopify.com/s/files/1/0097/5821/2174/products/Perry-Ellis-mens-Slim-Fit-Washable-Suit-Pant-Suit-Pants-Black-black.jpg?v=1675970770",
+                        listPrice: 150,
+                        name: "Slim Fit Washable Suit Pant",
+                        price: 40,
+                        productId: "6853920686158",
+                        url: "https://www.perryellis.com/products/slim-fit-washable-suit-pant-black-4isb4316rt-010",
+                    }
+                )
+            })
+        })
+
+        it("should record search click on keyword submitted with keyboard", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.type(screen.getByTestId("input"), "black")
+            await wait(500)
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{enter}")
+
+            await waitFor(() =>
+                expect(recordSearchClickSpy).toHaveBeenCalledWith(
+                    "autocomplete",
+                    {
+                        _highlight: {
+                            keyword: "<strong>black</strong>",
+                        },
+                        keyword: "black",
+                    }
+                )
+            )
+        })
+
+        it("should record search click on product submitted with keyboard", async () => {
+            const user = userEvent.setup()
+
+            const oldLocation = w.location
+            // @ts-expect-error: mock location
+            delete w.location
+            w.location = { ...oldLocation, assign: jest.fn(() => ({})) }
+
+            await waitFor(() =>
+                handleAutocomplete(fromLiquidTemplate(template))
+            )
+
+            await user.type(screen.getByTestId("input"), "black")
+            await wait(500)
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{arrowdown}")
+            await user.keyboard("{enter}")
+
+            await waitFor(() => {
+                expect(recordSearchClickSpy).toHaveBeenCalledWith(
+                    "autocomplete",
+                    {
+                        brand: "Brand",
+                        imageUrl:
+                            "https://cdn.shopify.com/s/files/1/0097/5821/2174/products/Perry-Ellis-mens-Slim-Fit-Washable-Suit-Pant-Suit-Pants-Black-black.jpg?v=1675970770",
+                        listPrice: 150,
+                        name: "Slim Fit Washable Suit Pant",
+                        price: 40,
+                        productId: "6853920686158",
+                        url: "https://www.perryellis.com/products/slim-fit-washable-suit-pant-black-4isb4316rt-010",
+                    }
+                )
+            })
         })
     })
 })
