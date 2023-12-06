@@ -11,7 +11,7 @@
         <!-- Include default nosto code -->
         <script>
             ;(function () {
-                var name = 'nostojs'
+                var name = "nostojs"
                 window[name] =
                     window[name] ||
                     function (cb) {
@@ -43,32 +43,43 @@
                     fetch: {
                         products: {
                             fields: [
-                                'name',
-                                'url',
-                                'imageUrl',
-                                'price',
-                                'listPrice',
-                                'brand',
+                                "name",
+                                "url",
+                                "imageUrl",
+                                "price",
+                                "listPrice",
+                                "brand",
                             ],
                             size: 5,
                         },
                         keywords: {
                             size: 5,
-                            fields: ['keyword', '_highlight.keyword'],
+                            fields: ["keyword", "_highlight.keyword"],
                             highlight: {
                                 preTag: `<strong>`,
-                                postTag: '</strong>',
+                                postTag: "</strong>",
                             },
                         },
                     },
-                    inputSelector: '#search',
-                    dropdownSelector: '#search-results',
+                    inputSelector: "#search",
+                    dropdownSelector: "#search-results",
                     render: window.nostoAutocomplete.fromRemoteLiquidTemplate(
-                        'autocomplete.liquid',
+                        "autocomplete.liquid"
                     ),
-                    submit: (query) => {
+                    submit: (query, config) => {
                         // Handle search submit
-                        console.log('Submitting search with query: ', query)
+                        console.log("Submitting search with query: ", query)
+                        window.nostoAutocomplete.search(
+                            {
+                                query,
+                            },
+                            {
+                                redirect: true,
+                                track: config.nostoAnalytics
+                                    ? "serp"
+                                    : undefined,
+                            }
+                        )
                     },
                 })
             }

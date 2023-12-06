@@ -1,9 +1,8 @@
-import { InputSearchQuery, SearchResult } from "./api/search/generated"
-
-import { AutocompleteConfig } from "."
-import { getNostoClient } from "./api/client"
+import { InputSearchQuery, SearchResult } from "../api/search/generated"
+import { AutocompleteConfig } from "../config"
 import { History } from "./history"
-import { AnyPromise, Cancellable, makeCancellable } from "./utils/promise"
+import { AnyPromise, Cancellable, makeCancellable } from "./promise"
+import { search } from "../search"
 
 /**
  * @group Autocomplete
@@ -35,12 +34,10 @@ export const getStateActions = <State>({
     config,
     history,
     input,
-    minQueryLength,
 }: {
-    config: AutocompleteConfig<State>
+    config: Required<AutocompleteConfig<State>>
     history?: History
     input: HTMLInputElement
-    minQueryLength: number
 }): StateActions<State> => {
     let cancellable: Cancellable<State> | undefined
 
@@ -48,23 +45,16 @@ export const getStateActions = <State>({
         if (typeof config.fetch === "function") {
             return config.fetch(value)
         } else {
-            const query = {
-                query: value,
-                ...config.fetch,
-            }
-            return getNostoClient()
-                .then(api => {
-                    return api.search(query, {
-                        track: "autocomplete",
-                    })
-                })
-                .then(
-                    response =>
-                        ({
-                            query,
-                            response,
-                        }) as State
-                )
+            return search<State>(
+                {
+                    query: value,
+                    ...config.fetch,
+                },
+                {
+                    track: config.nostoAnalytics ? "autocomplete" : undefined,
+                    redirect: false,
+                }
+            )
         }
     }
 
@@ -81,7 +71,7 @@ export const getStateActions = <State>({
         updateState: (inputValue?: string): PromiseLike<State> => {
             cancellable?.cancel()
 
-            if (inputValue && inputValue.length >= minQueryLength) {
+            if (inputValue && inputValue.length >= config.minQueryLength) {
                 cancellable = makeCancellable(fetchState(inputValue, config))
                 return cancellable.promise.then(
                     s => s as State,

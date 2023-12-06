@@ -1,5 +1,6 @@
 import { AnyPromise } from "../utils/promise"
-import { InputSearchQuery, SearchResult } from "./search/generated"
+import { InputSearchQueryWithFields } from "./search"
+import { SearchResult } from "./search/generated"
 
 /**
  * @group Nosto Client
@@ -43,6 +44,11 @@ export interface NostoSession {
     viewCart(): SessionAction
 }
 
+export interface SearchOptions {
+    track?: "autocomplete" | "category" | "serp"
+    redirect?: boolean
+}
+
 /**
  * @group Nosto Client
  * @category Core
@@ -55,12 +61,14 @@ export interface NostoClient {
         injectCampaigns(recommendations: Record<string, Recommendation>): void
     }
     search(
-        query: InputSearchQuery,
-        options?: {
-            track?: "autocomplete" | "category" | "serp"
-            redirect?: boolean
-        }
+        query: InputSearchQueryWithFields,
+        options?: SearchOptions
     ): PromiseLike<SearchResult>
+    recordSearchClick(
+        type: "serp" | "autocomplete" | "category",
+        hit: { url?: string; keyword?: string }
+    ): void
+    recordSearchSubmit(query: string): void
 }
 
 /**

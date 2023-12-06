@@ -1,17 +1,18 @@
-import { AnyPromise } from "./utils/promise"
+import { AnyPromise } from "./promise"
 
 type OnClickBindings<State> = {
-    [key: string]: (
-        data: string | undefined,
+    [key: string]: (obj: {
+        data: string | undefined
         el: HTMLElement
-    ) => PromiseLike<State> | undefined
+        update: (state: State) => void
+    }) => unknown
 }
 
 export function createDropdown<State>(
     container: HTMLElement,
     initialState: PromiseLike<State>,
     render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
-    submit: (inputValue: string) => unknown,
+    submit: (inputValue: string, redirect?: boolean) => unknown,
     updateInput: (inputValue: string) => void,
     onClickBindings?: OnClickBindings<State>
 ) {
@@ -25,25 +26,25 @@ export function createDropdown<State>(
         const hit = el?.dataset?.nsHit
 
         if (hit) {
-            try {
-                const parsedHit = JSON.parse(hit)
-                hide()
+            const parsedHit = parseHit(hit)
+            hide()
 
-                if (parsedHit.item) {
-                    submit(parsedHit.item)
-                    return
-                }
+            if (parsedHit?.item) {
+                submit(parsedHit.item)
+                return
+            }
 
-                if (parsedHit.keyword) {
-                    submit(parsedHit.keyword)
-                    return
-                }
+            if (parsedHit?.keyword) {
+                submit(parsedHit.keyword, !!parsedHit?._redirect)
 
-                if (parsedHit.url) {
-                    location.href = parsedHit.url
+                if (parsedHit?._redirect) {
+                    location.href = parsedHit._redirect
                 }
-            } catch (error) {
-                console.error("Could not parse [data-ns-hit]", error)
+                return
+            }
+
+            if (parsedHit?.url) {
+                location.href = parsedHit.url
             }
         }
     }
@@ -68,21 +69,26 @@ export function createDropdown<State>(
                 .replace(/([A-Z])/g, "-$1")
                 .toLowerCase()}]`
 
-            Array.from<HTMLElement>(container.querySelectorAll(dataKey)).map(
-                el => {
-                    const data =
-                        el?.dataset?.[
-                            `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
-                        ]
-                    const onClick = () => {
-                        callback(data, el)?.then(state => update(state))
-                    }
-                    el.addEventListener("click", onClick)
-                    unbindCallbacks.push(() => {
-                        el.removeEventListener("click", onClick)
+            Array.from<HTMLElement>(
+                container.querySelectorAll(dataKey)
+            ).map(el => {
+                const data =
+                    el?.dataset?.[
+                        `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
+                    ]
+                const onClick = () => {
+                    callback({
+                        data,
+                        el,
+                        update,
                     })
                 }
-            )
+
+                el.addEventListener("click", onClick)
+                unbindCallbacks.push(() => {
+                    el.removeEventListener("click", onClick)
+                })
+            })
         })
     }
 
@@ -108,20 +114,16 @@ export function createDropdown<State>(
             const hit = elements[index]?.dataset?.nsHit
 
             if (hit) {
-                try {
-                    const parsedHit = JSON.parse(hit)
+                const parsedHit = parseHit(hit)
 
-                    if (parsedHit.item) {
-                        updateInput(parsedHit.item)
-                        return
-                    }
+                if (parsedHit.item) {
+                    updateInput(parsedHit.item)
+                    return
+                }
 
-                    if (parsedHit.keyword) {
-                        updateInput(parsedHit.keyword)
-                        return
-                    }
-                } catch (error) {
-                    console.error("Could not parse [data-ns-hit]", error)
+                if (parsedHit.keyword) {
+                    updateInput(parsedHit.keyword)
+                    return
                 }
             }
         }
@@ -209,6 +211,10 @@ export function createDropdown<State>(
         return selectedIndex > -1
     }
 
+    function getHighlight() {
+        return elements[selectedIndex]
+    }
+
     function resetHighlight() {
         if (hasHighlight()) {
             elements[selectedIndex]?.classList.remove("selected")
@@ -245,8 +251,26 @@ export function createDropdown<State>(
         hide,
         resetHighlight,
         hasHighlight,
+        getHighlight,
         container
     }
 }
 
 export type Dropdown<T> = ReturnType<typeof createDropdown<T>>
+
+interface Hit {
+    item?: string
+    keyword?: string
+    url?: string
+    _redirect?: string
+}
+
+export function parseHit(hit: string): Hit {
+    try {
+        const parsedHit: Hit | undefined | null = JSON.parse(hit)
+        return parsedHit ?? {}
+    } catch (error) {
+        console.warn("Could not parse hit", error)
+        return {}
+    }
+}

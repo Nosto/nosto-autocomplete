@@ -1,12 +1,13 @@
-import { DefaultState } from "./state"
+import { DefaultState } from "./utils/state"
 import { AnyPromise } from "./utils/promise"
-import { Liquid } from "liquidjs"
 
 declare global {
     interface Window {
         liquidjs?: {
             Liquid: {
-                new (): Liquid
+                new(): {
+                    parseAndRenderSync(template: string, state: object): string
+                }
             }
         }
     }
@@ -23,7 +24,7 @@ declare global {
 export function fromLiquidTemplate<State extends object = DefaultState>(
     template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-    const LiquidFactory = window.liquidjs?.Liquid
+    const LiquidFactory = window?.liquidjs?.Liquid
     const instance = LiquidFactory ? new LiquidFactory() : undefined
 
     if (instance === undefined) {

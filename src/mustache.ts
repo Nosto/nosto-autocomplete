@@ -1,5 +1,5 @@
 import { AnyPromise } from "./utils/promise"
-import { DefaultState } from "./state"
+import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
 declare global {
