@@ -13,7 +13,7 @@
         <div class="ns-autocomplete-history-item" data-ns-hit="{{ hit | json | escape }}">
           {{ hit.item }}
           <a
-            href="javascript:void(0)"
+            href="javascript:;"
             class="ns-autocomplete-history-item-remove"
             data-ns-remove-history="{{hit.item}}">
             &#x2715;
@@ -54,7 +54,7 @@
         {% for hit in response.products.hits %}
           <a
             class="ns-autocomplete-product"
-            {% comment %} href="{{ hit.url }}" {% endcomment %}
+            href="{{ hit.url }}"
             data-ns-hit="{{ hit | json | escape }}">
             <img
               class="ns-autocomplete-product-image"

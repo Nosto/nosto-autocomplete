@@ -65,7 +65,7 @@ function History({ history }: { history: AutocompleteProps["history"] }) {
                         >
                             {hit.item}
                             <a
-                                href="javascript:void(0)"
+                                href="javascript:;"
                                 className="ns-autocomplete-history-item-remove"
                                 data-ns-remove-history={hit.item}
                             >
@@ -124,7 +124,7 @@ function Products({ products }: { products: SearchProduct[] }) {
                 return (
                     <a
                         className="ns-autocomplete-product"
-                        href="javascript:void(0)"
+                        href="javascript:;"
                         key={hit.productId}
                         data-ns-hit={JSON.stringify(hit)}
                         data-testid="product"
