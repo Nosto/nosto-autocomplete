@@ -55,7 +55,7 @@
     "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/nosto-autocomplete.d.ts src/entries/base.ts",
     "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts",
     "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts",
-    "build:docs": "typedoc src/index.ts",
+    "build:docs": "typedoc src/entries/base.ts",
     "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r./docs ./site && cp -r./examples ./site/examples && cp -r./coverage ./site/coverage",
     "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
     "typecheck": "tsc --noEmit",
@@ -63,7 +63,7 @@
     "test": "jest spec",
     "test:cov": "jest --coverage spec && make-coverage-badge",
     "codegen": "graphql-codegen",
-    "dev:docs": "typedoc --watch src/index.ts"
+    "dev:docs": "typedoc --watch src/entries/base.ts"
   },
   "prettier": {
     "trailingComma": "es5",
