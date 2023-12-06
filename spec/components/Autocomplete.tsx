@@ -124,7 +124,7 @@ function Products({ products }: { products: SearchProduct[] }) {
                 return (
                     <a
                         className="ns-autocomplete-product"
-                        href={hit.url}
+                        href="javascript:void(0)"
                         key={hit.productId}
                         data-ns-hit={JSON.stringify(hit)}
                         data-testid="product"
