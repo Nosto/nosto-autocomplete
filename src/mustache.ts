@@ -17,14 +17,18 @@ declare global {
  * @category Mustache
  */
 export function fromMustacheTemplate(template: string) {
-    if (window.Mustache === undefined) {
+    console.log('Mustache', Mustache)
+    console.log('window.Mustache', window.Mustache)
+    const mustache = Mustache ?? window.Mustache
+
+    if (mustache === undefined) {
         throw new Error(
-            "Mustache is not defined. Please include the Mustache library in your page."
+            "Mustache is not defined. Please include the Mustache dependency or library in your page."
         )
     }
 
     return (container: HTMLElement, state: object) => {
-        container.innerHTML = window.Mustache.render(template, {
+        container.innerHTML = mustache.render(template, {
             ...state,
             imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
             toJson: function () {
