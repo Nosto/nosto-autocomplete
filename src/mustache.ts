@@ -2,12 +2,6 @@ import { AnyPromise } from "./utils/promise"
 import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
-declare global {
-    interface Window {
-        Mustache?: typeof Mustache
-    }
-}
-
 /**
  * Render a Mustache template into a container
  *
@@ -17,18 +11,14 @@ declare global {
  * @category Mustache
  */
 export function fromMustacheTemplate(template: string) {
-    console.log('Mustache', Mustache)
-    console.log('window.Mustache', window.Mustache)
-    const mustache = Mustache ?? window.Mustache
-
-    if (mustache === undefined) {
+    if (Mustache === undefined) {
         throw new Error(
             "Mustache is not defined. Please include the Mustache dependency or library in your page."
         )
     }
 
     return (container: HTMLElement, state: object) => {
-        container.innerHTML = mustache.render(template, {
+        container.innerHTML = Mustache.render(template, {
             ...state,
             imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
             toJson: function () {

@@ -1,19 +1,6 @@
 import { DefaultState } from "./utils/state"
 import { AnyPromise } from "./utils/promise"
-// @ts-expect-error: Optional peer dependency
 import { Liquid } from "liquidjs"
-
-declare global {
-    interface Window {
-        liquidjs?: {
-            Liquid: {
-                new (): {
-                    parseAndRenderSync(template: string, state: object): string
-                }
-            }
-        }
-    }
-}
 
 /**
  * Render a liquid template into a container
@@ -26,10 +13,7 @@ declare global {
 export function fromLiquidTemplate<State extends object = DefaultState>(
     template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-    console.log('Liquid', Liquid)
-    console.log('window.liquidjs', window.liquidjs)
-    const LiquidFactory = Liquid ?? window?.liquidjs?.Liquid
-    const instance = LiquidFactory ? new LiquidFactory() : undefined
+    const instance = Liquid ? new Liquid() : undefined
 
     if (instance === undefined) {
         throw new Error(

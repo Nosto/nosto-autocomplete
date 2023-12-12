@@ -20,7 +20,6 @@
     "unpkg": "./dist/nosto-autocomplete.umd.js",
     "module": "./dist/nosto-autocomplete.module.js",
     "source": "./src/index.ts",
-    "types": "./dist/nosto-autocomplete.d.ts",
     "exports": {
         ".": {
             "browser": "./dist/nosto-autocomplete.module.js",
@@ -28,13 +27,6 @@
             "import": "./dist/nosto-autocomplete.mjs",
             "require": "./dist/nosto-autocomplete.js",
             "types": "./dist/nosto-autocomplete.d.ts"
-        },
-        "./react": {
-            "browser": "./dist/react/nosto-autocomplete.module.js",
-            "umd": "./dist/react/nosto-autocomplete.umd.js",
-            "import": "./dist/react/nosto-autocomplete.mjs",
-            "require": "./dist/react/nosto-autocomplete.js",
-            "types": "./dist/react/nosto-autocomplete.d.ts"
         },
         "./liquid": {
             "browser": "./dist/nosto-autocomplete.module.js",
@@ -49,16 +41,26 @@
             "import": "./dist/mustache/nosto-autocomplete.mjs",
             "require": "./dist/mustache/nosto-autocomplete.js",
             "types": "./dist/mustache/nosto-autocomplete.d.ts"
+        },
+        "./styles": {
+            "import": "./dist/styles.css",
+            "require": "./dist/styles.css"
+        },
+        "./styles.css": {
+            "import": "./dist/styles.css",
+            "require": "./dist/styles.css"
         }
     },
+    "types": "./dist/nosto-autocomplete.d.ts",
     "files": [
         "dist/**/*"
     ],
     "scripts": {
-        "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base",
+        "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:styles",
         "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/nosto-autocomplete.d.ts src/entries/base.ts",
         "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts",
         "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts",
+        "build:styles": "cp src/styles.css dist/styles.css",
         "build:docs": "typedoc src/index.ts",
         "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r./docs ./site && cp -r./examples ./site/examples && cp -r./coverage ./site/coverage",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
