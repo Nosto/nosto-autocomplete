@@ -114,3 +114,5 @@ dist
 
 # OS
 .DS_Store
+
+site/
