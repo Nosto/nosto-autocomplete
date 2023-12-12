@@ -76,7 +76,7 @@
         "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts",
         "build:styles": "cp src/styles.css dist/styles.css",
         "build:docs": "typedoc src/index.ts",
-        "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r./docs ./site && cp -r./examples ./site/examples && cp -r./coverage ./site/coverage",
+        "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r ./docs ./site && cp -r ./examples ./site/examples && cp -r ./coverage ./site/coverage",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
         "prettify": "node cleanup.js && prettier --write \"{src,spec}/**/*.ts\"",
