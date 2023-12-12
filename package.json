@@ -49,6 +49,10 @@
         "./styles.css": {
             "import": "./dist/styles.css",
             "require": "./dist/styles.css"
+        },
+        "./dist/styles.css": {
+            "import": "./dist/styles.css",
+            "require": "./dist/styles.css"
         }
     },
     "typesVersions": {
@@ -63,9 +67,7 @@
     },
     "types": "dist/nosto-autocomplete.d.ts",
     "files": [
-        "dist",
-        "dist/liquid",
-        "dist/mustache"
+        "dist/**/*"
     ],
     "scripts": {
         "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:styles",
