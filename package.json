@@ -15,31 +15,31 @@
     },
     "license": "BSD-3-Clause",
     "author": "Nosto",
-    "type": "module",
-    "main": "./dist/nosto-autocomplete.cjs",
-    "unpkg": "./dist/nosto-autocomplete.umd.js",
-    "module": "./dist/nosto-autocomplete.module.js",
-    "source": "./src/index.ts",
+    "main": "dist/nosto-autocomplete.cjs",
+    "module": "dist/nosto-autocomplete.module.js",
+    "umd:main": "dist/nosto-autocomplete.umd.js",
+    "unpkg": "dist/nosto-autocomplete.umd.js",
+    "source": "src/index.ts",
     "exports": {
         ".": {
             "browser": "./dist/nosto-autocomplete.module.js",
             "umd": "./dist/nosto-autocomplete.umd.js",
             "import": "./dist/nosto-autocomplete.mjs",
-            "require": "./dist/nosto-autocomplete.js",
+            "require": "./dist/nosto-autocomplete.cjs",
             "types": "./dist/nosto-autocomplete.d.ts"
         },
         "./liquid": {
             "browser": "./dist/nosto-autocomplete.module.js",
             "umd": "./dist/liquid/nosto-autocomplete.umd.js",
             "import": "./dist/liquid/nosto-autocomplete.mjs",
-            "require": "./dist/liquid/nosto-autocomplete.js",
+            "require": "./dist/liquid/nosto-autocomplete.cjs",
             "types": "./dist/liquid/nosto-autocomplete.d.ts"
         },
         "./mustache": {
             "browser": "./dist/mustache/nosto-autocomplete.module.js",
             "umd": "./dist/mustache/nosto-autocomplete.umd.js",
             "import": "./dist/mustache/nosto-autocomplete.mjs",
-            "require": "./dist/mustache/nosto-autocomplete.js",
+            "require": "./dist/mustache/nosto-autocomplete.cjs",
             "types": "./dist/mustache/nosto-autocomplete.d.ts"
         },
         "./styles": {
@@ -51,9 +51,21 @@
             "require": "./dist/styles.css"
         }
     },
-    "types": "./dist/nosto-autocomplete.d.ts",
+    "typesVersions": {
+        "*": {
+            "liquid": [
+                "dist/liquid/nosto-autocomplete.d.ts"
+            ],
+            "mustache": [
+                "dist/mustache/nosto-autocomplete.d.ts"
+            ]
+        }
+    },
+    "types": "dist/nosto-autocomplete.d.ts",
     "files": [
-        "dist/**/*"
+        "dist",
+        "dist/liquid",
+        "dist/mustache"
     ],
     "scripts": {
         "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:styles",
