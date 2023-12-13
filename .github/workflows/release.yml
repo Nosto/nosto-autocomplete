@@ -52,9 +52,9 @@ jobs:
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
-        branches: |
-          [
-            "release-action"
-          ]
+          branches: |
+            [
+              "release-action"
+            ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
