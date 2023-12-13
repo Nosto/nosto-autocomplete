@@ -1,24 +1,24 @@
-name: npm_publish
-on:
-  release:
-    types: [published]
+# name: npm_publish
+# on:
+#   release:
+#     types: [published]
 
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm init --scope=nosto -y
-      - run: npm install
-      - run: npm run build
-      - run: npm run test
+# jobs:
+#   publish:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
+#       - run: npm init --scope=nosto -y
+#       - run: npm install
+#       - run: npm run build
+#       - run: npm run test
 
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPMJS_TOKEN }}
-          access: "public"
-          dry-run: false
-          check-version: true
+#       - uses: JS-DevTools/npm-publish@v1
+#         with:
+#           token: ${{ secrets.NPMJS_TOKEN }}
+#           access: "public"
+#           dry-run: false
+#           check-version: true
