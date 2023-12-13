@@ -2,29 +2,29 @@ name: Release
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current branch
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Setup NodeJS
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
-      - run: npm install
+        run: npm install
 
       - name: Build project
-      - run: npm run build
+        run: npm run build
 
       - name: Test project
-      - run: npm run test
+        run: npm run test
 
   release:
     needs: build
@@ -34,19 +34,19 @@ jobs:
       name: production
     steps:
       - name: Checkout current branch
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Setup NodeJS
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
-      - run: npm install
+        run: npm install
 
       - name: Publish project
-      - uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v4
         id: semantic
         with:
           extra_plugins: |
