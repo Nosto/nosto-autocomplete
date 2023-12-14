@@ -17,6 +17,7 @@ export function fromMustacheTemplate(template: string) {
         )
     }
 
+
     return (container: HTMLElement, state: object) => {
         container.innerHTML = Mustache.render(template, {
             ...state,
