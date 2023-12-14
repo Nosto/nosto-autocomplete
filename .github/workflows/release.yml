@@ -2,48 +2,60 @@ name: Release
 
 on:
   push:
-    branches: ['**']
+    branches: ["**"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout current branch
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: "npm"
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-      - run: npm run build
+      - name: Build project
+        run: npm run build
 
-      - run: npm run test
+      - name: Test project
+        run: npm run test
 
-  # release:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main'
-  #   environment:
-  #     name: production
-  #   steps:
-  #     - uses: actions/checkout@v3
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
 
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #         cache: 'npm'
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
 
-  #     - run: npm ci
+      - name: Install dependencies
+        run: npm install
 
-  #     - run: npm run build
-
-  #     - uses: cycjimmy/semantic-release-action@v3
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #       with:
-  #         extra_plugins: |
-  #           @semantic-release/changelog
-  #           @semantic-release/git
+      - name: Publish project
+        uses: cycjimmy/semantic-release-action@v4
+        id: semantic
+        with:
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+          branches: |
+            [
+              "main"
+            ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
