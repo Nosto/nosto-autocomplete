@@ -5,6 +5,17 @@
 
 * add tests for history element ([9c4a19b](https://github.com/Nosto/nosto-autocomplete/commit/9c4a19be162e43837ef368fee404764abcb031ad))
 * main release ([93ce0bf](https://github.com/Nosto/nosto-autocomplete/commit/93ce0bf4d0a7e365d84bfdfb34619fde93d75429))
+* release main ([a76020a](https://github.com/Nosto/nosto-autocomplete/commit/a76020aa32f1b1b539b4b48cf2c8c8e02bb889b2))
+* release main ([#14](https://github.com/Nosto/nosto-autocomplete/issues/14)) ([d4a15dd](https://github.com/Nosto/nosto-autocomplete/commit/d4a15dd4ae346d6a1004fc79e8d78aaddcba9ee7))
+* test release ([d7dee68](https://github.com/Nosto/nosto-autocomplete/commit/d7dee68ac4f553677f8fdabe943bedd0c947e4f9))
+
+# 1.0.0 (2023-12-14)
+
+
+### Features
+
+* add tests for history element ([9c4a19b](https://github.com/Nosto/nosto-autocomplete/commit/9c4a19be162e43837ef368fee404764abcb031ad))
+* main release ([93ce0bf](https://github.com/Nosto/nosto-autocomplete/commit/93ce0bf4d0a7e365d84bfdfb34619fde93d75429))
 * release main ([#14](https://github.com/Nosto/nosto-autocomplete/issues/14)) ([d4a15dd](https://github.com/Nosto/nosto-autocomplete/commit/d4a15dd4ae346d6a1004fc79e8d78aaddcba9ee7))
 * test release ([d7dee68](https://github.com/Nosto/nosto-autocomplete/commit/d7dee68ac4f553677f8fdabe943bedd0c947e4f9))
 
