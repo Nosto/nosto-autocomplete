@@ -29,7 +29,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/release-action'
+    if: github.ref == 'refs/heads/main'
     environment:
       name: production
     steps:
@@ -54,7 +54,7 @@ jobs:
             @semantic-release/git
           branches: |
             [
-              "release-action"
+              "main"
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
