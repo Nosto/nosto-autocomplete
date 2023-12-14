@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.0...v1.0.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* release ([57637ca](https://github.com/Nosto/nosto-autocomplete/commit/57637ca8b5c1b40f1212019c2b70c17f4df067ae))
+
 # 1.0.0 (2023-12-13)
 
 
