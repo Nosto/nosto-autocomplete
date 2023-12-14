@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.0...v1.1.1) (2023-12-14)
+
+
+### Bug Fixes
+
+* Include dist/ into package. ([b609264](https://github.com/Nosto/nosto-autocomplete/commit/b60926447e109651da80476ad66298167847eca8))
+
 # [1.1.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.1...v1.1.0) (2023-12-14)
 
 
