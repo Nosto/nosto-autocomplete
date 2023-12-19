@@ -70,14 +70,19 @@ export const defaultConfig = {
         enabled: true,
     },
     submit: (query: string, config: AutocompleteConfig<unknown>) => {
-        search(
-            {
-                query,
-            },
-            {
-                redirect: true,
-                track: config.nostoAnalytics ? "serp" : undefined,
-            }
-        )
+        if (
+            query.length >=
+            (config.minQueryLength ?? defaultConfig.minQueryLength)
+        ) {
+            search(
+                {
+                    query,
+                },
+                {
+                    redirect: true,
+                    track: config.nostoAnalytics ? "serp" : undefined,
+                }
+            )
+        }
     },
 }

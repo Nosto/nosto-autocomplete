@@ -1,2 +1,2 @@
-export { fromLiquidTemplate, fromRemoteLiquidTemplate } from "../liquid"
+export { fromLiquidTemplate, fromRemoteLiquidTemplate, defaultLiquidTemplate } from "../liquid"
 export * from './base'

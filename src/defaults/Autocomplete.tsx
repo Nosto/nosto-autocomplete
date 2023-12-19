@@ -1,4 +1,4 @@
-import { SearchKeyword, SearchProduct } from '../../src/api/search'
+import { SearchKeyword, SearchProduct } from '../api/search'
 
 interface AutocompleteProps {
     response?: {
@@ -96,7 +96,6 @@ function Keywords({ keywords }: { keywords: SearchKeyword[] }) {
                     <div
                         className="ns-autocomplete-keyword"
                         data-ns-hit={JSON.stringify(hit)}
-                        data-testid="keyword"
                         key={index}
                     >
                         {hit._highlight && hit._highlight.keyword ? (
@@ -126,7 +125,6 @@ function Products({ products }: { products: SearchProduct[] }) {
                         href="#"
                         key={hit.productId}
                         data-ns-hit={JSON.stringify(hit)}
-                        data-testid="product"
                     >
                         <img
                             className="ns-autocomplete-product-image"
