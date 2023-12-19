@@ -33,7 +33,7 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to submit the search
      */
-    submit: (query: string, config?: AutocompleteConfig<State>) => unknown
+    submit?: <T extends State>(query: string, config: AutocompleteConfig<T>) => unknown
     /**
      * Enable history
      */
@@ -69,7 +69,7 @@ export const defaultConfig = {
         queryParamName: "query",
         enabled: true,
     },
-    submit: (query: string, config: AutocompleteConfig<unknown>) => {
+    submit: <State>(query: string, config: AutocompleteConfig<State>) => {
         if (
             query.length >=
             (config.minQueryLength ?? defaultConfig.minQueryLength)
