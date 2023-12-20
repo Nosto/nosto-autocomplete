@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom"
-import { Autocomplete } from "./components/Autocomplete"
+import { Autocomplete } from "../src/defaults/Autocomplete"
 import type React from "react"
 import type ReactDOM from "react-dom/client"
 import { DefaultState } from '../src/utils/state'

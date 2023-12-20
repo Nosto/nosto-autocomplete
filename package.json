@@ -13,6 +13,7 @@
         "type": "git",
         "url": "git+https://github.com/Nosto/nosto-autocomplete.git"
     },
+    "type": "module",
     "license": "BSD-3-Clause",
     "author": "Nosto",
     "main": "dist/nosto-autocomplete.cjs",

@@ -60,6 +60,7 @@ function History({ history }: { history: AutocompleteProps["history"] }) {
                         <div
                             className="ns-autocomplete-history-item"
                             data-ns-hit={JSON.stringify(hit)}
+                            data-testid="history"
                             key={index}
                         >
                             {hit.item}
@@ -96,6 +97,7 @@ function Keywords({ keywords }: { keywords: SearchKeyword[] }) {
                     <div
                         className="ns-autocomplete-keyword"
                         data-ns-hit={JSON.stringify(hit)}
+                        data-testid="keyword"
                         key={index}
                     >
                         {hit._highlight && hit._highlight.keyword ? (
@@ -125,6 +127,7 @@ function Products({ products }: { products: SearchProduct[] }) {
                         href="#"
                         key={hit.productId}
                         data-ns-hit={JSON.stringify(hit)}
+                        data-testid="product"
                     >
                         <img
                             className="ns-autocomplete-product-image"
@@ -144,7 +147,7 @@ function Products({ products }: { products: SearchProduct[] }) {
                             </div>
                             <div>
                                 <span>{hit.price}&euro;</span>
-                                {hit.listPrice && (
+                                {hit.listPrice && hit.listPrice !== hit.price &&  (
                                     <span className="ns-autocomplete-product-list-price">
                                         {hit.listPrice}
                                         &euro;

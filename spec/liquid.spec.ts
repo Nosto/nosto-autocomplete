@@ -1,9 +1,8 @@
 import "@testing-library/jest-dom"
 import {
-    fromLiquidTemplate, fromRemoteLiquidTemplate,
+    fromLiquidTemplate, fromRemoteLiquidTemplate, defaultLiquidTemplate as liquidTemplate
 } from "../src/liquid"
 import { handleAutocomplete, hooks, autocompleteSuite } from './suites/autocomplete'
-import liquidTemplate from './templates/liquid'
 import { waitFor } from '@testing-library/dom'
 
 function libraryScript() {

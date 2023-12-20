@@ -10,7 +10,7 @@
         Recently searched
       </div>
       {% for hit in history %}
-        <div class="ns-autocomplete-history-item" data-ns-hit="{{ hit | json | escape }}">
+        <div class="ns-autocomplete-history-item" data-ns-hit="{{ hit | json | escape }}" data-testid="history">
           {{ hit.item }}
           <a
             href="#"
@@ -36,7 +36,7 @@
           Keywords
         </div>
         {% for hit in response.keywords.hits %}
-          <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}">
+          <div class="ns-autocomplete-keyword" data-ns-hit="{{ hit | json | escape }}" data-testid="keyword">
             {% if hit._highlight and hit._highlight.keyword %}
               <span>{{ hit._highlight.keyword }}</span>
             {% else %}
@@ -55,7 +55,8 @@
           <a
             class="ns-autocomplete-product"
             href="{{ hit.url }}"
-            data-ns-hit="{{ hit | json | escape }}">
+            data-ns-hit="{{ hit | json | escape }}"
+            data-testid="product">
             <img
               class="ns-autocomplete-product-image"
               src="{% if hit.imageUrl %}{{ hit.imageUrl }}{% else %}{{ imagePlaceHolder }}{% endif %}"
@@ -75,11 +76,11 @@
                 <span>
                   {{ hit.price }}&euro;
                 </span>
-                {% if hit.listPrice %}
-                  <span class="ns-autocomplete-product-list-price">
-                    {{ hit.listPrice }}
-                    &euro;
-                  </span>
+                {% if hit.listPrice and hit.listPrice != hit.price %}
+                    <span class="ns-autocomplete-product-list-price">
+                        {{ hit.listPrice }}
+                        &euro;
+                    </span>
                 {% endif %}
               </div>
             </div>

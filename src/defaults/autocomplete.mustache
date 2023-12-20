@@ -5,7 +5,7 @@
         Keywords
       </div>
       {{#response.keywords.hits}}
-        <div class="ns-autocomplete-keyword" data-ns-hit="{{toJson}}">
+        <div class="ns-autocomplete-keyword" data-ns-hit="{{toJson}}" data-testid="keyword">
           {{#_highlight.keyword}}
             <span>{{{.}}}</span>
           {{/_highlight.keyword}}
@@ -23,7 +23,7 @@
         Products
       </div>
       {{#response.products.hits}}
-        <a class="ns-autocomplete-product" href="{{url}}" data-ns-hit="{{toJson}}">
+        <a class="ns-autocomplete-product" href="{{url}}" data-ns-hit="{{toJson}}" data-testid="product">
           <img
               class="ns-autocomplete-product-image"
               src="{{#imageUrl}}{{ imageUrl }}{{/imageUrl}}{{^imageUrl}}{{ imagePlaceholder }}{{/imageUrl}}"
@@ -44,11 +44,11 @@
               <span>
                 {{price}}&euro;
               </span>
-              {{#listPrice}}
+              {{#showListPrice}}
                 <span class="ns-autocomplete-product-list-price">
-                  {{.}}&euro;
+                  {{listPrice}}&euro;
                 </span>
-              {{/listPrice}}
+              {{/showListPrice}}
             </div>
           </div>
         </a>
@@ -62,7 +62,7 @@
         Recently searched
       </div>
       {{#history}}
-        <div class="ns-autocomplete-history-item" data-ns-hit="{{toJson}}">
+        <div class="ns-autocomplete-history-item" data-ns-hit="{{toJson}}" data-testid="history">
           {{item}}
           <a href="#" class="ns-autocomplete-history-item-remove" data-ns-remove-history="{{item}}">
             &#x2715;

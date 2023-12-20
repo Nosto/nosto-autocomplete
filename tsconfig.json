@@ -1,4 +1,5 @@
 {
+    "exclude": ["**/*.js"],
     "compilerOptions": {
         "target": "es2016",
         "lib": ["ES2019", "DOM"],
