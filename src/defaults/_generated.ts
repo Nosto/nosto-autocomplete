@@ -4,10 +4,6 @@ export const defaultLiquidTemplate = `
 {% assign hasHistory = history.length > 0 %}
 {% assign imagePlaceHolder = 'https://cdn.nosto.com/nosto/9/mock' %}
 
-
-
-
-
 <div class="ns-autocomplete-results">
   {% if hasKeywords == false and hasProducts == false and hasHistory %}
     <div class="ns-autocomplete-history">
