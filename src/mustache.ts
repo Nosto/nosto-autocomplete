@@ -2,7 +2,7 @@ import { AnyPromise } from "./utils/promise"
 import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
-export { defaultMustacheTemplate } from './_generated'
+export { defaultMustacheTemplate } from './defaults/_generated'
 
 /**
  * Render a Mustache template into a container
