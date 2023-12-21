@@ -59,17 +59,19 @@ export interface AutocompleteConfig<State> {
         | boolean
 }
 
+export const defaultGaConfig = {
+    serpPath: "/search",
+    queryParamName: "query",
+    enabled: true,
+}
+
 export function getDefaultConfig<State>() {
     return {
         minQueryLength: 2,
         historyEnabled: true,
         historySize: 5,
         nostoAnalytics: true,
-        googleAnalytics: {
-            serpPath: "/search",
-            queryParamName: "query",
-            enabled: true,
-        },
+        googleAnalytics: defaultGaConfig,
         submit: (query, config) => {
             if (
                 query.length >=
