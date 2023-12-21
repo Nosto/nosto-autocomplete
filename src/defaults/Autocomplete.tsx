@@ -1,4 +1,4 @@
-import { SearchKeyword, SearchProduct } from '../api/search'
+import { SearchKeyword, SearchProduct } from "../api/search"
 
 interface AutocompleteProps {
     response?: {
@@ -147,12 +147,13 @@ function Products({ products }: { products: SearchProduct[] }) {
                             </div>
                             <div>
                                 <span>{hit.price}&euro;</span>
-                                {hit.listPrice && hit.listPrice !== hit.price &&  (
-                                    <span className="ns-autocomplete-product-list-price">
-                                        {hit.listPrice}
-                                        &euro;
-                                    </span>
-                                )}
+                                {hit.listPrice &&
+                                    hit.listPrice !== hit.price && (
+                                        <span className="ns-autocomplete-product-list-price">
+                                            {hit.listPrice}
+                                            &euro;
+                                        </span>
+                                    )}
                             </div>
                         </div>
                     </a>

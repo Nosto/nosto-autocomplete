@@ -1,9 +1,15 @@
 import "@testing-library/jest-dom"
 import {
-    fromLiquidTemplate, fromRemoteLiquidTemplate, defaultLiquidTemplate as liquidTemplate
+    fromLiquidTemplate,
+    fromRemoteLiquidTemplate,
+    defaultLiquidTemplate as liquidTemplate,
 } from "../src/liquid"
-import { handleAutocomplete, hooks, autocompleteSuite } from './suites/autocomplete'
-import { waitFor } from '@testing-library/dom'
+import {
+    handleAutocomplete,
+    hooks,
+    autocompleteSuite,
+} from "./suites/autocomplete"
+import { waitFor } from "@testing-library/dom"
 
 function libraryScript() {
     const liquidScript = document.createElement("script")

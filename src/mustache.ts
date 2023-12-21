@@ -2,7 +2,7 @@ import { AnyPromise } from "./utils/promise"
 import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
-export { defaultMustacheTemplate } from './defaults/_generated'
+export { defaultMustacheTemplate } from "./defaults/_generated"
 
 /**
  * Render a Mustache template into a container
@@ -12,9 +12,12 @@ export { defaultMustacheTemplate } from './defaults/_generated'
  * @group Autocomplete
  * @category Mustache
  */
-export function fromMustacheTemplate<State extends object = DefaultState>(template: string, options?: {
-    helpers?: object
-}) {
+export function fromMustacheTemplate<State extends object = DefaultState>(
+    template: string,
+    options?: {
+        helpers?: object
+    }
+) {
     if (Mustache === undefined) {
         throw new Error(
             "Mustache is not defined. Please include the Mustache dependency or library in your page."
@@ -33,7 +36,7 @@ export function fromMustacheTemplate<State extends object = DefaultState>(templa
             showListPrice: function () {
                 return this.listPrice !== this.price
             },
-            ...helpers
+            ...helpers,
         })
 
         return AnyPromise.resolve(undefined)

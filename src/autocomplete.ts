@@ -7,7 +7,7 @@ import { bindInput } from "./utils/input"
 import { LimiterError, createLimiter } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
-import { createHistory } from './utils/history'
+import { createHistory } from "./utils/history"
 
 /**
  * @group Autocomplete

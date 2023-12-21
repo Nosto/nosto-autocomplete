@@ -69,26 +69,26 @@ export function createDropdown<State>(
                 .replace(/([A-Z])/g, "-$1")
                 .toLowerCase()}]`
 
-            Array.from<HTMLElement>(
-                container.querySelectorAll(dataKey)
-            ).map(el => {
-                const data =
-                    el?.dataset?.[
-                        `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
-                    ]
-                const onClick = () => {
-                    callback({
-                        data,
-                        el,
-                        update,
+            Array.from<HTMLElement>(container.querySelectorAll(dataKey)).map(
+                el => {
+                    const data =
+                        el?.dataset?.[
+                            `ns${key.charAt(0).toUpperCase() + key.slice(1)}`
+                        ]
+                    const onClick = () => {
+                        callback({
+                            data,
+                            el,
+                            update,
+                        })
+                    }
+
+                    el.addEventListener("click", onClick)
+                    unbindCallbacks.push(() => {
+                        el.removeEventListener("click", onClick)
                     })
                 }
-
-                el.addEventListener("click", onClick)
-                unbindCallbacks.push(() => {
-                    el.removeEventListener("click", onClick)
-                })
-            })
+            )
         })
     }
 
@@ -252,7 +252,7 @@ export function createDropdown<State>(
         resetHighlight,
         hasHighlight,
         getHighlight,
-        container
+        container,
     }
 }
 

@@ -75,7 +75,8 @@ export function getDefaultConfig<State>() {
         submit: (query, config) => {
             if (
                 query.length >=
-                (config.minQueryLength ?? getDefaultConfig<State>().minQueryLength)
+                (config.minQueryLength ??
+                    getDefaultConfig<State>().minQueryLength)
             ) {
                 search(
                     {

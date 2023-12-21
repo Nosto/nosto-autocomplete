@@ -26,18 +26,20 @@ export function createHistory(size: number) {
     }
 
     function add(item: string) {
-        set(items = [
-            { item },
-            ...(items?.filter(v => v.item !== item) || []),
-        ].slice(0, size))
+        set(
+            (items = [
+                { item },
+                ...(items?.filter(v => v.item !== item) || []),
+            ].slice(0, size))
+        )
     }
 
     function clear() {
-        set(items = [])
+        set((items = []))
     }
 
     function remove(item: string) {
-        set(items = items.filter(v => v.item !== item))
+        set((items = items.filter(v => v.item !== item)))
     }
 
     function getItems() {
