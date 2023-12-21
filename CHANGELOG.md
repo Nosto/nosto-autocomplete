@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.1...v1.2.0) (2023-12-21)
+
+
+### Bug Fixes
+
+* Generate templates, refactor. ([6c77199](https://github.com/Nosto/nosto-autocomplete/commit/6c77199bf1faae68c43913a7b2bf2ce73cf5cd23))
+
+
+### Features
+
+* Provide React and Preact bundles. ([4623193](https://github.com/Nosto/nosto-autocomplete/commit/46231934c9ca8bf1b914d1c30d1518e9d5c65f1c))
+
 ## [1.1.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.0...v1.1.1) (2023-12-14)
 
 
