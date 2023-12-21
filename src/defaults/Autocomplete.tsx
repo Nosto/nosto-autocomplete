@@ -1,5 +1,4 @@
-import React from "react"
-import { SearchKeyword, SearchProduct } from '../../src/api/search'
+import { SearchKeyword, SearchProduct } from "../api/search"
 
 interface AutocompleteProps {
     response?: {
@@ -61,11 +60,12 @@ function History({ history }: { history: AutocompleteProps["history"] }) {
                         <div
                             className="ns-autocomplete-history-item"
                             data-ns-hit={JSON.stringify(hit)}
+                            data-testid="history"
                             key={index}
                         >
                             {hit.item}
                             <a
-                                href="javascript:;"
+                                href="#"
                                 className="ns-autocomplete-history-item-remove"
                                 data-ns-remove-history={hit.item}
                             >
@@ -124,7 +124,7 @@ function Products({ products }: { products: SearchProduct[] }) {
                 return (
                     <a
                         className="ns-autocomplete-product"
-                        href="javascript:;"
+                        href="#"
                         key={hit.productId}
                         data-ns-hit={JSON.stringify(hit)}
                         data-testid="product"
@@ -147,12 +147,13 @@ function Products({ products }: { products: SearchProduct[] }) {
                             </div>
                             <div>
                                 <span>{hit.price}&euro;</span>
-                                {hit.listPrice && (
-                                    <span className="ns-autocomplete-product-list-price">
-                                        {hit.listPrice}
-                                        &euro;
-                                    </span>
-                                )}
+                                {hit.listPrice &&
+                                    hit.listPrice !== hit.price && (
+                                        <span className="ns-autocomplete-product-list-price">
+                                            {hit.listPrice}
+                                            &euro;
+                                        </span>
+                                    )}
                             </div>
                         </div>
                     </a>

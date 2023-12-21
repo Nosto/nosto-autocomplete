@@ -13,6 +13,7 @@
         "type": "git",
         "url": "git+https://github.com/Nosto/nosto-autocomplete.git"
     },
+    "type": "module",
     "license": "BSD-3-Clause",
     "author": "Nosto",
     "main": "dist/nosto-autocomplete.cjs",
@@ -42,6 +43,28 @@
             "require": "./dist/mustache/nosto-autocomplete.cjs",
             "types": "./dist/mustache/nosto-autocomplete.d.ts"
         },
+        "./react": {
+            "browser": "./dist/react/nosto-autocomplete.module.js",
+            "umd": "./dist/react/nosto-autocomplete.umd.js",
+            "import": "./dist/react/nosto-autocomplete.mjs",
+            "require": "./dist/react/nosto-autocomplete.cjs",
+            "types": "./dist/react/nosto-autocomplete.d.ts"
+        },
+        "./preact": {
+            "browser": "./dist/preact/nosto-autocomplete.module.js",
+            "umd": "./dist/preact/nosto-autocomplete.umd.js",
+            "import": "./dist/preact/nosto-autocomplete.mjs",
+            "require": "./dist/preact/nosto-autocomplete.cjs",
+            "types": "./dist/preact/nosto-autocomplete.d.ts"
+        },
+        "./liquid/template": {
+            "import": "./dist/liquid/autocomplete.liquid",
+            "require": "./dist/liquid/autocomplete.liquid"
+        },
+        "./mustache/template": {
+            "import": "./dist/mustache/autocomplete.mustache",
+            "require": "./dist/mustache/autocomplete.mustache"
+        },
         "./styles": {
             "import": "./dist/styles.css",
             "require": "./dist/styles.css"
@@ -62,6 +85,12 @@
             ],
             "mustache": [
                 "dist/mustache/nosto-autocomplete.d.ts"
+            ],
+            "react": [
+                "dist/react/nosto-autocomplete.d.ts"
+            ],
+            "preact": [
+                "dist/preact/nosto-autocomplete.d.ts"
             ]
         }
     },
@@ -70,16 +99,19 @@
         "dist/**/*"
     ],
     "scripts": {
-        "build": "npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:styles",
+        "build": "npm run exportTemplates && npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:react && npm run build:preact && npm run build:styles",
         "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/nosto-autocomplete.d.ts src/entries/base.ts",
-        "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts",
-        "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts",
+        "build:preact": "microbundle --generateTypes false --alias react=preact/compat react-dom=preact/compat src/entries/preact.ts -o dist/preact && dts-bundle-generator -o dist/preact/nosto-autocomplete.d.ts src/entries/preact.ts",
+        "build:react": "microbundle --generateTypes false src/entries/react.ts -o dist/react && dts-bundle-generator -o dist/react/nosto-autocomplete.d.ts src/entries/react.ts",
+        "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts && cp src/defaults/autocomplete.liquid dist/liquid/autocomplete.liquid",
+        "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts && cp src/defaults/autocomplete.mustache dist/mustache/autocomplete.mustache",
         "build:styles": "cp src/styles.css dist/styles.css",
         "build:docs": "typedoc src/index.ts",
         "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r ./docs ./site && cp -r ./examples ./site/examples && cp -r ./coverage ./site/coverage",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
-        "prettify": "node cleanup.js && prettier --write \"{src,spec}/**/*.ts\"",
+        "exportTemplates": "node scripts/exportTemplates.js",
+        "prettify": "node scripts/cleanup.js && prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
         "test": "jest spec",
         "test:cov": "jest --coverage spec && make-coverage-badge",
         "codegen": "graphql-codegen",
@@ -117,6 +149,7 @@
     "devDependencies": {
         "@graphql-codegen/cli": "5.0.0",
         "@graphql-codegen/typescript": "4.0.1",
+        "@preact/compat": "^17.1.2",
         "@testing-library/dom": "^9.3.1",
         "@testing-library/jest-dom": "^6.0.0",
         "@testing-library/user-event": "^14.4.3",

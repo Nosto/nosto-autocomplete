@@ -2,6 +2,8 @@ import { AnyPromise } from "./utils/promise"
 import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
+export { defaultMustacheTemplate } from "./defaults/_generated"
+
 /**
  * Render a Mustache template into a container
  *
@@ -10,21 +12,31 @@ import Mustache from "mustache"
  * @group Autocomplete
  * @category Mustache
  */
-export function fromMustacheTemplate(template: string) {
+export function fromMustacheTemplate<State extends object = DefaultState>(
+    template: string,
+    options?: {
+        helpers?: object
+    }
+) {
     if (Mustache === undefined) {
         throw new Error(
             "Mustache is not defined. Please include the Mustache dependency or library in your page."
         )
     }
 
+    const { helpers } = options || {}
 
-    return (container: HTMLElement, state: object) => {
+    return (container: HTMLElement, state: State) => {
         container.innerHTML = Mustache.render(template, {
             ...state,
             imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
             toJson: function () {
                 return JSON.stringify(this)
             },
+            showListPrice: function () {
+                return this.listPrice !== this.price
+            },
+            ...helpers,
         })
 
         return AnyPromise.resolve(undefined)
@@ -40,7 +52,10 @@ export function fromMustacheTemplate(template: string) {
  * @category Mustache
  */
 export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
-    url: string
+    url: string,
+    options?: {
+        helpers?: object
+    }
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     return (container, state) => {
         return new AnyPromise((resolve, reject) => {
@@ -48,7 +63,7 @@ export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
             xhr.open("GET", url)
             xhr.onload = () => {
                 if (xhr.status === 200) {
-                    fromMustacheTemplate(xhr.responseText)(
+                    fromMustacheTemplate(xhr.responseText, options)(
                         container,
                         state
                     ).then(() => {

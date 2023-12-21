@@ -1,9 +1,9 @@
 import "@testing-library/jest-dom"
-import { Autocomplete } from "./components/Autocomplete"
+import { Autocomplete } from "../src/defaults/Autocomplete"
 import type React from "react"
 import type ReactDOM from "react-dom/client"
-import { DefaultState } from '../src/utils/state'
-import { autocompleteSuite } from './suites/autocomplete'
+import { DefaultState } from "../src/utils/state"
+import { autocompleteSuite } from "./suites/autocomplete"
 
 interface WindowWithReact extends Window {
     React?: typeof React
@@ -28,7 +28,7 @@ function libraryScript() {
     document.body.appendChild(babelScript)
 }
 
-function render (container: HTMLElement, state: DefaultState) {
+function render(container: HTMLElement, state: DefaultState) {
     if (!reactRoot) {
         reactRoot = w.ReactDOM?.createRoot(container)
     }

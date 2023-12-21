@@ -2,8 +2,8 @@ import "@testing-library/jest-dom"
 import {
     fromMustacheTemplate,
     fromRemoteMustacheTemplate,
+    defaultMustacheTemplate as mustacheTemplate,
 } from "../src/mustache"
-import mustacheTemplate from "./templates/mustache"
 import {
     autocompleteSuite,
     handleAutocomplete,

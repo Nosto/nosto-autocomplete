@@ -1,2 +1,6 @@
-export { fromMustacheTemplate, fromRemoteMustacheTemplate } from "../mustache"
-export * from './base'
+export {
+    fromMustacheTemplate,
+    fromRemoteMustacheTemplate,
+    defaultMustacheTemplate,
+} from "../mustache"
+export * from "./base"

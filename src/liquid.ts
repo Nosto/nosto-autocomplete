@@ -2,6 +2,8 @@ import { DefaultState } from "./utils/state"
 import { AnyPromise } from "./utils/promise"
 import { Liquid } from "liquidjs"
 
+export { defaultLiquidTemplate } from "./defaults/_generated"
+
 /**
  * Render a liquid template into a container
  *
