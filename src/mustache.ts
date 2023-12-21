@@ -12,7 +12,7 @@ export { defaultMustacheTemplate } from './defaults/_generated'
  * @group Autocomplete
  * @category Mustache
  */
-export function fromMustacheTemplate(template: string, options?: {
+export function fromMustacheTemplate<State extends object = DefaultState>(template: string, options?: {
     helpers?: object
 }) {
     if (Mustache === undefined) {
@@ -23,7 +23,7 @@ export function fromMustacheTemplate(template: string, options?: {
 
     const { helpers } = options || {}
 
-    return (container: HTMLElement, state: object) => {
+    return (container: HTMLElement, state: State) => {
         container.innerHTML = Mustache.render(template, {
             ...state,
             imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",

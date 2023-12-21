@@ -33,7 +33,7 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to submit the search
      */
-    submit?: <T extends State>(query: string, config: AutocompleteConfig<T>) => unknown
+    submit?: (query: string, config: AutocompleteConfig<State>) => void
     /**
      * Enable history
      */
@@ -59,30 +59,32 @@ export interface AutocompleteConfig<State> {
         | boolean
 }
 
-export const defaultConfig = {
-    minQueryLength: 2,
-    historyEnabled: true,
-    historySize: 5,
-    nostoAnalytics: true,
-    googleAnalytics: {
-        serpPath: "/search",
-        queryParamName: "query",
-        enabled: true,
-    },
-    submit: <State>(query: string, config: AutocompleteConfig<State>) => {
-        if (
-            query.length >=
-            (config.minQueryLength ?? defaultConfig.minQueryLength)
-        ) {
-            search(
-                {
-                    query,
-                },
-                {
-                    redirect: true,
-                    track: config.nostoAnalytics ? "serp" : undefined,
-                }
-            )
-        }
-    },
+export function getDefaultConfig<State>() {
+    return {
+        minQueryLength: 2,
+        historyEnabled: true,
+        historySize: 5,
+        nostoAnalytics: true,
+        googleAnalytics: {
+            serpPath: "/search",
+            queryParamName: "query",
+            enabled: true,
+        },
+        submit: (query, config) => {
+            if (
+                query.length >=
+                (config.minQueryLength ?? getDefaultConfig<State>().minQueryLength)
+            ) {
+                search(
+                    {
+                        query,
+                    },
+                    {
+                        redirect: true,
+                        track: config.nostoAnalytics ? "serp" : undefined,
+                    }
+                )
+            }
+        },
+    } satisfies Partial<AutocompleteConfig<State>>
 }

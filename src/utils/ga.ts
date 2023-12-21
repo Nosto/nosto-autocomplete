@@ -1,4 +1,4 @@
-import { AutocompleteConfig, defaultConfig } from "../config"
+import { AutocompleteConfig, getDefaultConfig } from "../config"
 
 const localStorageKey = "nostoAutocomplete:gaEvent"
 
@@ -86,9 +86,9 @@ export const getGaTrackUrl = <State>(
 ) => {
     const gaConfig = isGaEnabled(config)
         ? typeof config.googleAnalytics === "boolean"
-            ? defaultConfig.googleAnalytics
+            ? getDefaultConfig().googleAnalytics
             : {
-                  ...defaultConfig.googleAnalytics,
+                  ...getDefaultConfig().googleAnalytics,
                   ...config.googleAnalytics,
               }
         : undefined
