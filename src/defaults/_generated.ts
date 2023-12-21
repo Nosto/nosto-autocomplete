@@ -96,8 +96,8 @@ export const defaultLiquidTemplate = `
     </div>
   {% endif %}
 </div>
-
 `
+
 export const defaultMustacheTemplate = `
 <div class="ns-autocomplete-results">
   {{#response.keywords.hits.length}}
@@ -186,5 +186,4 @@ export const defaultMustacheTemplate = `
     </div>
   {{/response.products.hits.length}}{{/response.keywords.hits.length}}
 </div>
-
 `
