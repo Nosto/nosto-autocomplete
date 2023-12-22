@@ -1,5 +1,5 @@
-import { SearchOptions, getNostoClient } from "./api/client"
-import { InputSearchQueryWithFields } from "./api/search"
+import { getNostoClient } from "./api/client"
+import { InputSearchQueryWithFields, SearchOptions } from "./api/search"
 
 const defaultProductFields = [
     "productId",
@@ -54,6 +54,30 @@ const defaultProductFields = [
     "tags3",
 ]
 
+/**
+ *
+ * @param query Query object.
+ * @param options Options object.
+ * @returns Promise of search response.
+ * @group Autocomplete
+ * @category Core
+ * @example
+ * ```js
+ * import { search } from "@nosto/nosto-autocomplete"
+ *
+ * search({
+ *     query: "shoes",
+ *     products: {
+ *       fields: ["name", "price"],
+ *       facets: ["brand", "category"],
+ *       size: 10,
+ *       from: 0,
+ *     }
+ * }).then((state) => {
+ *    console.log(state.response)
+ * })
+ * ```
+ */
 export function search<State>(
     query: InputSearchQueryWithFields,
     options?: SearchOptions

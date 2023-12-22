@@ -8,9 +8,34 @@ export { defaultLiquidTemplate } from "./defaults/_generated"
  * Render a liquid template into a container
  *
  * @param template Liquid template
- * @returns render function
+ * @returns Render function
  * @group Autocomplete
  * @category Liquid
+ * @example
+ * ```js
+ * import { fromLiquidTemplate } from "@nosto/nosto-autocomplete/liquid";
+ *
+ * const render = fromLiquidTemplate(`
+ *   <div>
+ *      <h1>{{title}}</h1>
+ *    <ul>
+ *    {% for product in products %}
+ *     <li>{{product.name}}</li>
+ *  {% endfor %}
+ *  </ul>
+ *  </div>
+ *  `);
+ *
+ * render(document.getElementById("container"), {
+ *   title: "My Title",
+ *   products: [
+ *     { name: "Product 1" },
+ *     { name: "Product 2" },
+ *     { name: "Product 3" }
+ *   ]
+ * });
+
+ * ```
  */
 export function fromLiquidTemplate<State extends object = DefaultState>(
     template: string
@@ -33,10 +58,16 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
 /**
  * Load a remote liquid template and render it into a container
  *
- * @param url remote Liquid template URL
- * @returns render function
+ * @param url Remote Liquid template URL
+ * @returns Render function
  * @group Autocomplete
  * @category Liquid
+ * @example
+ * ```js
+ * import { fromRemoteLiquidTemplate } from "@nosto/nosto-autocomplete/liquid";
+ *
+ * const render = fromRemoteLiquidTemplate("https://example.com/template.liquid");
+ * ```
  */
 export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
     url: string

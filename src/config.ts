@@ -52,8 +52,20 @@ export interface AutocompleteConfig<State> {
      */
     googleAnalytics?:
         | {
+              /**
+               * The path to the search page
+               * @default "/search"
+               */
               serpPath?: string
+              /**
+               * The query url parameter name
+               * @default "query"
+               */
               queryParamName?: string
+              /**
+               * Enable Google Analytics
+               * @default true
+               */
               enabled?: boolean
           }
         | boolean

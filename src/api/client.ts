@@ -1,5 +1,5 @@
 import { AnyPromise } from "../utils/promise"
-import { InputSearchQueryWithFields } from "./search"
+import { InputSearchQueryWithFields, SearchOptions } from "./search"
 import { SearchResult } from "./search/generated"
 
 /**
@@ -42,11 +42,6 @@ export interface NostoSession {
     viewOther(): SessionAction
     viewSearch(query: string): SessionAction
     viewCart(): SessionAction
-}
-
-export interface SearchOptions {
-    track?: "autocomplete" | "category" | "serp"
-    redirect?: boolean
 }
 
 /**
