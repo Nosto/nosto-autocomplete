@@ -43,22 +43,21 @@ export interface AutocompleteConfig<State> {
      */
     historySize?: number
     /**
-     * enable Nosto Analytics
+     * Enable Nosto Analytics
      */
     nostoAnalytics?: boolean
     /**
-     * Enable Google Analytics
-     *
+     * Google Analytics configuration. Set to `false` to disable.
      */
     googleAnalytics?:
         | {
               /**
-               * The path to the search page
+               * Path of search page
                * @default "/search"
                */
               serpPath?: string
               /**
-               * The query url parameter name
+               * Search query url parameter name
                * @default "query"
                */
               queryParamName?: string
