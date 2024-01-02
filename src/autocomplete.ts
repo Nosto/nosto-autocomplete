@@ -351,25 +351,27 @@ function submitWithContext<State>(context: {
     return (value: string, redirect: boolean = false) => {
         const { config, actions } = context
 
-        if (config.historyEnabled) {
-            actions.addHistoryItem(value)
-        }
+        if (value.length > 0) {
+            if (config.historyEnabled) {
+                actions.addHistoryItem(value)
+            }
 
-        if (config.nostoAnalytics) {
-            getNostoClient().then(api => {
-                api?.recordSearchSubmit?.(value)
-            })
-        }
+            if (config.nostoAnalytics) {
+                getNostoClient().then(api => {
+                    api?.recordSearchSubmit?.(value)
+                })
+            }
 
-        if (isGaEnabled(config)) {
-            trackGaPageView({
-                delay: true,
-                location: getGaTrackUrl(value, config),
-            })
-        }
+            if (isGaEnabled(config)) {
+                trackGaPageView({
+                    delay: true,
+                    location: getGaTrackUrl(value, config),
+                })
+            }
 
-        if (!redirect && typeof config?.submit === "function") {
-            config.submit(value, config)
+            if (!redirect && typeof config?.submit === "function") {
+                config.submit(value, config)
+            }
         }
     }
 }

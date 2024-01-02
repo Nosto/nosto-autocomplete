@@ -33,7 +33,11 @@ type Options = {
  *     {{/products}}
  *    </ul>
  *   </div>
- *   `);
+ *   `, {
+ *    helpers: {
+ *     toJson: function () {
+ *      return JSON.stringify(this)
+ *    }});
  *
  * render(document.getElementById("container"), {
  *   title: "My Title",
