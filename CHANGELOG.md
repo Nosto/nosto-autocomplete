@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.2.0...v1.2.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* add TypeDoc comments in library functions ([674c22f](https://github.com/Nosto/nosto-autocomplete/commit/674c22fd110edd4c1ee7c0a7f16cefc10f91b8ab))
+
 # [1.2.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.1...v1.2.0) (2023-12-21)
 
 
