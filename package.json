@@ -1,6 +1,6 @@
 {
-    "name": "@nosto/nosto-autocomplete",
-    "version": "1.2.1",
+    "name": "@nosto/autocomplete",
+    "version": "1.0.0",
     "description": "Library designed to simplify the implementation of search autocomplete functionality",
     "keywords": [
         "nosto"
@@ -16,46 +16,46 @@
     "type": "module",
     "license": "BSD-3-Clause",
     "author": "Nosto",
-    "main": "dist/nosto-autocomplete.cjs",
-    "module": "dist/nosto-autocomplete.module.js",
-    "umd:main": "dist/nosto-autocomplete.umd.js",
-    "unpkg": "dist/nosto-autocomplete.umd.js",
+    "main": "dist/autocomplete.cjs",
+    "module": "dist/autocomplete.module.js",
+    "umd:main": "dist/autocomplete.umd.js",
+    "unpkg": "dist/autocomplete.umd.js",
     "source": "src/index.ts",
     "exports": {
         ".": {
-            "browser": "./dist/nosto-autocomplete.module.js",
-            "umd": "./dist/nosto-autocomplete.umd.js",
-            "import": "./dist/nosto-autocomplete.mjs",
-            "require": "./dist/nosto-autocomplete.cjs",
-            "types": "./dist/nosto-autocomplete.d.ts"
+            "browser": "./dist/autocomplete.module.js",
+            "umd": "./dist/autocomplete.umd.js",
+            "import": "./dist/autocomplete.mjs",
+            "require": "./dist/autocomplete.cjs",
+            "types": "./dist/autocomplete.d.ts"
         },
         "./liquid": {
-            "browser": "./dist/nosto-autocomplete.module.js",
-            "umd": "./dist/liquid/nosto-autocomplete.umd.js",
-            "import": "./dist/liquid/nosto-autocomplete.mjs",
-            "require": "./dist/liquid/nosto-autocomplete.cjs",
-            "types": "./dist/liquid/nosto-autocomplete.d.ts"
+            "browser": "./dist/autocomplete.module.js",
+            "umd": "./dist/liquid/autocomplete.umd.js",
+            "import": "./dist/liquid/autocomplete.mjs",
+            "require": "./dist/liquid/autocomplete.cjs",
+            "types": "./dist/liquid/autocomplete.d.ts"
         },
         "./mustache": {
-            "browser": "./dist/mustache/nosto-autocomplete.module.js",
-            "umd": "./dist/mustache/nosto-autocomplete.umd.js",
-            "import": "./dist/mustache/nosto-autocomplete.mjs",
-            "require": "./dist/mustache/nosto-autocomplete.cjs",
-            "types": "./dist/mustache/nosto-autocomplete.d.ts"
+            "browser": "./dist/mustache/autocomplete.module.js",
+            "umd": "./dist/mustache/autocomplete.umd.js",
+            "import": "./dist/mustache/autocomplete.mjs",
+            "require": "./dist/mustache/autocomplete.cjs",
+            "types": "./dist/mustache/autocomplete.d.ts"
         },
         "./react": {
-            "browser": "./dist/react/nosto-autocomplete.module.js",
-            "umd": "./dist/react/nosto-autocomplete.umd.js",
-            "import": "./dist/react/nosto-autocomplete.mjs",
-            "require": "./dist/react/nosto-autocomplete.cjs",
-            "types": "./dist/react/nosto-autocomplete.d.ts"
+            "browser": "./dist/react/autocomplete.module.js",
+            "umd": "./dist/react/autocomplete.umd.js",
+            "import": "./dist/react/autocomplete.mjs",
+            "require": "./dist/react/autocomplete.cjs",
+            "types": "./dist/react/autocomplete.d.ts"
         },
         "./preact": {
-            "browser": "./dist/preact/nosto-autocomplete.module.js",
-            "umd": "./dist/preact/nosto-autocomplete.umd.js",
-            "import": "./dist/preact/nosto-autocomplete.mjs",
-            "require": "./dist/preact/nosto-autocomplete.cjs",
-            "types": "./dist/preact/nosto-autocomplete.d.ts"
+            "browser": "./dist/preact/autocomplete.module.js",
+            "umd": "./dist/preact/autocomplete.umd.js",
+            "import": "./dist/preact/autocomplete.mjs",
+            "require": "./dist/preact/autocomplete.cjs",
+            "types": "./dist/preact/autocomplete.d.ts"
         },
         "./liquid/template": {
             "import": "./dist/liquid/autocomplete.liquid",
@@ -81,30 +81,30 @@
     "typesVersions": {
         "*": {
             "liquid": [
-                "dist/liquid/nosto-autocomplete.d.ts"
+                "dist/liquid/autocomplete.d.ts"
             ],
             "mustache": [
-                "dist/mustache/nosto-autocomplete.d.ts"
+                "dist/mustache/autocomplete.d.ts"
             ],
             "react": [
-                "dist/react/nosto-autocomplete.d.ts"
+                "dist/react/autocomplete.d.ts"
             ],
             "preact": [
-                "dist/preact/nosto-autocomplete.d.ts"
+                "dist/preact/autocomplete.d.ts"
             ]
         }
     },
-    "types": "dist/nosto-autocomplete.d.ts",
+    "types": "dist/autocomplete.d.ts",
     "files": [
         "dist/**/*"
     ],
     "scripts": {
         "build": "npm run exportTemplates && npm run typecheck && npm run lint && npm run build:liquid && npm run build:mustache && npm run build:base && npm run build:react && npm run build:preact && npm run build:styles",
-        "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/nosto-autocomplete.d.ts src/entries/base.ts",
-        "build:preact": "microbundle --generateTypes false --alias react=preact/compat react-dom=preact/compat src/entries/preact.ts -o dist/preact && dts-bundle-generator -o dist/preact/nosto-autocomplete.d.ts src/entries/preact.ts",
-        "build:react": "microbundle --generateTypes false src/entries/react.ts -o dist/react && dts-bundle-generator -o dist/react/nosto-autocomplete.d.ts src/entries/react.ts",
-        "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/nosto-autocomplete.d.ts src/entries/liquid.ts && cp src/defaults/autocomplete.liquid dist/liquid/autocomplete.liquid",
-        "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/nosto-autocomplete.d.ts src/entries/mustache.ts && cp src/defaults/autocomplete.mustache dist/mustache/autocomplete.mustache",
+        "build:base": "microbundle --generateTypes false src/entries/base.ts -o dist && dts-bundle-generator -o dist/autocomplete.d.ts src/entries/base.ts",
+        "build:preact": "microbundle --generateTypes false --alias react=preact/compat react-dom=preact/compat src/entries/preact.ts -o dist/preact && dts-bundle-generator -o dist/preact/autocomplete.d.ts src/entries/preact.ts",
+        "build:react": "microbundle --generateTypes false src/entries/react.ts -o dist/react && dts-bundle-generator -o dist/react/autocomplete.d.ts src/entries/react.ts",
+        "build:liquid": "microbundle --generateTypes false src/entries/liquid.ts -o dist/liquid && dts-bundle-generator -o dist/liquid/autocomplete.d.ts src/entries/liquid.ts && cp src/defaults/autocomplete.liquid dist/liquid/autocomplete.liquid",
+        "build:mustache": "microbundle --generateTypes false src/entries/mustache.ts -o dist/mustache && dts-bundle-generator -o dist/mustache/autocomplete.d.ts src/entries/mustache.ts && cp src/defaults/autocomplete.mustache dist/mustache/autocomplete.mustache",
         "build:styles": "cp src/styles.css dist/styles.css",
         "build:docs": "typedoc src/index.ts",
         "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r ./docs ./site && cp -r ./coverage ./site/coverage",

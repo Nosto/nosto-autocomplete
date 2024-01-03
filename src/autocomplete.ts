@@ -31,7 +31,7 @@ export type AutocompleteInstance = {
  * @category Core
  * @example
  * ```js
- * import { autocomplete } from '@nosto/nosto-autocomplete';
+ * import { autocomplete } from '@nosto/autocomplete';
  *
  * // Basic usage
  * autocomplete({
@@ -66,7 +66,7 @@ export type AutocompleteInstance = {
  * });
  *
  * // Liquid template.
- * import { autocomplete, fromRemoteLiquidTemplate, fromLiquidTemplate, defaultLiquidTemplate } from '@nosto/nosto-autocomplete/liquid';
+ * import { autocomplete, fromRemoteLiquidTemplate, fromLiquidTemplate, defaultLiquidTemplate } from '@nosto/autocomplete/liquid';
  *
  * autocomplete({
  *   inputSelector: '#search',
@@ -78,7 +78,7 @@ export type AutocompleteInstance = {
  * });
  *
  * // Mustache template.
- * import { autocomplete, fromRemoteMustacheTemplate, fromMustacheTemplate, defaultMustacheTemplate } from '@nosto/nosto-autocomplete/mustache';
+ * import { autocomplete, fromRemoteMustacheTemplate, fromMustacheTemplate, defaultMustacheTemplate } from '@nosto/autocomplete/mustache';
  *
  * autocomplete({
  *   inputSelector: '#search',
@@ -90,7 +90,7 @@ export type AutocompleteInstance = {
  * });
  *
  * // React example.
- * import { autocomplete, Autocomplete } from '@nosto/nosto-autocomplete/react';
+ * import { autocomplete, Autocomplete } from '@nosto/autocomplete/react';
  * import ReactDOM from 'react-dom';
  *
  * let reactRoot;

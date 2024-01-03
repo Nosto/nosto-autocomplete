@@ -63,7 +63,7 @@ const defaultProductFields = [
  * @category Core
  * @example
  * ```js
- * import { search } from "@nosto/nosto-autocomplete"
+ * import { search } from "@nosto/autocomplete"
  *
  * search({
  *     query: "shoes",

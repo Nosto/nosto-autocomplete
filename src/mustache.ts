@@ -22,7 +22,7 @@ type Options = {
 /**
  * @example
  * ```js
- * import { fromMustacheTemplate } from "@nosto/nosto-autocomplete/mustache";
+ * import { fromMustacheTemplate } from "@nosto/autocomplete/mustache";
  *
  * const render = fromMustacheTemplate(`
  *   <div>
@@ -87,7 +87,7 @@ export function fromMustacheTemplate<State extends object = DefaultState>(
  * @category Mustache
  * @example
  * ```js
- * import { fromRemoteMustacheTemplate } from "@nosto/nosto-autocomplete/mustache";
+ * import { fromRemoteMustacheTemplate } from "@nosto/autocomplete/mustache";
  *
  * const render = fromRemoteMustacheTemplate("https://example.com/template.mustache");
  * ```

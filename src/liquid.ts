@@ -13,7 +13,7 @@ export { defaultLiquidTemplate } from "./defaults/_generated"
  * @category Liquid
  * @example
  * ```js
- * import { fromLiquidTemplate } from "@nosto/nosto-autocomplete/liquid";
+ * import { fromLiquidTemplate } from "@nosto/autocomplete/liquid";
  *
  * const render = fromLiquidTemplate(`
  *   <div>
@@ -64,7 +64,7 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
  * @category Liquid
  * @example
  * ```js
- * import { fromRemoteLiquidTemplate } from "@nosto/nosto-autocomplete/liquid";
+ * import { fromRemoteLiquidTemplate } from "@nosto/autocomplete/liquid";
  *
  * const render = fromRemoteLiquidTemplate("https://example.com/template.liquid");
  * ```

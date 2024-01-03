@@ -1,7 +1,7 @@
 # Nosto Autocomplete
 
 [![typedoc](https://img.shields.io/badge/%F0%9F%93%96-TypeDoc-blue)](https://nosto.github.io/nosto-autocomplete/)
-[![npm](https://img.shields.io/npm/v/@nosto/nosto-autocomplete?color=33cd56&logo=npm)](https://www.npmjs.com/package/@nosto/nosto-autocomplete)
+[![npm](https://img.shields.io/npm/v/@nosto/autocomplete?color=33cd56&logo=npm)](https://www.npmjs.com/package/@nosto/autocomplete)
 [![coverage](https://nosto.github.io/nosto-autocomplete/coverage/badge.svg)](https://nosto.github.io/nosto-autocomplete/coverage/lcov-report/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
@@ -16,20 +16,20 @@
 You can install the `Nosto Autocomplete` library via npm:
 
 ```bash
-npm install @nosto/nosto-autocomplete
+npm install @nosto/autocomplete
 ```
 
 The Nosto Autocomplete library can be imported and used in various ways, depending on your preferred framework or template language. Some of the supported import methods include:
 
--   Base:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete } from "@nosto/nosto-autocomplete"`
+-   Base:&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete } from "@nosto/autocomplete"`
 
--   Mustache:&nbsp; `import { autocomplete, fromMustacheTemplate, defaultMustacheTemplate } from "@nosto/nosto-autocomplete/mustache"`
+-   Mustache:&nbsp; `import { autocomplete, fromMustacheTemplate, defaultMustacheTemplate } from "@nosto/autocomplete/mustache"`
 
--   Liquid:&nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete, fromLiquidTemplate, defaultLiquidTemplate } from "@nosto/nosto-autocomplete/liquid"`
+-   Liquid:&nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete, fromLiquidTemplate, defaultLiquidTemplate } from "@nosto/autocomplete/liquid"`
 
--   Preact:&nbsp; &nbsp; &nbsp; &nbsp;`import { autocomplete, Autocomplete } from "@nosto/nosto-autocomplete/preact"`
+-   Preact:&nbsp; &nbsp; &nbsp; &nbsp;`import { autocomplete, Autocomplete } from "@nosto/autocomplete/preact"`
 
--   React:&nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete, Autocomplete } from "@nosto/nosto-autocomplete/react"`
+-   React:&nbsp; &nbsp; &nbsp; &nbsp; `import { autocomplete, Autocomplete } from "@nosto/autocomplete/react"`
 
 Choose the import method that aligns with your project's requirements and technology stack.
 
@@ -50,9 +50,9 @@ import {
     autocomplete,
     search,
     Autocomplete,
-} from "@nosto/nosto-autocomplete/react"
+} from "@nosto/autocomplete/react"
 import { createRoot } from "react-dom/client"
-import "@nosto/nosto-autocomplete/styles.css"
+import "@nosto/autocomplete/styles.css"
 
 let reactRoot = null
 
@@ -166,8 +166,8 @@ import {
     search,
     fromLiquidTemplate,
     defaultLiquidTemplate,
-} from "@nosto/nosto-autocomplete/liquid"
-import "@nosto/nosto-autocomplete/styles.css"
+} from "@nosto/autocomplete/liquid"
+import "@nosto/autocomplete/styles.css"
 
 autocomplete({
     fetch: {
@@ -211,13 +211,13 @@ import {
     autocomplete,
     search,
     fromRemoteLiquidTemplate,
-} from "@nosto/nosto-autocomplete/liquid"
-import "@nosto/nosto-autocomplete/styles.css"
+} from "@nosto/autocomplete/liquid"
+import "@nosto/autocomplete/styles.css"
 
 autocomplete({
     // ...
     render: fromRemoteLiquidTemplate(
-        `./node_modules/@nosto/nosto-autocomplete/dist/liquid/autocomplete.liquid`
+        `./node_modules/@nosto/autocomplete/dist/liquid/autocomplete.liquid`
     ),
 })
 ```
@@ -231,8 +231,8 @@ import {
     search,
     fromMustacheTemplate,
     defaultMustacheTemplate,
-} from "@nosto/nosto-autocomplete/mustache"
-import "@nosto/nosto-autocomplete/styles.css"
+} from "@nosto/autocomplete/mustache"
+import "@nosto/autocomplete/styles.css"
 
 autocomplete({
     // ...
@@ -247,13 +247,13 @@ import {
     autocomplete,
     search,
     fromRemoteMustacheTemplate,
-} from "@nosto/nosto-autocomplete/mustache"
-import "@nosto/nosto-autocomplete/styles.css"
+} from "@nosto/autocomplete/mustache"
+import "@nosto/autocomplete/styles.css"
 
 autocomplete({
     // ...
     render: fromRemoteMustacheTemplate(
-        `./node_modules/@nosto/nosto-autocomplete/dist/mustache/autocomplete.mustache`
+        `./node_modules/@nosto/autocomplete/dist/mustache/autocomplete.mustache`
     ),
 })
 ```
@@ -268,8 +268,8 @@ import {
     autocomplete,
     search,
     Autocomplete,
-} from "@nosto/nosto-autocomplete/react"
-import "@nosto/nosto-autocomplete/styles"
+} from "@nosto/autocomplete/react"
+import "@nosto/autocomplete/styles"
 
 let reactRoot = null
 
@@ -344,8 +344,8 @@ import {
     Autocomplete,
     autocomplete,
     search,
-} from "@nosto/nosto-autocomplete/preact"
-import "@nosto/nosto-autocomplete/styles.css"
+} from "@nosto/autocomplete/preact"
+import "@nosto/autocomplete/styles.css"
 
 export function Search() {
     useEffect(() => {
@@ -449,7 +449,7 @@ Template examples: [Mustache](/src/defaults/autocomplete.mustache), [Liquid](/sr
 **_Mustache is based on logic-less templates which can be enhanced with helpers, e.g `toJson`, `imagePlaceholder`, `showListPrice` in [example template](/src/defaults/autocomplete.mustache)_**.
 
 ```js
-import { fromMustacheTemplate } from '@nosto/nosto-autocomplete/mustache'
+import { fromMustacheTemplate } from '@nosto/autocomplete/mustache'
 
 fromMustacheTemplate(template, {
     helpers: {
