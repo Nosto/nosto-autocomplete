@@ -118,18 +118,18 @@ export function Search() {
 }
 ```
 
-| Property         | Required | Default Value                                                    | Description                                                                             |
-| ---------------- | -------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| inputSelector    | Yes      | N/A                                                              | Input element to attach the autocomplete to                                         |
-| dropdownSelector | Yes      | N/A                                                              | Dropdown element to attach the autocomplete to (empty container's selector should be provided) |
-| render           | Yes      | N/A                                                              | Function to render the dropdown                                              |
-| fetch            | Yes      | N/A                                                              | Function to fetch the search state                                           |
-| submit           | No       | Search API request                                               | Function to submit the search                                                |
-| minQueryLength   | No       | `2`                                                              | Minimum length of the query before searching (applied on typing in autocomplete and used in default `submit` implementation)                                            |
-| historyEnabled   | No       | `true`                                                           | Enables search history component                                                        |
-| historySize      | No       | `5`                                                              | Max number of history items to show                                                     |
-| nostoAnalytics   | No       | `true`                                                           | Enable Nosto Analytics                                                                  |
-| googleAnalytics  | No       | `{ serpPath: "search", queryParamName: "query", enabled: true }` | Google Analytics configuration. Set to `false` to disable.                              |
+| Property         | Required | Default Value                                                    | Description                                                                                                                  |
+| ---------------- | -------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| inputSelector    | Yes      | N/A                                                              | Input element to attach the autocomplete to                                                                                  |
+| dropdownSelector | Yes      | N/A                                                              | Dropdown element to attach the autocomplete to (empty container's selector should be provided)                               |
+| render           | Yes      | N/A                                                              | Function to render the dropdown                                                                                              |
+| fetch            | Yes      | N/A                                                              | Function to fetch the search state                                                                                           |
+| submit           | No       | Search API request                                               | Function to submit the search                                                                                                |
+| minQueryLength   | No       | `2`                                                              | Minimum length of the query before searching (applied on typing in autocomplete and used in default `submit` implementation) |
+| historyEnabled   | No       | `true`                                                           | Enables search history component                                                                                             |
+| historySize      | No       | `5`                                                              | Max number of history items to show                                                                                          |
+| nostoAnalytics   | No       | `true`                                                           | Enable Nosto Analytics                                                                                                       |
+| googleAnalytics  | No       | `{ serpPath: "search", queryParamName: "query", enabled: true }` | Google Analytics configuration. Set to `false` to disable.                                                                   |
 
 </br>
 
@@ -223,7 +223,7 @@ autocomplete({
 ```
 
 2. **Mustache**</br>
-Mustache template is rendered similarly as Liquid template in the above example:
+   Mustache template is rendered similarly as Liquid template in the above example:
 
 ```js
 import {
@@ -259,7 +259,7 @@ autocomplete({
 ```
 
 3. **React/Preact**</br>
-One way to initialize autocomplete in a React app, is to call `autocomplete` from the `useEffect` on component mount, using default `<Autocomplete />` component and styles:
+   One way to initialize autocomplete in a React app, is to call `autocomplete` from the `useEffect` on component mount, using default `<Autocomplete />` component and styles:
 
 ```jsx
 import { useEffect } from "react"
@@ -429,6 +429,36 @@ googleAnalytics: {
 ```
 
 To disable Google Analytics, set `googleAnalytics: false`.
+
+## 💡 Creating Autocomplete template
+
+The library handles events through `dataset` properties to avoid handling logic in a template. These `data-*` attributes are used:
+
+1. `data-ns-hit` - this attribute should be used on clickable `keyword`, `product`, `history` list elements. Stringified unmodified JSON object (**_product_**, **_keyword_** or **_history_** hit) from the search response should be provided as a value. You will need to escape it in Liquid and Mustache templates.
+   <br/>
+   This attribute handles submit keyword/history as search, redirect to product, analytics (if enabled) request.
+
+2. `data-ns-remove-history` - should be used to delete history entries in the autocomplete.
+   <br/>
+
+-   To make an element delete a single history entry when clicked, add `data-ns-remove-history={hit.item}` to an element.
+-   To delete all history entries, add `data-ns-remove-history="all"` to clear button.
+
+Template examples: [Mustache](/src/defaults/autocomplete.mustache), [Liquid](/src/defaults/autocomplete.liquid), [React/Preact](/src/defaults/Autocomplete.tsx)
+
+**_Mustache is based on logic-less templates which can be enhanced with helpers, e.g `toJson`, `imagePlaceholder`, `showListPrice` in [example template](/src/defaults/autocomplete.mustache)_**.
+
+```js
+import { fromMustacheTemplate } from '@nosto/nosto-autocomplete/mustache'
+
+fromMustacheTemplate(template, {
+    helpers: {
+        toJson: function () {
+            return JSON.stringify(this)
+        },
+    },
+})
+```
 
 ## Further reading
 
