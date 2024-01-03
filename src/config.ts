@@ -5,7 +5,7 @@ import { search } from "./search"
  * @group Autocomplete
  * @category Core
  */
-interface GoogleAnalyticsConfig {
+export interface GoogleAnalyticsConfig {
     /**
      * Path of search page
      * @default "/search"

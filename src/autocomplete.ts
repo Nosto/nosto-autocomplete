@@ -74,7 +74,6 @@ export type AutocompleteInstance = {
  *   render: fromRemoteLiquidTemplate('autocomplete.liquid'),
  *   // Or:
  *   render: window.nostoAutocomplete.fromLiquidTemplate(defaultLiquidTemplate),
- *   fetch:
  *   ...
  * });
  *
@@ -87,7 +86,6 @@ export type AutocompleteInstance = {
  *   render: fromRemoteMustacheTemplate('autocomplete.mustache'),
  *   // Or:
  *   render: fromMustacheTemplate(defaultMustacheTemplate),
- *   fetch:
  *   ...
  * });
  *
@@ -106,7 +104,6 @@ export type AutocompleteInstance = {
  *     }
  *     reactRoot.render(<Autocomplete {...state} />);
  *   },
- *   fetch:
  *   ...
  * });
  * ```
