@@ -5,7 +5,7 @@
 [![coverage](https://nosto.github.io/nosto-autocomplete/coverage/badge.svg)](https://nosto.github.io/nosto-autocomplete/coverage/lcov-report/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-**The library designed to simplify the implementation of Search Autocomplete functionality by providing:**
+**The library is designed to simplify the implementation of Search Autocomplete functionality by providing:**
 
 -   Default autocomplete components and templates.
 -   Abstracting Search API requests.
@@ -89,9 +89,9 @@ export function Search() {
 
                 reactRoot.render(<Autocomplete {...state} />)
             },
-            submit: (query, config) => {
+            submit: async (query, config) => {
                 if (query.length >= config.minQueryLength) {
-                    search(
+                    const response = await search(
                         {
                             query,
                         },
@@ -99,9 +99,8 @@ export function Search() {
                             redirect: true,
                             track: config.nostoAnalytics ? "serp" : undefined,
                         }
-                    ).then(response => {
-                        // Do something with response. For example, update Search Engine Results Page products state.
-                    })
+                    )
+                    // Do something with response. For example, update Search Engine Results Page products state.
                 }
             },
         })
@@ -136,12 +135,12 @@ export function Search() {
 
 ### 🌇 Render results
 
-Once autocomplete component binds to input via `inputSelector` and `dropdownSelector`, it then renders autocomplete provided in a `render` function. It is called on input focus and change events, and renders dropdown element with current search result state:
+Once the autocomplete component binds to input via `inputSelector` and `dropdownSelector`, it then renders autocomplete provided in a `render` function. It is called on input focus and change events, and renders a dropdown element with the current search result state:
 
 -   if input is empty and history entries exist, it renders dropdown with history list,
 -   if input is not empty and it passes `minQueryLength` rule, it render dropdown with keywords and products.
 
-Render can be adjusted to desired framework. Moreover, the library provides helpers for Mustache/Liquid template languages.
+Render can be adjusted to the desired framework. Moreover, the library provides helpers for Mustache/Liquid template languages.
 
 #### Examples
 
@@ -188,9 +187,9 @@ autocomplete({
     inputSelector: "#search",
     dropdownSelector: "#search-results",
     render: fromLiquidTemplate(defaultLiquidTemplate),
-    submit: (query, config) => {
+    submit: async (query, config) => {
         if (query.length >= config.minQueryLength) {
-            search(
+            const response = await search(
                 {
                     query,
                 },
@@ -198,15 +197,14 @@ autocomplete({
                     redirect: true,
                     track: config.nostoAnalytics ? "serp" : undefined,
                 }
-            ).then(response => {
-                // Do something with response. For example, update Search Engine Results Page products state.
-            })
+            )
+            // Do something with response. For example, update Search Engine Results Page products state.
         }
     },
 })
 ```
 
-Template also can be loaded from a file. The library includes default template, equivalent to string template in above example:
+The template also can be loaded from a file. The library includes a default template, equivalent to string template in above example:
 
 ```js
 import {
@@ -261,7 +259,7 @@ autocomplete({
 ```
 
 3. **React/Preact**</br>
-One way to initialize autocomplete in a React app, is to create `useEffect` which would call `autocomplete` on component mount, using default `<Autocomplete />` component and styles:
+One way to initialize autocomplete in a React app, is to call `autocomplete` from the `useEffect` on component mount, using default `<Autocomplete />` component and styles:
 
 ```jsx
 import { useEffect } from "react"
@@ -308,9 +306,9 @@ export function Search() {
 
                 reactRoot.render(<Autocomplete {...state} />)
             },
-            submit: (query, config) => {
+            submit: async (query, config) => {
                 if (query.length >= config.minQueryLength) {
-                    search(
+                    const response = await search(
                         {
                             query,
                         },
@@ -318,9 +316,8 @@ export function Search() {
                             redirect: true,
                             track: config.nostoAnalytics ? "serp" : undefined,
                         }
-                    ).then(response => {
-                        // Do something with response. For example, update Search Engine Results Page products state.
-                    })
+                    )
+                    // Do something with response. For example, update Search Engine Results Page products state.
                 }
             },
         })
@@ -338,7 +335,7 @@ export function Search() {
 }
 ```
 
-Preact solution does not differ from React a lot:
+The Preact solution does not differ from React a lot:
 
 ```jsx
 import { render } from "preact/compat"
@@ -380,11 +377,11 @@ By default `submit` checks if query/keyword length satisfies `minQueryLength`, s
 On usual scenario, you want to render Search Results on submit, so you should override `submit` function:
 
 ```js
-submit: (query, config) => {
+submit: async (query, config) => {
     if (
         query.length >= config.minQueryLength
     ) {
-        search(
+        const response = await search(
             {
                 query,
             },
@@ -392,9 +389,8 @@ submit: (query, config) => {
                 redirect: true,
                 track: config.nostoAnalytics ? "serp" : undefined,
             }
-        ).then((response) => {
-            // Do something with response.
-        })
+        )
+        // Do something with response. For example, update Search Engine Results Page products state.
     }
 },
 ```
