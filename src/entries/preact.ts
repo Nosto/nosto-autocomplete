@@ -1,2 +1,2 @@
-export { Autocomplete } from "../defaults/Autocomplete"
+export { Autocomplete, AutocompleteProps } from "../defaults/Autocomplete"
 export * from "./base"

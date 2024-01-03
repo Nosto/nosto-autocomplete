@@ -9,17 +9,111 @@ import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
 import { createHistory } from "./utils/history"
 
+export type AutocompleteInstance = {
+    /**
+     * Open the dropdown.
+     */
+    open(): void
+    /**
+     * Close the dropdown.
+     */
+    close(): void
+    /**
+     * Destroy the autocomplete instance.
+     */
+    destroy(): void
+}
+
 /**
+ * @param config Autocomplete configuration.
+ * @returns Autocomplete instance.
  * @group Autocomplete
  * @category Core
+ * @example
+ * ```js
+ * import { autocomplete } from '@nosto/nosto-autocomplete';
+ *
+ * // Basic usage
+ * autocomplete({
+ *   inputSelector: '#search',
+ *   dropdownSelector: '#dropdown',
+ *   render: (container, state) => {
+ *     container.innerHTML = `
+ *        <div>
+ *         <h1>${state.query}</h1>
+ *        <ul>
+ *        ${state.response.products
+ *          .map((product) => `<li>${product.name}</li>`)
+ *          .join('')}
+ *       </ul>
+ *     </div>
+ *    `;
+ *   },
+ *   fetch: {
+ *     products: {
+ *       fields: ['name', 'url', 'imageUrl', 'price', 'listPrice', 'brand'],
+ *       size: 5
+ *     },
+ *     keywords: {
+ *       size: 5,
+ *       fields: ['keyword', '_highlight.keyword'],
+ *       highlight: {
+ *         preTag: `<strong>`,
+ *         postTag: '</strong>'
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * // Liquid template.
+ * import { autocomplete, fromRemoteLiquidTemplate, fromLiquidTemplate, defaultLiquidTemplate } from '@nosto/nosto-autocomplete/liquid';
+ *
+ * autocomplete({
+ *   inputSelector: '#search',
+ *   dropdownSelector: '#dropdown',
+ *   render: fromRemoteLiquidTemplate('autocomplete.liquid'),
+ *   // Or:
+ *   render: window.nostoAutocomplete.fromLiquidTemplate(defaultLiquidTemplate),
+ *   fetch:
+ *   ...
+ * });
+ *
+ * // Mustache template.
+ * import { autocomplete, fromRemoteMustacheTemplate, fromMustacheTemplate, defaultMustacheTemplate } from '@nosto/nosto-autocomplete/mustache';
+ *
+ * autocomplete({
+ *   inputSelector: '#search',
+ *   dropdownSelector: '#dropdown',
+ *   render: fromRemoteMustacheTemplate('autocomplete.mustache'),
+ *   // Or:
+ *   render: fromMustacheTemplate(defaultMustacheTemplate),
+ *   fetch:
+ *   ...
+ * });
+ *
+ * // React example.
+ * import { autocomplete, Autocomplete } from '@nosto/nosto-autocomplete/react';
+ * import ReactDOM from 'react-dom';
+ *
+ * let reactRoot;
+ *
+ * autocomplete({
+ *   inputSelector: '#search',
+ *   dropdownSelector: '#dropdown',
+ *   render: function (container, state) {
+ *     if (!reactRoot) {
+ *       reactRoot = ReactDOM.createRoot(container);
+ *     }
+ *     reactRoot.render(<Autocomplete {...state} />);
+ *   },
+ *   fetch:
+ *   ...
+ * });
+ * ```
  */
 export function autocomplete<State = DefaultState>(
     config: AutocompleteConfig<State>
-): {
-    destroy(): void
-    open(): void
-    close(): void
-} {
+): AutocompleteInstance {
     const fullConfig = {
         ...getDefaultConfig<State>(),
         ...config,
@@ -257,25 +351,27 @@ function submitWithContext<State>(context: {
     return (value: string, redirect: boolean = false) => {
         const { config, actions } = context
 
-        if (config.historyEnabled) {
-            actions.addHistoryItem(value)
-        }
+        if (value.length > 0) {
+            if (config.historyEnabled) {
+                actions.addHistoryItem(value)
+            }
 
-        if (config.nostoAnalytics) {
-            getNostoClient().then(api => {
-                api?.recordSearchSubmit?.(value)
-            })
-        }
+            if (config.nostoAnalytics) {
+                getNostoClient().then(api => {
+                    api?.recordSearchSubmit?.(value)
+                })
+            }
 
-        if (isGaEnabled(config)) {
-            trackGaPageView({
-                delay: true,
-                location: getGaTrackUrl(value, config),
-            })
-        }
+            if (isGaEnabled(config)) {
+                trackGaPageView({
+                    delay: true,
+                    location: getGaTrackUrl(value, config),
+                })
+            }
 
-        if (!redirect && typeof config?.submit === "function") {
-            config.submit(value, config)
+            if (!redirect && typeof config?.submit === "function") {
+                config.submit(value, config)
+            }
         }
     }
 }

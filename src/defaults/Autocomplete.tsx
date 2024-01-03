@@ -1,6 +1,9 @@
 import { SearchKeyword, SearchProduct } from "../api/search"
 
-interface AutocompleteProps {
+export interface AutocompleteProps {
+    /**
+     * The response from the autocomplete API.
+     */
     response?: {
         keywords: {
             hits: SearchKeyword[]
@@ -14,6 +17,14 @@ interface AutocompleteProps {
     }[]
 }
 
+/**
+ * The default autocomplete component.
+ *
+ * @param props Autocomplete props.
+ * @returns The JSX element.
+ * @group Autocomplete
+ * @category React
+ */
 export function Autocomplete({ response, history }: AutocompleteProps) {
     const hasKeywords = !!response?.keywords?.hits?.length
     const hasProducts = !!response?.products?.hits?.length

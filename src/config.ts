@@ -5,6 +5,28 @@ import { search } from "./search"
  * @group Autocomplete
  * @category Core
  */
+interface GoogleAnalyticsConfig {
+    /**
+     * Path of search page
+     * @default "/search"
+     */
+    serpPath?: string
+    /**
+     * Search query url parameter name
+     * @default "query"
+     */
+    queryParamName?: string
+    /**
+     * Enable Google Analytics
+     * @default true
+     */
+    enabled?: boolean
+}
+
+/**
+ * @group Autocomplete
+ * @category Core
+ */
 export interface AutocompleteConfig<State> {
     /**
      * The input element to attach the autocomplete to
@@ -43,20 +65,13 @@ export interface AutocompleteConfig<State> {
      */
     historySize?: number
     /**
-     * enable Nosto Analytics
+     * Enable Nosto Analytics
      */
     nostoAnalytics?: boolean
     /**
-     * Enable Google Analytics
-     *
+     * Google Analytics configuration. Set to `false` to disable.
      */
-    googleAnalytics?:
-        | {
-              serpPath?: string
-              queryParamName?: string
-              enabled?: boolean
-          }
-        | boolean
+    googleAnalytics?: GoogleAnalyticsConfig | boolean
 }
 
 export const defaultGaConfig = {

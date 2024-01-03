@@ -10,15 +10,15 @@ import { search } from "../search"
  */
 export interface DefaultState {
     /**
-     * The current search query
+     * The current search query object.
      */
     query?: InputSearchQuery
     /**
-     * The current search response
+     * The current search response.
      */
     response?: SearchResult
     /**
-     * The history items
+     * The history items.
      */
     history?: { item: string }[]
 }
