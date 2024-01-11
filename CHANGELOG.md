@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.0...v1.0.1) (2024-01-11)
+
+
+### Bug Fixes
+
+* Remove unnecessary comma from default Autocomplete react component. ([3a7dce2](https://github.com/Nosto/nosto-autocomplete/commit/3a7dce2dba0295658b59ec034fe5c12603b50afa))
+
 # 1.0.0 (2024-01-03)
 
 
