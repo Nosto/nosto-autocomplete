@@ -54,7 +54,6 @@ export function Autocomplete({ response, history }: AutocompleteProps) {
                             See all search results
                         </button>
                     </div>
-                    ,
                 </>
             ) : null}
         </div>
