@@ -63,7 +63,8 @@ export interface NostoClient {
         type: "serp" | "autocomplete" | "category",
         hit: { url?: string; keyword?: string }
     ): void
-    recordSearchSubmit(query: string): void
+    recordSearchSubmit(query: string): void,
+    captureError: (error: unknown, reporter: string, level: 'debug' | 'info' | 'warn' | 'error') => void
 }
 
 /**
@@ -80,6 +81,16 @@ export function getNostoClient(): PromiseLike<NostoClient> {
             reject("nostojs not found")
         }
     })
+}
+
+export function logAndCaptureError(error: unknown, level: 'debug' | 'info' | 'warn' | 'error') {
+    getNostoClient().then(api => {
+        api.captureError(error, 'nostoAutocomplete', level)
+    })
+    const acceptedLogs = ['debug', 'info', 'warn', 'error']
+    if (level in acceptedLogs) {
+        console[level](error)
+    }
 }
 
 /**

@@ -1,3 +1,4 @@
+import { logAndCaptureError } from "../api/client"
 import { AnyPromise } from "./promise"
 
 type OnClickBindings<State> = {
@@ -270,7 +271,8 @@ export function parseHit(hit: string): Hit {
         const parsedHit: Hit | undefined | null = JSON.parse(hit)
         return parsedHit ?? {}
     } catch (error) {
-        console.warn("Could not parse hit", error)
+        logAndCaptureError(error, "warn")
+        console.warn("Could not parse hit")
         return {}
     }
 }

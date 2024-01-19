@@ -1,3 +1,4 @@
+import { logAndCaptureError } from "../api/client"
 import { DefaultState } from "./state"
 
 type Items = NonNullable<DefaultState["history"]>
@@ -12,7 +13,8 @@ export function createHistory(size: number) {
                 JSON.parse(localStorage.getItem(localStorageKey) ?? "[]") ?? []
             )
         } catch (err) {
-            console.error("Could not get history items.", err)
+            logAndCaptureError(err, "error")
+            console.error("Could not get history items.")
             return [] as Items
         }
     }
@@ -21,7 +23,8 @@ export function createHistory(size: number) {
         try {
             localStorage.setItem(localStorageKey, JSON.stringify(data))
         } catch (err) {
-            console.error("Could not set history items.", err)
+            logAndCaptureError(err, "error")
+            console.error("Could not set history items.")
         }
     }
 
