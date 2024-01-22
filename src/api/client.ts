@@ -87,7 +87,8 @@ export function getNostoClient(): PromiseLike<NostoClient> {
  * @category Core
  */
 type LogLevel = 'error' | 'warn' | 'info' | 'debug'
-
+export function log(msg: string, error: unknown, level?: LogLevel): void
+export function log(msgOrError: string | unknown, level?: LogLevel): void
 /**
  * Logs an error to Nosto and the console
  * @param msgOrError string message or error instance
@@ -97,10 +98,9 @@ type LogLevel = 'error' | 'warn' | 'info' | 'debug'
 export function log(msgOrError: string | unknown, errorOrLevel: LogLevel | unknown, optLevel?: LogLevel) {
    const msg = typeof msgOrError === "string" ? msgOrError : undefined
    const error = optLevel ? errorOrLevel : (!msg ? msgOrError : undefined)
-   const level = optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : undefined) as LogLevel
-
+   const level = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : undefined)) as LogLevel
    getNostoClient().then(api => {
-        api.captureError(error, 'nostoAutocomplete', level)
+        api.captureError(error ?? new Error(msg), 'nostoAutocomplete', level)
     })
     console[level](...(msg ? [msg, error] : [error]))
 }
