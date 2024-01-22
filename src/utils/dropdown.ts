@@ -1,5 +1,3 @@
-import { AnyPromise } from "./promise"
-
 type OnClickBindings<State> = {
     [key: string]: (obj: {
         data: string | undefined
@@ -228,7 +226,7 @@ export function createDropdown<State>(
         container.innerHTML = ""
     }
 
-    AnyPromise.resolve(initialState)
+    Promise.resolve(initialState)
         .then(state => render(container, state as State))
         .then(() => {
             // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
