@@ -83,13 +83,13 @@ export function getNostoClient(): PromiseLike<NostoClient> {
     })
 }
 
-export function logAndCaptureError(error: unknown, level: 'debug' | 'info' | 'warn' | 'error') {
+export function logAndCaptureError(message: string, error: unknown, level: 'debug' | 'info' | 'warn' | 'error') {
     getNostoClient().then(api => {
         api.captureError(error, 'nostoAutocomplete', level)
     })
     const acceptedLogs = ['debug', 'info', 'warn', 'error']
     if (level in acceptedLogs) {
-        console[level](error)
+        console[level](message, error)
     }
 }
 

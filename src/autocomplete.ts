@@ -261,10 +261,10 @@ function createInputDropdown<State>({
 
     if (dropdownElements.length === 0) {
         const noElementsError = `No dropdown element found for input ${input}`
-        logAndCaptureError(new Error(noElementsError), "error")
+        logAndCaptureError("noElementsError", new Error(noElementsError), "error")
         return
     } else if (dropdownElements.length > 1) {
-        logAndCaptureError(new Error(
+        logAndCaptureError("dropdownElements length", new Error(
             `Multiple dropdown elements found for input ${input}, using the first element`
         ), "error")
     }
