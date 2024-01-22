@@ -1,4 +1,3 @@
-import { AnyPromise } from "../utils/promise"
 import { InputSearchQueryWithFields, SearchOptions } from "./search"
 import { SearchResult } from "./search/generated"
 
@@ -71,7 +70,7 @@ export interface NostoClient {
  * @category Core
  */
 export function getNostoClient(): PromiseLike<NostoClient> {
-    return new AnyPromise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if ("nostojs" in window && typeof window.nostojs === "function") {
             window.nostojs((api: NostoClient) => {
                 resolve(api)

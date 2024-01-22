@@ -1,5 +1,4 @@
 import { DefaultState } from "./utils/state"
-import { AnyPromise } from "./utils/promise"
 import { Liquid } from "liquidjs"
 
 export { defaultLiquidTemplate } from "./defaults/_generated"
@@ -51,7 +50,7 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
     return (container, state) => {
         container.innerHTML = instance.parseAndRenderSync(template, state)
 
-        return AnyPromise.resolve(undefined)
+        return Promise.resolve(undefined)
     }
 }
 
@@ -73,7 +72,7 @@ export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
     url: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     return (container, state) => {
-        return new AnyPromise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open("GET", url)
             xhr.onload = () => {

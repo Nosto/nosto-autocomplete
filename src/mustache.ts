@@ -1,4 +1,3 @@
-import { AnyPromise } from "./utils/promise"
 import { DefaultState } from "./utils/state"
 import Mustache from "mustache"
 
@@ -74,7 +73,7 @@ export function fromMustacheTemplate<State extends object = DefaultState>(
             ...helpers,
         })
 
-        return AnyPromise.resolve(undefined)
+        return Promise.resolve(undefined)
     }
 }
 
@@ -99,7 +98,7 @@ export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
     }
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
     return (container, state) => {
-        return new AnyPromise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open("GET", url)
             xhr.onload = () => {
