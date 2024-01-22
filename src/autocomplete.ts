@@ -1,4 +1,4 @@
-import { getNostoClient, logAndCaptureError } from "./api/client"
+import { getNostoClient, log } from "./api/client"
 import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./utils/dropdown"
 import { DefaultState, StateActions, getStateActions } from "./utils/state"
@@ -261,10 +261,10 @@ function createInputDropdown<State>({
 
     if (dropdownElements.length === 0) {
         const noElementsError = `No dropdown element found for input ${input}`
-        logAndCaptureError("noElementsError", new Error(noElementsError), "error")
+        log(new Error(noElementsError), "error")
         return
     } else if (dropdownElements.length > 1) {
-        logAndCaptureError("dropdownElements length", new Error(
+        log(new Error(
             `Multiple dropdown elements found for input ${input}, using the first element`
         ), "error")
     }
