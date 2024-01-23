@@ -260,10 +260,10 @@ function createInputDropdown<State>({
             : findAll(config.dropdownSelector, HTMLElement)
 
     if (dropdownElements.length === 0) {
-        log(new Error(`No dropdown element found for input ${input}`), "error")
+        log(`No dropdown element found for input ${input}`, "error")
         return
     } else if (dropdownElements.length > 1) {
-        log(new Error(`Multiple dropdown elements found for input ${input}, using the first element`), "error")
+        log(`Multiple dropdown elements found for input ${input}, using the first element`, "error")
     }
 
     const dropdownElement = dropdownElements[0]

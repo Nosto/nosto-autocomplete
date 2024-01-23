@@ -106,7 +106,7 @@ export function log(message: string, error: unknown, level: LogLevel): void
 export function log(error: unknown, level: LogLevel): void
 export function log(
     msgOrError: unknown,
-    errorOrLevel: LogLevel | unknown,
+    errorOrLevel: unknown,
     optLevel?: LogLevel
 ) {
     const msg = typeof msgOrError === "string" ? msgOrError : undefined
