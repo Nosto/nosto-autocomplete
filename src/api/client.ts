@@ -63,8 +63,12 @@ export interface NostoClient {
         type: "serp" | "autocomplete" | "category",
         hit: { url?: string; keyword?: string }
     ): void
-    recordSearchSubmit(query: string): void,
-    captureError: (error: unknown, reporter: string, level: 'debug' | 'info' | 'warn' | 'error') => void
+    recordSearchSubmit(query: string): void
+    captureError: (
+        error: unknown,
+        reporter: string,
+        level: "debug" | "info" | "warn" | "error"
+    ) => void
 }
 
 /**
@@ -86,21 +90,31 @@ export function getNostoClient(): PromiseLike<NostoClient> {
  * @group Nosto Client
  * @category Core
  */
-type LogLevel = 'error' | 'warn' | 'info' | 'debug'
-export function log(msg: string, error: unknown, level: LogLevel): void
-export function log(msgOrError: unknown, level: LogLevel): void
+type LogLevel = "error" | "warn" | "info" | "debug"
 /**
- * @param msgOrError string message or error instance
- * @param errorOrLevel error instance or log level string
- * @param optLevel log level string
+ *
+ * @param msg Message to log
+ * @param error Error instance to log
+ * @param level Log level string
  */
-export function log(msgOrError: unknown, errorOrLevel: LogLevel | unknown, optLevel?: LogLevel) {
-   const msg = typeof msgOrError === "string" ? msgOrError : undefined
-   const error = optLevel ? errorOrLevel : (!msg ? msgOrError : undefined)
-   const level = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error")) as LogLevel
-   if (error) {
-    getNostoClient().then(api => {
-            api.captureError(error, 'nostoAutocomplete', level)
+export function log(message: string, error: unknown, level: LogLevel): void
+/**
+ *
+ * @param error Error instance to log
+ * @param level Log level string
+ */
+export function log(error: unknown, level: LogLevel): void
+export function log(
+    msgOrError: unknown,
+    errorOrLevel: LogLevel | unknown,
+    optLevel?: LogLevel
+) {
+    const msg = typeof msgOrError === "string" ? msgOrError : undefined
+    const error = optLevel ? errorOrLevel : !msg ? msgOrError : undefined
+    const level = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error")) as LogLevel
+    if (error) {
+        getNostoClient().then(api => {
+            api.captureError(error, "nostoAutocomplete", level)
         })
     }
     console[level](...(msg ? [msg, error] : [error]))
