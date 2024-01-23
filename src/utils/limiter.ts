@@ -1,5 +1,3 @@
-import { AnyPromise } from "./promise"
-
 type Callback<T> = () => PromiseLike<T>
 
 interface Event<T> {
@@ -22,7 +20,7 @@ export function createLimiter<T = void>(
     let lastEvent: Event<T> | undefined
 
     function limited(getPromise?: Callback<T>): PromiseLike<T> {
-        return new AnyPromise<T>((resolve, reject) => {
+        return new Promise<T>((resolve, reject) => {
             currentNumber += 1
             const event = {
                 getPromise,

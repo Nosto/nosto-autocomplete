@@ -1,7 +1,7 @@
 import { InputSearchQuery, SearchResult } from "../api/search/generated"
 import { AutocompleteConfig } from "../config"
 import { History } from "./history"
-import { AnyPromise, Cancellable, makeCancellable } from "./promise"
+import { Cancellable, makeCancellable } from "./promise"
 import { search } from "../search"
 
 /**
@@ -59,7 +59,7 @@ export const getStateActions = <State>({
     }
 
     const getHistoryState = (query: string) => {
-        return AnyPromise.resolve({
+        return Promise.resolve({
             query: {
                 query,
             },
@@ -89,7 +89,7 @@ export const getStateActions = <State>({
                     e => {
                         throw e
                     }
-                ) ?? AnyPromise.resolve({}).then(s => s as State)
+                ) ?? Promise.resolve({}).then(s => s as State)
             )
         },
         addHistoryItem: (item: string) => {
