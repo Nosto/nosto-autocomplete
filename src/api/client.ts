@@ -5,6 +5,11 @@ import { SearchResult } from "./search/generated"
  * @group Nosto Client
  * @category Core
  */
+type LogLevel = "error" | "warn" | "info" | "debug"
+/**
+ * @group Nosto Client
+ * @category Core
+ */
 export interface Affinity {
     name: string
     score: number
@@ -66,7 +71,7 @@ export interface NostoClient {
     captureError: (
         error: unknown,
         reporter: string,
-        level: "debug" | "info" | "warn" | "error"
+        level: LogLevel
     ) => void
 }
 
@@ -85,11 +90,6 @@ export function getNostoClient(): PromiseLike<NostoClient> {
         }
     })
 }
-/**
- * @group Nosto Client
- * @category Core
- */
-type LogLevel = "error" | "warn" | "info" | "debug"
 /**
  *
  * @param msg Message to log
@@ -116,7 +116,7 @@ export function log(
             api.captureError(error, "nostoAutocomplete", level)
         })
     }
-    console[level](...(msg ? [msg, error] : [error]))
+    console[level](...[msg, error].filter(Boolean))
 }
 
 /**
