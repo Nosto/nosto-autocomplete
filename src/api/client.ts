@@ -68,11 +68,11 @@ export interface NostoClient {
         hit: { url?: string; keyword?: string }
     ): void
     recordSearchSubmit(query: string): void
-    captureError: (
+    captureError(
         error: unknown,
         reporter: string,
         level: LogLevel
-    ) => void
+    ): void
 }
 
 /**
