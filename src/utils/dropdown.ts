@@ -6,7 +6,7 @@ type OnClickBindings<State> = {
     }) => unknown
 }
 
-export async function createDropdown<State>(
+export function createDropdown<State>(
     container: HTMLElement,
     initialState: PromiseLike<State>,
     render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
@@ -225,15 +225,18 @@ export async function createDropdown<State>(
         container.innerHTML = ""
     }
 
-    const state = await Promise.resolve(initialState)
-    await Promise.resolve(render(container, state as State))
-
-    // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
-    setTimeout(() => {
-        loadElements()
-        bindDataCallbacks()
-        hide()
-    }, 0)
+    async function init() {
+        const state = await Promise.resolve(initialState)
+        await Promise.resolve(render(container, state as State))
+    
+        // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+        setTimeout(() => {
+            loadElements()
+            bindDataCallbacks()
+            hide()
+        }, 0)
+    }
+    init()
 
     return {
         update,
