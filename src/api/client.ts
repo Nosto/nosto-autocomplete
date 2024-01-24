@@ -5,6 +5,11 @@ import { SearchResult } from "./search/generated"
  * @group Nosto Client
  * @category Core
  */
+type LogLevel = "error" | "warn" | "info" | "debug"
+/**
+ * @group Nosto Client
+ * @category Core
+ */
 export interface Affinity {
     name: string
     score: number
@@ -63,6 +68,11 @@ export interface NostoClient {
         hit: { url?: string; keyword?: string }
     ): void
     recordSearchSubmit(query: string): void
+    captureError(
+        error: unknown,
+        reporter: string,
+        level: LogLevel
+    ): void
 }
 
 /**
@@ -79,6 +89,34 @@ export function getNostoClient(): PromiseLike<NostoClient> {
             reject("nostojs not found")
         }
     })
+}
+/**
+ *
+ * @param msg Message to log
+ * @param error Error instance to log
+ * @param level Log level string
+ */
+export function log(message: string, error: unknown, level: LogLevel): void
+/**
+ *
+ * @param error Error instance to log
+ * @param level Log level string
+ */
+export function log(error: unknown, level: LogLevel): void
+export function log(
+    msgOrError: unknown,
+    errorOrLevel: unknown,
+    optLevel?: LogLevel
+) {
+    const msg = typeof msgOrError === "string" ? msgOrError : undefined
+    const error = optLevel ? errorOrLevel : !msg ? msgOrError : undefined
+    const level = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error")) as LogLevel
+    if (error) {
+        getNostoClient().then(api => {
+            api.captureError(error, "nostoAutocomplete", level)
+        })
+    }
+    console[level](...[msg, error].filter(Boolean))
 }
 
 /**

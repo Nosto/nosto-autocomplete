@@ -1,3 +1,5 @@
+import { log } from "../api/client"
+
 type OnClickBindings<State> = {
     [key: string]: (obj: {
         data: string | undefined
@@ -268,7 +270,7 @@ export function parseHit(hit: string): Hit {
         const parsedHit: Hit | undefined | null = JSON.parse(hit)
         return parsedHit ?? {}
     } catch (error) {
-        console.warn("Could not parse hit", error)
+        log("Could not parse hit", error, "warn")
         return {}
     }
 }
