@@ -75,13 +75,10 @@ export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open("GET", url)
-            xhr.onload = () => {
+            xhr.onload = async () => {
                 if (xhr.status === 200) {
-                    fromLiquidTemplate(xhr.responseText)(container, state).then(
-                        () => {
-                            resolve(undefined)
-                        }
-                    )
+                    await fromLiquidTemplate(xhr.responseText)(container, state)
+                    resolve(undefined)
                 } else {
                     reject(
                         new Error(

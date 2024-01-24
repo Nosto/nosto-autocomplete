@@ -67,22 +67,20 @@ export function createLimiter<T = void>(
         }
     }
 
-    function execute(event: Event<T>) {
+    async function execute(event: Event<T>) {
         events.push(new Date().getTime())
         if (event.getPromise !== undefined) {
-            event.getPromise().then(
-                result => {
-                    if (event.number > lastCompletedNumber) {
-                        lastCompletedNumber = event.number
-                        event.resolve(result)
-                    } else {
-                        event.reject(new LimiterError("Got newer event"))
-                    }
-                },
-                (...args: unknown[]) => {
-                    event.reject(...args)
+            try {
+                const result = await event.getPromise()
+                if (event.number > lastCompletedNumber) {
+                    lastCompletedNumber = event.number
+                    event.resolve(result)
+                } else {
+                    event.reject(new LimiterError("Got newer event"))
                 }
-            )
+            } catch (e) {
+                event.reject(e)
+            }
         } else {
             event.resolve()
         }

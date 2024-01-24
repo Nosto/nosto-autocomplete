@@ -143,10 +143,9 @@ export function autocomplete<State = DefaultState>(
             const input = bindInput(inputElement, {
                 onInput: async value => {
                     try {
-                        await limiter.limited(() => {
-                            return actions.updateState(value).then(state => {
-                                dropdown.update(state)
-                            })
+                        await limiter.limited(async () => {
+                            const state = await actions.updateState(value)
+                            dropdown.update(state)
                         })
                     } catch (err) {
                         if (
@@ -299,7 +298,7 @@ function createInputDropdown<State>({
     )
 }
 
-function trackClick<State>({
+async function trackClick<State>({
     config,
     data,
     query,
@@ -316,9 +315,8 @@ function trackClick<State>({
 
     if (config.nostoAnalytics) {
         if (parsedHit) {
-            getNostoClient().then(api => {
-                api?.recordSearchClick?.("autocomplete", parsedHit)
-            })
+            const api = await getNostoClient()
+            api?.recordSearchClick?.("autocomplete", parsedHit)
         }
     }
 
@@ -343,7 +341,7 @@ function submitWithContext<State>(context: {
     config: AutocompleteConfig<State>
     actions: StateActions<State>
 }) {
-    return (value: string, redirect: boolean = false) => {
+    return async (value: string, redirect: boolean = false) => {
         const { config, actions } = context
 
         if (value.length > 0) {
@@ -352,9 +350,8 @@ function submitWithContext<State>(context: {
             }
 
             if (config.nostoAnalytics) {
-                getNostoClient().then(api => {
-                    api?.recordSearchSubmit?.(value)
-                })
+                const api = await getNostoClient()
+                api?.recordSearchSubmit?.(value)
             }
 
             if (isGaEnabled(config)) {

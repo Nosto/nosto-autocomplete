@@ -5,6 +5,7 @@
     },
     "extends": [
         "eslint:recommended",
+        "plugin:promise/recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
@@ -13,7 +14,8 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "promise"
     ],
     "rules": {
     }

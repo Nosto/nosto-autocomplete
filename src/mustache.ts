@@ -101,14 +101,10 @@ export function fromRemoteMustacheTemplate<State extends object = DefaultState>(
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest()
             xhr.open("GET", url)
-            xhr.onload = () => {
+            xhr.onload = async () => {
                 if (xhr.status === 200) {
-                    fromMustacheTemplate(xhr.responseText, options)(
-                        container,
-                        state
-                    ).then(() => {
-                        resolve(undefined)
-                    })
+                    await fromMustacheTemplate(xhr.responseText, options)(container, state)
+                    resolve(undefined)
                 } else {
                     reject(
                         new Error(
