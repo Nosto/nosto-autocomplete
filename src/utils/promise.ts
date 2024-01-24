@@ -6,17 +6,17 @@ export function makeCancellable<T>(promise: PromiseLike<T>): Cancellable<T> {
     let hasCanceled_ = false
 
     const wrappedPromise = new Promise<T>((resolve, reject) => {
-        promise.then(
-            val => {
+        return promise.then(
+            val => 
                 hasCanceled_
                     ? reject(new CancellableError("cancelled promise"))
                     : resolve(val)
-            },
-            error => {
+            ,
+            error => 
                 hasCanceled_
                     ? reject(new CancellableError("cancelled promise"))
                     : reject(error)
-            }
+            
         )
     })
 

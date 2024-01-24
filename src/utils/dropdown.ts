@@ -6,7 +6,7 @@ type OnClickBindings<State> = {
     }) => unknown
 }
 
-export function createDropdown<State>(
+export async function createDropdown<State>(
     container: HTMLElement,
     initialState: PromiseLike<State>,
     render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
@@ -134,17 +134,16 @@ export function createDropdown<State>(
         unbindCallbacks = []
     }
 
-    function update(state: State) {
+    async function update(state: State) {
         dispose()
+        await Promise.resolve(render(container, state))
 
-        Promise.resolve(render(container, state)).then(() => {
-            // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
-            setTimeout(() => {
-                loadElements()
-                bindDataCallbacks()
-                show()
-            }, 0)
-        })
+        // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+        setTimeout(() => {
+            loadElements()
+            bindDataCallbacks()
+            show()
+        }, 0)
     }
 
     function hide() {
@@ -226,16 +225,15 @@ export function createDropdown<State>(
         container.innerHTML = ""
     }
 
-    Promise.resolve(initialState)
-        .then(state => render(container, state as State))
-        .then(() => {
-            // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
-            setTimeout(() => {
-                loadElements()
-                bindDataCallbacks()
-                hide()
-            }, 0)
-        })
+    const state = await Promise.resolve(initialState)
+    await Promise.resolve(render(container, state as State))
+
+    // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
+    setTimeout(() => {
+        loadElements()
+        bindDataCallbacks()
+        hide()
+    }, 0)
 
     return {
         update,
