@@ -58,13 +58,13 @@ export const getStateActions = <State>({
         }
     }
 
-    const getHistoryState = (query: string) => {
+    function getHistoryState(query: string) {
         return Promise.resolve({
             query: {
                 query,
             },
-            history: history?.getItems(),
-        }).then(s => s as State)
+            history: history?.getItems()
+        } as State)
     }
 
     return {
@@ -73,23 +73,13 @@ export const getStateActions = <State>({
 
             if (inputValue && inputValue.length >= config.minQueryLength) {
                 cancellable = makeCancellable(fetchState(inputValue, config))
-                return cancellable.promise.then(
-                    s => s as State,
-                    e => {
-                        throw e
-                    }
-                )
+                return cancellable.promise
             } else if (history) {
                 return getHistoryState(inputValue ?? "")
             }
 
             return (
-                cancellable?.promise.then(
-                    s => s as State,
-                    e => {
-                        throw e
-                    }
-                ) ?? Promise.resolve({}).then(s => s as State)
+                cancellable?.promise ?? Promise.resolve({} as State)
             )
         },
         addHistoryItem: (item: string) => {
