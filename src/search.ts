@@ -91,7 +91,6 @@ export async function search<State>(
 
     const api = await getNostoClient()
     const response = await api.search({
-            query: query.query,
             ...query,
             products: {
                 ...query.products,
