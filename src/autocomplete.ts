@@ -271,10 +271,7 @@ function createInputDropdown<State>({
 
     return createDropdown<State>(
         dropdownElement,
-        actions.updateState(input.value).then(
-            state => state,
-            () => ({}) as State
-        ),
+        actions.updateState(input.value),
         config.render,
         submitWithContext({
             actions,
@@ -282,13 +279,13 @@ function createInputDropdown<State>({
         }),
         value => (input.value = value),
         {
-            removeHistory: function ({ data, update }) {
+            removeHistory: async function ({ data, update }) {
                 if (data === "all") {
-                    return actions.clearHistory().then(state => update(state))
+                    const state = await actions.clearHistory();
+                    return update(state);
                 } else if (data) {
-                    return actions
-                        .removeHistoryItem(data)
-                        .then(state => update(state))
+                    const state = await actions.removeHistoryItem(data);
+                    return update(state);
                 }
             },
             hit: function ({ data }) {

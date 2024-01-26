@@ -6,6 +6,7 @@ export function makeCancellable<T>(promise: PromiseLike<T>): Cancellable<T> {
     let hasCanceled_ = false
 
     const wrappedPromise = new Promise<T>((resolve, reject) => {
+        // eslint-disable-next-line promise/prefer-await-to-then
         return promise.then(
             val => 
                 hasCanceled_

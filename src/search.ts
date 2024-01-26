@@ -78,7 +78,7 @@ const defaultProductFields = [
  * })
  * ```
  */
-export function search<State>(
+export async function search<State>(
     query: InputSearchQueryWithFields,
     options?: SearchOptions
 ) {
@@ -89,31 +89,19 @@ export function search<State>(
     const size = query.products?.size ?? 20
     const from = query.products?.from ?? 0
 
-    return getNostoClient()
-        .then(api => {
-            return api.search(
-                {
-                    query: query.query,
-                    ...query,
-                    products: {
-                        ...query.products,
-                        fields,
-                        facets,
-                        size,
-                        from,
-                    },
-                },
-                {
-                    redirect,
-                    track,
-                }
-            )
-        })
-        .then(
-            response =>
-                ({
-                    query,
-                    response,
-                }) as State
-        )
+    const api = await getNostoClient()
+    const response = await api.search({
+            query: query.query,
+            ...query,
+            products: {
+                ...query.products,
+                fields,
+                facets,
+                size,
+                from,
+            }
+        },
+        { redirect, track })
+
+    return { query, response } as State
 }
