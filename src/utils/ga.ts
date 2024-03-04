@@ -3,13 +3,6 @@ import { AutocompleteConfig, defaultGaConfig } from "../config"
 
 const localStorageKey = "nostoAutocomplete:gaEvent"
 
-type GaNamespace = {
-    (): void
-    getAll(): {
-        send(type: string, url: string): void
-    }[]
-}
-
 export function trackGaPageView(options?: {
     delay?: boolean
     title?: string
@@ -21,20 +14,14 @@ export function trackGaPageView(options?: {
         location = window.location.href,
     } = options || {}
 
-    const windowObj = window as {
-        ga?: GaNamespace
-        gtag?: unknown
-        google_tag_manager?: unknown
-    }
-
     if (delay) {
         saveToLocalStorage(title, location)
     } else {
-        if ("gtag" in windowObj && typeof windowObj.gtag === "function") {
+        if ("gtag" in window && typeof window.gtag === "function") {
             const accounts =
-                "google_tag_manager" in windowObj &&
-                typeof windowObj.google_tag_manager === "object"
-                    ? Object.keys(windowObj.google_tag_manager || []).filter(
+                "google_tag_manager" in window &&
+                typeof window.google_tag_manager === "object"
+                    ? Object.keys(window.google_tag_manager || []).filter(
                           e => {
                               return e.substring(0, 2) == "G-"
                           }
@@ -43,28 +30,28 @@ export function trackGaPageView(options?: {
 
             if (accounts.length > 1) {
                 for (let i = 0; i < accounts.length; i++) {
-                    windowObj.gtag("event", "page_view", {
+                    window.gtag("event", "page_view", {
                         page_title: title,
                         page_location: location,
                         send_to: accounts[i],
                     })
                 }
             } else {
-                windowObj.gtag("event", "page_view", {
+                window.gtag("event", "page_view", {
                     page_title: title,
                     page_location: location,
                 })
             }
         }
         if (
-            "ga" in windowObj &&
-            typeof windowObj.ga === "function" &&
-            "getAll" in windowObj.ga &&
-            typeof windowObj.ga.getAll === "function"
+            "ga" in window &&
+            typeof window.ga === "function" &&
+            "getAll" in window.ga &&
+            typeof window.ga.getAll === "function"
         ) {
             try {
                 const url = new URL(location)
-                const trackers = windowObj.ga!.getAll()
+                const trackers = window.ga!.getAll()
                 if (trackers?.length > 0) {
                     trackers[0]?.send("pageview", url.pathname + url.search)
                 }
@@ -115,15 +102,17 @@ function saveToLocalStorage(title: string, location: string): void {
     localStorage.setItem(localStorageKey, JSON.stringify({ title, location }))
 }
 
+interface Event {
+    title: string
+    location: string
+}
+
 function consumeLocalStorageEvent(): void {
     const eventString = localStorage.getItem(localStorageKey)
     if (typeof eventString === "string") {
         localStorage.removeItem(localStorageKey)
         try {
-            const event = JSON.parse(eventString) as {
-                title: string
-                location: string
-            }
+            const event: Event = JSON.parse(eventString)
             trackGaPageView(event)
         } catch (e) {
             log("Could not consume pageView", e, "warn")

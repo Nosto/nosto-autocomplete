@@ -12,7 +12,7 @@ export function findAll<T extends Element>(
         } else if (selector instanceof Array) {
             return selector
         } else if (selector instanceof NodeList) {
-            return Array.prototype.slice.call(selector) as Element[]
+            return Array.prototype.slice.call(selector)
         }
         return Array.prototype.slice.call(document.querySelectorAll(selector))
     })()
@@ -48,14 +48,11 @@ export function parents(target: Selector, selector?: string): Element[] {
     )
 }
 
-type WithMsMatchesSelector = {
-    msMatchesSelector?: typeof Element.prototype.matches
-}
-
 export function matches(target: Selector, selector: string): boolean {
     const matchesFunc =
         Element.prototype.matches ||
-        (Element.prototype as WithMsMatchesSelector).msMatchesSelector ||
+        // @ts-expect-error proprietary method
+        Element.prototype.msMatchesSelector ||
         Element.prototype.webkitMatchesSelector
     return findAll(target).some(element => matchesFunc.call(element, selector))
 }

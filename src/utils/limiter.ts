@@ -2,7 +2,7 @@ type Callback<T> = () => PromiseLike<T>
 
 interface Event<T> {
     getPromise?: Callback<T>
-    resolve: (result?: T) => void
+    resolve: (result: T | PromiseLike<T>) => void
     reject: (...args: unknown[]) => void
     number: number
 }
@@ -22,12 +22,12 @@ export function createLimiter<T = void>(
     function limited(getPromise?: Callback<T>): PromiseLike<T> {
         return new Promise<T>((resolve, reject) => {
             currentNumber += 1
-            const event = {
+            const event: Event<T> = {
                 getPromise,
                 resolve,
                 reject,
                 number: currentNumber,
-            } as Event<T>
+            }
             removeOldEvents()
             if (events.length < noLimitCount) {
                 execute(event)
@@ -82,6 +82,7 @@ export function createLimiter<T = void>(
                 event.reject(e)
             }
         } else {
+             // @ts-expect-error no result given
             event.resolve()
         }
     }

@@ -41,11 +41,12 @@ export const getStateActions = <State>({
 }): StateActions<State> => {
     let cancellable: Cancellable<State> | undefined
 
-    const fetchState = (value: string, config: AutocompleteConfig<State>) => {
+    const fetchState = (value: string, config: AutocompleteConfig<State>): PromiseLike<State> => {
         if (typeof config.fetch === "function") {
             return config.fetch(value)
         } else {
-            return search<State>(
+            // @ts-expect-error type mismatch
+            return search(
                 {
                     query: value,
                     ...config.fetch,
@@ -57,14 +58,15 @@ export const getStateActions = <State>({
             )
         }
     }
-
-    function getHistoryState(query: string) {
+    
+    function getHistoryState(query: string): PromiseLike<State> {
+        // @ts-expect-error type mismatch   
         return Promise.resolve({
             query: {
                 query,
             },
             history: history?.getItems()
-        } as State)
+        })
     }
 
     return {
@@ -79,7 +81,8 @@ export const getStateActions = <State>({
             }
 
             return (
-                cancellable?.promise ?? Promise.resolve({} as State)
+                // @ts-expect-error type mismatch
+                cancellable?.promise ?? Promise.resolve<State>({})
             )
         },
         addHistoryItem: (item: string) => {
