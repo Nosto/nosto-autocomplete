@@ -96,14 +96,14 @@ export function getNostoClient(): PromiseLike<NostoClient> {
  * @param error Error instance to log
  * @param level Log level string
  */
-export async function log(message: string, error: unknown, level: LogLevel): Promise<void>
+export function log(message: string, error: unknown, level: LogLevel): void
 /**
  *
  * @param error Error instance to log
  * @param level Log level string
  */
-export async function log(error: unknown, level: LogLevel): Promise<void>
-export async function log(
+export function log(error: unknown, level: LogLevel): void
+export function log(
     msgOrError: unknown,
     errorOrLevel: unknown,
     optLevel?: LogLevel
@@ -113,8 +113,10 @@ export async function log(
     // @ts-expect-error type mismatch
     const level: LogLevel = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error"))
     if (error) {
-        const api = await getNostoClient()
-        api.captureError(error, "nostoAutocomplete", level)
+        (async () => {
+            const api = await getNostoClient()
+            api.captureError(error, "nostoAutocomplete", level)
+        })()        
     }
     console[level](...[msg, error].filter(Boolean))
 }
