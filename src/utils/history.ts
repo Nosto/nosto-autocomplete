@@ -14,7 +14,7 @@ export function createHistory(size: number) {
             )
         } catch (err) {
             log("Could not get history items.", err, "error")
-            return [] as Items
+            return []
         }
     }
 

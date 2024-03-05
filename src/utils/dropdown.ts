@@ -229,7 +229,7 @@ export function createDropdown<State>(
 
     async function init() {
         const state = await Promise.resolve(initialState)
-        await Promise.resolve(render(container, state as State))
+        await Promise.resolve(render(container, state))
     
         // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
         setTimeout(() => {

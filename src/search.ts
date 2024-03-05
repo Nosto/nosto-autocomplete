@@ -78,7 +78,7 @@ const defaultProductFields = [
  * })
  * ```
  */
-export async function search<State>(
+export async function search(
     query: InputSearchQueryWithFields,
     options?: SearchOptions
 ) {
@@ -102,5 +102,5 @@ export async function search<State>(
         },
         { redirect, track })
 
-    return { query, response } as State
+    return { query, response }
 }

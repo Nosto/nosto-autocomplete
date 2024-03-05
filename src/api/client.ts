@@ -110,11 +110,13 @@ export function log(
 ) {
     const msg = typeof msgOrError === "string" ? msgOrError : undefined
     const error = optLevel ? errorOrLevel : !msg ? msgOrError : undefined
-    const level = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error")) as LogLevel
+    // @ts-expect-error type mismatch
+    const level: LogLevel = (optLevel || (typeof errorOrLevel === "string" ? errorOrLevel : "error"))
     if (error) {
-        getNostoClient().then(api => {
+        (async () => {
+            const api = await getNostoClient()
             api.captureError(error, "nostoAutocomplete", level)
-        })
+        })()        
     }
     console[level](...[msg, error].filter(Boolean))
 }
