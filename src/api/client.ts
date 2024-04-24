@@ -116,7 +116,7 @@ export function log(
         (async () => {
             const api = await getNostoClient()
             api.captureError(error, "nostoAutocomplete", level)
-        })()        
+        })()
     }
     console[level](...[msg, error].filter(Boolean))
 }
