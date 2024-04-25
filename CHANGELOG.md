@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.1...v1.1.0) (2024-04-25)
+
+
+### Features
+
+* Implement isKeyword support for analytics ([ce66a31](https://github.com/Nosto/nosto-autocomplete/commit/ce66a31cbbad65ede7bc4b37bbc7f084c7216fd0))
+
 ## [1.0.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.0...v1.0.1) (2024-01-11)
 
 
