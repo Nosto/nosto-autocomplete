@@ -82,7 +82,7 @@ export async function search(
     query: InputSearchQueryWithFields,
     options?: SearchOptions
 ) {
-    const { redirect, track } = options ?? { redirect: false, track: undefined }
+    const { redirect = false, track, isKeyword = false } = options ?? {}
 
     const fields = query.products?.fields ?? defaultProductFields
     const facets = query.products?.facets ?? ["*"]
@@ -90,7 +90,8 @@ export async function search(
     const from = query.products?.from ?? 0
 
     const api = await getNostoClient()
-    const response = await api.search({
+    const response = await api.search(
+        {
             ...query,
             products: {
                 ...query.products,
@@ -98,9 +99,10 @@ export async function search(
                 facets,
                 size,
                 from,
-            }
+            },
         },
-        { redirect, track })
+        { redirect, track, isKeyword }
+    )
 
     return { query, response }
 }

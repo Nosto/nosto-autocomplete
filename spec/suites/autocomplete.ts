@@ -9,6 +9,7 @@ import {
     NostoClient,
     autocomplete,
 } from "../../src/entries/base"
+import { getDefaultConfig } from "../../src/config"
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
@@ -29,7 +30,7 @@ interface WindowWithNostoJS extends Window {
 
 export const handleAutocomplete = async (
     render: AutocompleteConfig<DefaultState>["render"],
-    submit: AutocompleteConfig<DefaultState>["submit"] = () => ({})
+    submit?: AutocompleteConfig<DefaultState>["submit"]
 ) => {
     autocomplete({
         fetch: {
@@ -56,7 +57,7 @@ export const handleAutocomplete = async (
         inputSelector: "#search",
         dropdownSelector: "#search-results",
         render,
-        submit,
+        submit: submit ?? getDefaultConfig<DefaultState>().submit,
     })
 }
 
@@ -349,6 +350,23 @@ export function autocompleteSuite({
             )
         })
 
+        it("should call search with isKeyword=false", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() => handleAutocomplete(render()))
+
+            await user.type(screen.getByTestId("input"), "black")
+            await user.click(screen.getByTestId("search-button"))
+
+            await waitFor(() =>
+                expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
+                    track: "serp",
+                    redirect: true,
+                    isKeyword: false,
+                })
+            )
+        })
+
         it("should record search submit with keyboard", async () => {
             const user = userEvent.setup()
 
@@ -358,6 +376,22 @@ export function autocompleteSuite({
             await waitFor(async () => {
                 await user.keyboard("{enter}")
                 expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black")
+            })
+        })
+
+        it("should call search with keyboard with isKeyword=false", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() => handleAutocomplete(render()))
+            await user.type(screen.getByTestId("input"), "black")
+
+            await waitFor(async () => {
+                await user.keyboard("{enter}")
+                expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
+                    track: "serp",
+                    redirect: true,
+                    isKeyword: false,
+                })
             })
         })
 
@@ -373,6 +407,23 @@ export function autocompleteSuite({
                     "autocomplete",
                     searchResponse.keywords.hits[0]
                 )
+            })
+        })
+
+        it("should call search on keyword click with isKeyword=true", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() => handleAutocomplete(render()))
+            await user.type(screen.getByTestId("input"), "black")
+
+            await waitFor(async () => {
+                await user.click(screen.getAllByTestId("keyword")?.[0])
+
+                expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
+                    track: "serp",
+                    redirect: false,
+                    isKeyword: true,
+                })
             })
         })
 
@@ -447,6 +498,26 @@ export function autocompleteSuite({
             })
 
             assignMock.mockClear()
+        })
+
+        it("should call search when keyword is submitted with keyboard, with isKeyword=true", async () => {
+            const user = userEvent.setup()
+
+            await waitFor(() => handleAutocomplete(render()))
+
+            await user.type(screen.getByTestId("input"), "black")
+
+            await waitFor(async () => {
+                await user.keyboard("{arrowdown}")
+                await user.keyboard("{arrowdown}")
+                await user.keyboard("{enter}")
+
+                expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
+                    track: "serp",
+                    redirect: false,
+                    isKeyword: true,
+                })
+            })
         })
     })
 }

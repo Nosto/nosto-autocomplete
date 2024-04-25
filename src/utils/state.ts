@@ -3,6 +3,7 @@ import { AutocompleteConfig } from "../config"
 import { History } from "./history"
 import { Cancellable, makeCancellable } from "./promise"
 import { search } from "../search"
+import { SearchAutocompleteOptions } from "../autocomplete"
 
 /**
  * @group Autocomplete
@@ -41,7 +42,11 @@ export const getStateActions = <State>({
 }): StateActions<State> => {
     let cancellable: Cancellable<State> | undefined
 
-    const fetchState = (value: string, config: AutocompleteConfig<State>): PromiseLike<State> => {
+    const fetchState = (
+        value: string,
+        config: AutocompleteConfig<State>,
+        options?: SearchAutocompleteOptions
+    ): PromiseLike<State> => {
         if (typeof config.fetch === "function") {
             return config.fetch(value)
         } else {
@@ -54,27 +59,28 @@ export const getStateActions = <State>({
                 {
                     track: config.nostoAnalytics ? "autocomplete" : undefined,
                     redirect: false,
+                    ...options,
                 }
             )
         }
     }
-    
+
     function getHistoryState(query: string): PromiseLike<State> {
-        // @ts-expect-error type mismatch   
+        // @ts-expect-error type mismatch
         return Promise.resolve({
             query: {
                 query,
             },
-            history: history?.getItems()
+            history: history?.getItems(),
         })
     }
 
     return {
-        updateState: (inputValue?: string): PromiseLike<State> => {
+        updateState: (inputValue?: string, options?: SearchAutocompleteOptions): PromiseLike<State> => {
             cancellable?.cancel()
 
             if (inputValue && inputValue.length >= config.minQueryLength) {
-                cancellable = makeCancellable(fetchState(inputValue, config))
+                cancellable = makeCancellable(fetchState(inputValue, config, options))
                 return cancellable.promise
             } else if (history) {
                 return getHistoryState(inputValue ?? "")

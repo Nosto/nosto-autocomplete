@@ -1,4 +1,5 @@
 import { log } from "../api/client"
+import { SearchAutocompleteOptions } from "../autocomplete"
 
 type OnClickBindings<State> = {
     [key: string]: (obj: {
@@ -12,7 +13,10 @@ export function createDropdown<State>(
     container: HTMLElement,
     initialState: PromiseLike<State>,
     render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
-    submit: (inputValue: string, redirect?: boolean) => unknown,
+    submit: (
+        inputValue: string,
+        options?: SearchAutocompleteOptions
+    ) => unknown,
     updateInput: (inputValue: string) => void,
     onClickBindings?: OnClickBindings<State>
 ) {
@@ -35,7 +39,7 @@ export function createDropdown<State>(
             }
 
             if (parsedHit?.keyword) {
-                submit(parsedHit.keyword, !!parsedHit?._redirect)
+                submit(parsedHit.keyword, { redirect: !!parsedHit?._redirect, isKeyword: true })
 
                 if (parsedHit?._redirect) {
                     location.href = parsedHit._redirect
@@ -230,7 +234,7 @@ export function createDropdown<State>(
     async function init() {
         const state = await Promise.resolve(initialState)
         await Promise.resolve(render(container, state))
-    
+
         // Without setTimeout React does not have committed DOM changes yet, so we don't have the correct elements.
         setTimeout(() => {
             loadElements()

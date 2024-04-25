@@ -1,4 +1,5 @@
 import { InputSearchQueryWithFields } from "./api/search"
+import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
 
 /**
@@ -55,7 +56,11 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to submit the search
      */
-    submit?: (query: string, config: AutocompleteConfig<State>) => void
+    submit?: (
+        query: string,
+        config: AutocompleteConfig<State>,
+        options?: SearchAutocompleteOptions
+    ) => void
     /**
      * Enable history
      */
@@ -87,7 +92,7 @@ export function getDefaultConfig<State>() {
         historySize: 5,
         nostoAnalytics: true,
         googleAnalytics: defaultGaConfig,
-        submit: (query, config) => {
+        submit: (query, config, options) => {
             if (
                 query.length >=
                 (config.minQueryLength ??
@@ -100,6 +105,7 @@ export function getDefaultConfig<State>() {
                     {
                         redirect: true,
                         track: config.nostoAnalytics ? "serp" : undefined,
+                        ...options,
                     }
                 )
             }

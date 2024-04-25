@@ -8,6 +8,7 @@ import { LimiterError, createLimiter } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
 import { createHistory } from "./utils/history"
+import { SearchOptions } from "./api/search"
 
 export type AutocompleteInstance = {
     /**
@@ -23,6 +24,8 @@ export type AutocompleteInstance = {
      */
     destroy(): void
 }
+
+export type SearchAutocompleteOptions = Pick<SearchOptions, "isKeyword" | "redirect">
 
 /**
  * @param config Autocomplete configuration.
@@ -338,8 +341,9 @@ function submitWithContext<State>(context: {
     config: AutocompleteConfig<State>
     actions: StateActions<State>
 }) {
-    return async (value: string, redirect: boolean = false) => {
+    return async (value: string, options?: SearchAutocompleteOptions) => {
         const { config, actions } = context
+        const { redirect = false } = options ?? {}
 
         if (value.length > 0) {
             if (config.historyEnabled) {
@@ -359,7 +363,7 @@ function submitWithContext<State>(context: {
             }
 
             if (!redirect && typeof config?.submit === "function") {
-                config.submit(value, config)
+                config.submit(value, config, options)
             }
         }
     }
