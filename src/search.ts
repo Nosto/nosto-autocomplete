@@ -82,11 +82,7 @@ export async function search(
     query: InputSearchQueryWithFields,
     options?: SearchOptions
 ) {
-    const { redirect, track, isKeyword } = options ?? {
-        redirect: false,
-        track: undefined,
-        isKeyword: false,
-    }
+    const { redirect = false, track, isKeyword = false } = options ?? {}
 
     const fields = query.products?.fields ?? defaultProductFields
     const facets = query.products?.facets ?? ["*"]
