@@ -500,7 +500,7 @@ export function autocompleteSuite({
             assignMock.mockClear()
         })
 
-        it("should call search when keyqord is submitted with keyboard, with isKeyword=true", async () => {
+        it("should call search when keyword is submitted with keyboard, with isKeyword=true", async () => {
             const user = userEvent.setup()
 
             await waitFor(() => handleAutocomplete(render()))
