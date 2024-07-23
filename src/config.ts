@@ -24,6 +24,8 @@ export interface GoogleAnalyticsConfig {
     enabled?: boolean
 }
 
+type Selector = string | Element
+
 /**
  * @group Autocomplete
  * @category Core
@@ -32,15 +34,11 @@ export interface AutocompleteConfig<State> {
     /**
      * The input element to attach the autocomplete to
      */
-    inputSelector: string | Element | Element[] | NodeListOf<Element>
+    inputSelector: Selector
     /**
      * The dropdown element to attach the autocomplete to
      */
-    dropdownSelector:
-        | (string | Element | Element[] | NodeListOf<Element>)
-        | ((
-              input: HTMLInputElement
-          ) => string | Element | Element[] | NodeListOf<Element>)
+    dropdownSelector: Selector | ((input: HTMLInputElement) => Selector)
     /**
      * The function to use to render the dropdown
      */
