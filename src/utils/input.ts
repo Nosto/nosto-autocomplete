@@ -51,7 +51,7 @@ export function bindInput(
                     form?.removeEventListener("submit", onSubmit)
                 })
 
-                const buttons = findAll(form.querySelectorAll("[type=submit]"))
+                const buttons = Array.from(form.querySelectorAll("[type=submit]"))
                 buttons.forEach(button => {
                     const onClick = (event: Event) => {
                         event.preventDefault()

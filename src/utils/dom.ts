@@ -1,22 +1,10 @@
-type Selector = string | Element | Element[] | NodeListOf<Element>
+type Selector = string | Element
 
 export function findAll<T extends Element>(
     selector: Selector,
     filterType?: { new (): T }
 ): T[] {
-    const elements = (() => {
-        if (!selector) {
-            return []
-        } else if (selector instanceof Element) {
-            return [selector]
-        } else if (selector instanceof Array) {
-            return selector
-        } else if (selector instanceof NodeList) {
-            return Array.prototype.slice.call(selector)
-        }
-        return Array.prototype.slice.call(document.querySelectorAll(selector))
-    })()
-
+    const elements = typeof selector === "string" ? Array.from(document.querySelectorAll(selector)) : [selector]
     return elements.filter((v): v is T =>
         filterType ? v instanceof filterType : true
     )
