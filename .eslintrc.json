@@ -13,10 +13,6 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": [
-        "@typescript-eslint",
-        "promise"
-    ],
     "rules": {
         "promise/prefer-await-to-then": "error",
         "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "never" }]
