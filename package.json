@@ -176,7 +176,7 @@
         "react-dom": "^18.2.0",
         "ts-jest": "^29.1.1",
         "typedoc": "^0.26.7",
-        "typescript": "5.1.x"
+        "typescript": "5.6.x"
     },
     "peerDependencies": {
         "liquidjs": "10.x",
