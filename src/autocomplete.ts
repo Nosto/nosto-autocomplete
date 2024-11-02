@@ -11,21 +11,24 @@ import { createHistory } from "./utils/history"
 import { SearchOptions } from "./api/search"
 
 export type AutocompleteInstance = {
-    /**
-     * Open the dropdown.
-     */
-    open(): void
-    /**
-     * Close the dropdown.
-     */
-    close(): void
-    /**
-     * Destroy the autocomplete instance.
-     */
-    destroy(): void
+  /**
+   * Open the dropdown.
+   */
+  open(): void
+  /**
+   * Close the dropdown.
+   */
+  close(): void
+  /**
+   * Destroy the autocomplete instance.
+   */
+  destroy(): void
 }
 
-export type SearchAutocompleteOptions = Pick<SearchOptions, "isKeyword" | "redirect">
+export type SearchAutocompleteOptions = Pick<
+  SearchOptions,
+  "isKeyword" | "redirect"
+>
 
 /**
  * @param config Autocomplete configuration.
@@ -112,259 +115,259 @@ export type SearchAutocompleteOptions = Pick<SearchOptions, "isKeyword" | "redir
  * ```
  */
 export function autocomplete<State = DefaultState>(
-    config: AutocompleteConfig<State>
+  config: AutocompleteConfig<State>
 ): AutocompleteInstance {
-    const fullConfig = {
-        ...getDefaultConfig<State>(),
-        ...config,
-    } satisfies AutocompleteConfig<State>
+  const fullConfig = {
+    ...getDefaultConfig<State>(),
+    ...config,
+  } satisfies AutocompleteConfig<State>
 
-    const history = fullConfig.historyEnabled
-        ? createHistory(fullConfig.historySize)
-        : undefined
+  const history = fullConfig.historyEnabled
+    ? createHistory(fullConfig.historySize)
+    : undefined
 
-    const limiter = createLimiter(300, 1)
+  const limiter = createLimiter(300, 1)
 
-    const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
-        inputElement => {
-            const actions = getStateActions({
-                config: fullConfig,
-                history,
-                input: inputElement,
+  const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
+    inputElement => {
+      const actions = getStateActions({
+        config: fullConfig,
+        history,
+        input: inputElement,
+      })
+
+      const dropdown = createInputDropdown({
+        input: inputElement,
+        config: fullConfig,
+        actions,
+      })
+
+      if (!dropdown) {
+        return
+      }
+
+      const input = bindInput(inputElement, {
+        onInput: async value => {
+          try {
+            await limiter.limited(async () => {
+              const state = await actions.updateState(value)
+              dropdown.update(state)
             })
-
-            const dropdown = createInputDropdown({
-                input: inputElement,
-                config: fullConfig,
-                actions,
-            })
-
-            if (!dropdown) {
-                return
+          } catch (err) {
+            if (
+              !(err instanceof LimiterError || err instanceof CancellableError)
+            ) {
+              throw err
             }
-
-            const input = bindInput(inputElement, {
-                onInput: async value => {
-                    try {
-                        await limiter.limited(async () => {
-                            const state = await actions.updateState(value)
-                            dropdown.update(state)
-                        })
-                    } catch (err) {
-                        if (
-                            !(
-                                err instanceof LimiterError ||
-                                err instanceof CancellableError
-                            )
-                        ) {
-                            throw err
-                        }
-                    }
-                },
-                onClick() {
-                    dropdown.resetHighlight()
-                },
-                onFocus() {
-                    dropdown.show()
-                },
-                onBlur() {
-                    dropdown.hide()
-                },
-                onSubmit() {
-                    submitWithContext({
-                        config: fullConfig,
-                        actions,
-                    })(inputElement.value)
-                    dropdown.hide()
-                },
-                onKeyDown(_, key) {
-                    if (key === "Escape") {
-                        dropdown.hide()
-                    } else if (key === "ArrowDown") {
-                        if (dropdown.isOpen()) {
-                            dropdown.goDown()
-                        } else {
-                            dropdown.show()
-                        }
-                    } else if (key === "ArrowUp") {
-                        if (dropdown.isOpen()) {
-                            dropdown.goUp()
-                        }
-                    } else if (key === "Enter") {
-                        if (dropdown.isOpen() && dropdown.hasHighlight()) {
-                            const data = dropdown.getHighlight()?.dataset?.nsHit
-                            if (data) {
-                                trackClick({
-                                    config: fullConfig,
-                                    data,
-                                    query: inputElement.value,
-                                })
-                            }
-                            dropdown.handleSubmit()
-                        } else {
-                            submitWithContext({
-                                actions,
-                                config: fullConfig,
-                            })(inputElement.value)
-                        }
-                    }
-                },
-            })
-
-            const clickOutside = bindClickOutside(
-                [dropdown.container, inputElement],
-                () => {
-                    dropdown.hide()
-                }
-            )
-
-            return {
-                open() {
-                    dropdown.show()
-                },
-                close() {
-                    dropdown.hide()
-                },
-                destroy() {
-                    input.destroy()
-                    clickOutside.destroy()
-                    dropdown.destroy()
-                },
-            }
-        }
-    )
-
-    return {
-        destroy() {
-            dropdowns.forEach(dropdown => dropdown?.destroy())
+          }
         },
+        onClick() {
+          dropdown.resetHighlight()
+        },
+        onFocus() {
+          dropdown.show()
+        },
+        onBlur() {
+          dropdown.hide()
+        },
+        onSubmit() {
+          submitWithContext({
+            config: fullConfig,
+            actions,
+          })(inputElement.value)
+          dropdown.hide()
+        },
+        onKeyDown(_, key) {
+          if (key === "Escape") {
+            dropdown.hide()
+          } else if (key === "ArrowDown") {
+            if (dropdown.isOpen()) {
+              dropdown.goDown()
+            } else {
+              dropdown.show()
+            }
+          } else if (key === "ArrowUp") {
+            if (dropdown.isOpen()) {
+              dropdown.goUp()
+            }
+          } else if (key === "Enter") {
+            if (dropdown.isOpen() && dropdown.hasHighlight()) {
+              const data = dropdown.getHighlight()?.dataset?.nsHit
+              if (data) {
+                trackClick({
+                  config: fullConfig,
+                  data,
+                  query: inputElement.value,
+                })
+              }
+              dropdown.handleSubmit()
+            } else {
+              submitWithContext({
+                actions,
+                config: fullConfig,
+              })(inputElement.value)
+            }
+          }
+        },
+      })
+
+      const clickOutside = bindClickOutside(
+        [dropdown.container, inputElement],
+        () => {
+          dropdown.hide()
+        }
+      )
+
+      return {
         open() {
-            dropdowns.forEach(dropdown => dropdown?.open())
+          dropdown.show()
         },
         close() {
-            dropdowns.forEach(dropdown => dropdown?.close())
+          dropdown.hide()
         },
+        destroy() {
+          input.destroy()
+          clickOutside.destroy()
+          dropdown.destroy()
+        },
+      }
     }
+  )
+
+  return {
+    destroy() {
+      dropdowns.forEach(dropdown => dropdown?.destroy())
+    },
+    open() {
+      dropdowns.forEach(dropdown => dropdown?.open())
+    },
+    close() {
+      dropdowns.forEach(dropdown => dropdown?.close())
+    },
+  }
 }
 
 function createInputDropdown<State>({
-    input,
-    config,
-    actions,
+  input,
+  config,
+  actions,
 }: {
-    input: HTMLInputElement
-    config: AutocompleteConfig<State>
-    actions: StateActions<State>
+  input: HTMLInputElement
+  config: AutocompleteConfig<State>
+  actions: StateActions<State>
 }): Dropdown<State> | undefined {
-    const dropdownElements =
-        typeof config.dropdownSelector === "function"
-            ? findAll(config.dropdownSelector(input), HTMLElement)
-            : findAll(config.dropdownSelector, HTMLElement)
+  const dropdownElements =
+    typeof config.dropdownSelector === "function"
+      ? findAll(config.dropdownSelector(input), HTMLElement)
+      : findAll(config.dropdownSelector, HTMLElement)
 
-    if (dropdownElements.length === 0) {
-        log(`No dropdown element found for input ${input}`, "error")
-        return
-    } else if (dropdownElements.length > 1) {
-        log(`Multiple dropdown elements found for input ${input}, using the first element`, "error")
-    }
-
-    const dropdownElement = dropdownElements[0]
-
-    return createDropdown<State>(
-        dropdownElement,
-        actions.updateState(input.value),
-        config.render,
-        submitWithContext({
-            actions,
-            config,
-        }),
-        value => (input.value = value),
-        {
-            removeHistory: async function ({ data, update }) {
-                if (data === "all") {
-                    const state = await actions.clearHistory();
-                    return update(state);
-                } else if (data) {
-                    const state = await actions.removeHistoryItem(data);
-                    return update(state);
-                }
-            },
-            hit: function ({ data }) {
-                if (data) {
-                    trackClick({ config, data, query: input.value })
-                }
-            },
-        }
+  if (dropdownElements.length === 0) {
+    log(`No dropdown element found for input ${input}`, "error")
+    return
+  } else if (dropdownElements.length > 1) {
+    log(
+      `Multiple dropdown elements found for input ${input}, using the first element`,
+      "error"
     )
+  }
+
+  const dropdownElement = dropdownElements[0]
+
+  return createDropdown<State>(
+    dropdownElement,
+    actions.updateState(input.value),
+    config.render,
+    submitWithContext({
+      actions,
+      config,
+    }),
+    value => (input.value = value),
+    {
+      removeHistory: async function ({ data, update }) {
+        if (data === "all") {
+          const state = await actions.clearHistory()
+          return update(state)
+        } else if (data) {
+          const state = await actions.removeHistoryItem(data)
+          return update(state)
+        }
+      },
+      hit: function ({ data }) {
+        if (data) {
+          trackClick({ config, data, query: input.value })
+        }
+      },
+    }
+  )
 }
 
 async function trackClick<State>({
-    config,
-    data,
-    query,
+  config,
+  data,
+  query,
 }: {
-    config: AutocompleteConfig<State>
-    data: string
-    query: string
+  config: AutocompleteConfig<State>
+  data: string
+  query: string
 }) {
-    if (!config.googleAnalytics && !config.nostoAnalytics) {
-        return
+  if (!config.googleAnalytics && !config.nostoAnalytics) {
+    return
+  }
+
+  const parsedHit = parseHit(data)
+
+  if (config.nostoAnalytics) {
+    if (parsedHit) {
+      const api = await getNostoClient()
+      api?.recordSearchClick?.("autocomplete", parsedHit)
+    }
+  }
+
+  if (isGaEnabled(config)) {
+    if (parsedHit._redirect) {
+      trackGaPageView({
+        delay: true,
+        location: getGaTrackUrl(parsedHit.keyword, config),
+      })
     }
 
-    const parsedHit = parseHit(data)
-
-    if (config.nostoAnalytics) {
-        if (parsedHit) {
-            const api = await getNostoClient()
-            api?.recordSearchClick?.("autocomplete", parsedHit)
-        }
+    if (parsedHit.url) {
+      trackGaPageView({
+        delay: true,
+        location: getGaTrackUrl(query, config),
+      })
     }
-
-    if (isGaEnabled(config)) {
-        if (parsedHit._redirect) {
-            trackGaPageView({
-                delay: true,
-                location: getGaTrackUrl(parsedHit.keyword, config),
-            })
-        }
-
-        if (parsedHit.url) {
-            trackGaPageView({
-                delay: true,
-                location: getGaTrackUrl(query, config),
-            })
-        }
-    }
+  }
 }
 
 function submitWithContext<State>(context: {
-    config: AutocompleteConfig<State>
-    actions: StateActions<State>
+  config: AutocompleteConfig<State>
+  actions: StateActions<State>
 }) {
-    return async (value: string, options?: SearchAutocompleteOptions) => {
-        const { config, actions } = context
-        const { redirect = false } = options ?? {}
+  return async (value: string, options?: SearchAutocompleteOptions) => {
+    const { config, actions } = context
+    const { redirect = false } = options ?? {}
 
-        if (value.length > 0) {
-            if (config.historyEnabled) {
-                actions.addHistoryItem(value)
-            }
+    if (value.length > 0) {
+      if (config.historyEnabled) {
+        actions.addHistoryItem(value)
+      }
 
-            if (config.nostoAnalytics) {
-                const api = await getNostoClient()
-                api?.recordSearchSubmit?.(value)
-            }
+      if (config.nostoAnalytics) {
+        const api = await getNostoClient()
+        api?.recordSearchSubmit?.(value)
+      }
 
-            if (isGaEnabled(config)) {
-                trackGaPageView({
-                    delay: true,
-                    location: getGaTrackUrl(value, config),
-                })
-            }
+      if (isGaEnabled(config)) {
+        trackGaPageView({
+          delay: true,
+          location: getGaTrackUrl(value, config),
+        })
+      }
 
-            if (!redirect && typeof config?.submit === "function") {
-                config.submit(value, config, options)
-            }
-        }
+      if (!redirect && typeof config?.submit === "function") {
+        config.submit(value, config, options)
+      }
     }
+  }
 }
