@@ -30,7 +30,7 @@
             "types": "./dist/autocomplete.d.ts"
         },
         "./liquid": {
-            "browser": "./dist/autocomplete.module.js",
+            "browser": "./dist/liquid/autocomplete.module.js",
             "umd": "./dist/liquid/autocomplete.umd.js",
             "import": "./dist/liquid/autocomplete.mjs",
             "require": "./dist/liquid/autocomplete.cjs",
