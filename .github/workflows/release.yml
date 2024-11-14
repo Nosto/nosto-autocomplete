@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup NodeJS
         uses: actions/setup-node@v3
