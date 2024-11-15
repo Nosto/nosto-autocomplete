@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.0...v1.1.1) (2024-11-15)
+
+
+### Bug Fixes
+
+* do not persist credentials during release ([0f47645](https://github.com/Nosto/nosto-autocomplete/commit/0f47645d358b8a17ec37e6104839e8225ea0b14e))
+* switch release token to RELEASE_PAT_TOKEN ([954828a](https://github.com/Nosto/nosto-autocomplete/commit/954828a00c1d7f5548a146fe05158d613b5b9751))
+* trigger release ([4d82106](https://github.com/Nosto/nosto-autocomplete/commit/4d82106074ca8778119ad0be55a74a5dff1f6783))
+
 # [1.1.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.0.1...v1.1.0) (2024-04-25)
 
 
