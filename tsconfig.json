@@ -8,7 +8,7 @@
         "jsxFragmentFactory": "",
         "jsxImportSource": "",
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,

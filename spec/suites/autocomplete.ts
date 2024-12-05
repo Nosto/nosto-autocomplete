@@ -6,22 +6,22 @@ import "@testing-library/jest-dom"
 import {
     AutocompleteConfig,
     DefaultState,
-    NostoClient,
     autocomplete,
 } from "../../src/entries/base"
 import { getDefaultConfig } from "../../src/config"
+import type { API } from "@nosto/nosto-js/client"
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
         unknown,
         [
             callback: (api: {
-                search: jest.Mock<ReturnType<NostoClient["search"]>>
+                search: jest.Mock<ReturnType<API["search"]>>
                 recordSearchSubmit: jest.Mock<
-                    ReturnType<NostoClient["recordSearchSubmit"]>
+                    ReturnType<API["recordSearchSubmit"]>
                 >
                 recordSearchClick: jest.Mock<
-                    ReturnType<NostoClient["recordSearchClick"]>
+                    ReturnType<API["recordSearchClick"]>
                 >
             }) => unknown,
         ]
@@ -45,6 +45,7 @@ export const handleAutocomplete = async (
                 ],
                 size: 5,
             },
+            // @ts-expect-error missing fields    
             keywords: {
                 size: 5,
                 fields: ["keyword", "_highlight.keyword"],
@@ -65,12 +66,12 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const w = window as unknown as WindowWithNostoJS
 
-let searchSpy: jest.Mock<ReturnType<NostoClient["search"]>>
+let searchSpy: jest.Mock<ReturnType<API["search"]>>
 let recordSearchSubmitSpy: jest.Mock<
-    ReturnType<NostoClient["recordSearchSubmit"]>
+    ReturnType<API["recordSearchSubmit"]>
 >
 let recordSearchClickSpy: jest.Mock<
-    ReturnType<NostoClient["recordSearchClick"]>
+    ReturnType<API["recordSearchClick"]>
 >
 
 export function hooks(libraryScript: () => void) {
@@ -88,33 +89,33 @@ export function hooks(libraryScript: () => void) {
         searchSpy = jest.fn(
             () =>
                 Promise.resolve(searchResponse) as unknown as ReturnType<
-                    NostoClient["search"]
+                    API["search"]
                 >
         )
 
         recordSearchSubmitSpy = jest.fn(
             () =>
                 Promise.resolve() as unknown as ReturnType<
-                    NostoClient["recordSearchSubmit"]
+                    API["recordSearchSubmit"]
                 >
         )
 
         recordSearchClickSpy = jest.fn(
             () =>
                 Promise.resolve() as unknown as ReturnType<
-                    NostoClient["recordSearchClick"]
+                    API["recordSearchClick"]
                 >
         )
 
         w.nostojs = jest.fn(
             (
                 callback: (api: {
-                    search: jest.Mock<ReturnType<NostoClient["search"]>>
+                    search: jest.Mock<ReturnType<API["search"]>>
                     recordSearchSubmit: jest.Mock<
-                        ReturnType<NostoClient["recordSearchSubmit"]>
+                        ReturnType<API["recordSearchSubmit"]>
                     >
                     recordSearchClick: jest.Mock<
-                        ReturnType<NostoClient["recordSearchClick"]>
+                        ReturnType<API["recordSearchClick"]>
                     >
                 }) => unknown
             ) =>

@@ -111,10 +111,9 @@
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
         "exportTemplates": "node scripts/exportTemplates.js",
-        "prettify": "node scripts/cleanup.js && prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
+        "prettify": "prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
         "test": "jest spec",
         "test:cov": "jest --coverage spec && make-coverage-badge",
-        "codegen": "graphql-codegen",
         "dev:docs": "typedoc --watch src/index.ts"
     },
     "prettier": {
@@ -149,8 +148,6 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.13.0",
-        "@graphql-codegen/cli": "5.0.3",
-        "@graphql-codegen/typescript": "4.1.2",
         "@preact/compat": "^18.3.1",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.0.0",
@@ -174,7 +171,7 @@
         "react-dom": "^18.2.0",
         "ts-jest": "^29.1.1",
         "typedoc": "^0.26.7",
-        "typescript": "5.1.x",
+        "typescript": "5.4.x",
         "typescript-eslint": "^8.13.0"
     },
     "peerDependencies": {
@@ -204,23 +201,11 @@
             "text"
         ]
     },
-    "codegen": {
-        "overwrite": true,
-        "schema": "https://search.nosto.com/v1/graphql",
-        "generates": {
-            "src/api/search/generated.ts": {
-                "config": {
-                    "enumsAsTypes": true,
-                    "defaultScalarType": "unknown",
-                    "skipTypename": true,
-                    "useImplementingTypes": true,
-                    "declarationKind": "interface"
-                }
-            }
-        }
-    },
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
+    },
+    "dependencies": {
+        "@nosto/nosto-js": "^1.0.4"
     }
 }

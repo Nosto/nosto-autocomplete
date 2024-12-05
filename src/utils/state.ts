@@ -1,9 +1,9 @@
-import { InputSearchQuery, SearchResult } from "../api/search/generated"
 import { AutocompleteConfig } from "../config"
 import { History } from "./history"
 import { Cancellable, makeCancellable } from "./promise"
 import { search } from "../search"
 import { SearchAutocompleteOptions } from "../autocomplete"
+import type { InputSearchQuery, SearchResult } from "@nosto/nosto-js/client"
 
 /**
  * @group Autocomplete
@@ -57,7 +57,7 @@ export const getStateActions = <State>({
                     ...config.fetch,
                 },
                 {
-                    track: config.nostoAnalytics ? "autocomplete" : undefined,
+                    track: (config.nostoAnalytics ? "autocomplete" : undefined)!,
                     redirect: false,
                     ...options,
                 }
