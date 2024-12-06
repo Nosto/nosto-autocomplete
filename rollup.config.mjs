@@ -20,28 +20,20 @@ export default [
 ]
 
 function createConfigs(input, outputTemplate, aliasConfig = {}) {
-  // TODO handle aliases
   return [{
     plugins: [
       resolve(), 
       commonjs(),
-      alias(aliasConfig),
-      esbuild()
+      esbuild(),
+      alias(aliasConfig)
     ],
     jsx: "react-jsx",
     input,
-    output: [
-      {
-        file: outputTemplate.replace("[ext]", "mjs"),
-        format: 'es',
-        sourcemap: true,
-      },
-      {
-        file: outputTemplate.replace("[ext]", "cjs"),
-        format: 'cjs',
-        sourcemap: true,
-      }
-    ]  
+    output: [["mjs", "es"], ["cjs", "cjs"]].map(([ext, format]) => ({
+      file: outputTemplate.replace("[ext]", ext),
+      format,
+      sourcemap: true,
+    }))
   },
   {
     plugins: [

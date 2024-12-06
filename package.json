@@ -136,6 +136,7 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.13.0",
+        "@nosto/nosto-js": "^1.0.4",
         "@preact/compat": "^18.3.1",
         "@rollup/plugin-alias": "^5.1.1",
         "@rollup/plugin-commonjs": "^28.0.1",
@@ -196,8 +197,5 @@
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
-    },
-    "dependencies": {
-        "@nosto/nosto-js": "^1.0.4"
     }
 }
