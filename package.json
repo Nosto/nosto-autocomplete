@@ -6,9 +6,6 @@
         "nosto"
     ],
     "homepage": "https://github.com/Nosto/nosto-autocomplete#readme",
-    "bugs": {
-        "url": "https://github.com/Nosto/nosto-autocomplete/issues"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Nosto/nosto-autocomplete.git"
@@ -18,8 +15,6 @@
     "author": "Nosto",
     "main": "dist/autocomplete.cjs",
     "module": "dist/autocomplete.module.js",
-    "umd:main": "dist/autocomplete.umd.js",
-    "unpkg": "dist/autocomplete.umd.js",
     "source": "src/index.ts",
     "exports": {
         ".": {
@@ -47,42 +42,11 @@
             "require": "./dist/preact/autocomplete.cjs",
             "types": "./dist/preact/autocomplete.d.ts"
         },
-        "./liquid/template": {
-            "import": "./dist/liquid/autocomplete.liquid",
-            "require": "./dist/liquid/autocomplete.liquid"
-        },
-        "./mustache/template": {
-            "import": "./dist/mustache/autocomplete.mustache",
-            "require": "./dist/mustache/autocomplete.mustache"
-        },
-        "./styles": {
-            "import": "./dist/styles.css",
-            "require": "./dist/styles.css"
-        },
-        "./styles.css": {
-            "import": "./dist/styles.css",
-            "require": "./dist/styles.css"
-        },
-        "./dist/styles.css": {
-            "import": "./dist/styles.css",
-            "require": "./dist/styles.css"
-        }
-    },
-    "typesVersions": {
-        "*": {
-            "liquid": [
-                "dist/liquid/autocomplete.d.ts"
-            ],
-            "mustache": [
-                "dist/mustache/autocomplete.d.ts"
-            ],
-            "react": [
-                "dist/react/autocomplete.d.ts"
-            ],
-            "preact": [
-                "dist/preact/autocomplete.d.ts"
-            ]
-        }
+        "./liquid/template": "./dist/liquid/autocomplete.liquid",
+        "./mustache/template":  "./dist/mustache/autocomplete.mustache",
+        "./styles": "./dist/styles.css",
+        "./styles.css": "./dist/styles.css",
+        "./dist/styles.css": "./dist/styles.css"
     },
     "types": "dist/autocomplete.d.ts",
     "files": [
