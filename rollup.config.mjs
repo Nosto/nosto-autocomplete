@@ -4,28 +4,35 @@ import esbuild from "rollup-plugin-esbuild"
 import dts from "rollup-plugin-dts"
 import alias from '@rollup/plugin-alias'
 
-const preactAliases = {
+const preactAlias = alias({
   entries: [
     { find: 'react', replacement: 'preact/compat' },
     { find: 'react-dom', replacement: 'preact/compat' }
   ]
-}
+})
 
 export default [
   ...createConfigs('src/entries/base.ts', 'dist/autocomplete.[ext]'),
-  ...createConfigs('src/entries/preact.ts', 'dist/preact/autocomplete.[ext]', preactAliases),
+  ...createConfigs('src/entries/preact.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
   ...createConfigs('src/entries/react.ts', 'dist/react/autocomplete.[ext]'),
   ...createConfigs('src/entries/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
   ...createConfigs('src/entries/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
 ]
 
-function createConfigs(input, outputTemplate, aliasConfig = {}) {
-  return [{
+function createConfigs(input, outputTemplate, ...plugins) {
+  return [
+    createBuildConfig(input, outputTemplate, ...plugins),
+    createDtsConfig(input, outputTemplate)
+  ]
+}
+
+function createBuildConfig(input, outputTemplate, ...plugins) {
+  return {
     plugins: [
       resolve(), 
       commonjs(),
       esbuild(),
-      alias(aliasConfig)
+      ...plugins
     ],
     jsx: "react-jsx",
     input,
@@ -34,8 +41,11 @@ function createConfigs(input, outputTemplate, aliasConfig = {}) {
       format,
       sourcemap: true,
     }))
-  },
-  {
+  }
+}
+
+function createDtsConfig(input, outputTemplate) {
+  return {
     plugins: [
       dts()
     ],
@@ -44,5 +54,5 @@ function createConfigs(input, outputTemplate, aliasConfig = {}) {
       file: outputTemplate.replace("[ext]", "d.ts"),
       format: "es"
     }
-  }]
+  }
 }
