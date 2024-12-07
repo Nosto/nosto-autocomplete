@@ -1,5 +1,5 @@
+import type { SearchOptions, SearchQuery } from "@nosto/nosto-js/client"
 import { getNostoClient } from "./api/client"
-import { InputSearchQueryWithFields, SearchOptions } from "./api/search"
 
 const defaultProductFields = [
     "productId",
@@ -79,7 +79,7 @@ const defaultProductFields = [
  * ```
  */
 export async function search(
-    query: InputSearchQueryWithFields,
+    query: SearchQuery,
     options?: SearchOptions
 ) {
     const { redirect = false, track, isKeyword = false } = options ?? {}
@@ -101,7 +101,7 @@ export async function search(
                 from,
             },
         },
-        { redirect, track, isKeyword }
+        { redirect, track: track!, isKeyword }
     )
 
     return { query, response }

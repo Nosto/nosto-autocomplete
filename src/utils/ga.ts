@@ -56,7 +56,7 @@ export function trackGaPageView(options?: {
                     trackers[0]?.send("pageview", url.pathname + url.search)
                 }
             } catch (error) {
-                log("Could not send pageview to GA", error, "warn")
+                log("warn", "Could not send pageview to GA", error)
             }
         }
     }
@@ -92,7 +92,7 @@ export const getGaTrackUrl = <State>(
                 window.location.origin
             ).toString()
         } catch (error) {
-            log("Could not create track url", error, "warn")
+            log("warn", "Could not create track url", error)
             return undefined
         }
     }
@@ -115,7 +115,7 @@ function consumeLocalStorageEvent(): void {
             const event: Event = JSON.parse(eventString)
             trackGaPageView(event)
         } catch (e) {
-            log("Could not consume pageView", e, "warn")
+            log("warn", "Could not consume pageView", e)
         }
     }
 }

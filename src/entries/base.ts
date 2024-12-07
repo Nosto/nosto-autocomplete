@@ -1,19 +1,4 @@
-export { autocomplete, AutocompleteInstance } from "../autocomplete"
+export { autocomplete, type AutocompleteInstance } from "../autocomplete"
 export { search } from "../search"
-export { AutocompleteConfig, GoogleAnalyticsConfig } from "../config"
-export { DefaultState } from "../utils/state"
-
-export {
-    getNostoClient,
-    NostoClient,
-    Buyer,
-    Cart,
-    Customer,
-    Item,
-    Product,
-    Purchase,
-    Recommendation,
-    SKU,
-} from "../api/client"
-
-export * from "../api/search"
+export { type AutocompleteConfig, type GoogleAnalyticsConfig } from "../config"
+export { type DefaultState } from "../utils/state"

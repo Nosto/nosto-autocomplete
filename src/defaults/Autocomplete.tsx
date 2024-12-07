@@ -1,4 +1,4 @@
-import { SearchKeyword, SearchProduct } from "../api/search"
+import type { SearchKeyword, SearchProduct } from "@nosto/nosto-js/client"
 
 export interface AutocompleteProps {
     /**

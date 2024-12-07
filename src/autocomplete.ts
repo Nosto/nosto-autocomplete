@@ -8,7 +8,7 @@ import { LimiterError, createLimiter } from "./utils/limiter"
 import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
 import { createHistory } from "./utils/history"
-import { SearchOptions } from "./api/search"
+import type { SearchOptions } from "@nosto/nosto-js/client"
 
 export type AutocompleteInstance = {
     /**
@@ -262,10 +262,10 @@ function createInputDropdown<State>({
             : findAll(config.dropdownSelector, HTMLElement)
 
     if (dropdownElements.length === 0) {
-        log(`No dropdown element found for input ${input}`, "error")
+        log("error", `No dropdown element found for input ${input}`)
         return
     } else if (dropdownElements.length > 1) {
-        log(`Multiple dropdown elements found for input ${input}, using the first element`, "error")
+        log("error", `Multiple dropdown elements found for input ${input}, using the first element`)
     }
 
     const dropdownElement = dropdownElements[0]
@@ -316,6 +316,7 @@ async function trackClick<State>({
     if (config.nostoAnalytics) {
         if (parsedHit) {
             const api = await getNostoClient()
+            // @ts-expect-error type mismatch
             api?.recordSearchClick?.("autocomplete", parsedHit)
         }
     }

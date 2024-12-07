@@ -1,4 +1,4 @@
-import { InputSearchQueryWithFields } from "./api/search"
+import type { SearchQuery } from "@nosto/nosto-js/client"
 import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
 
@@ -50,7 +50,7 @@ export interface AutocompleteConfig<State> {
     /**
      * The function to use to fetch the search state
      */
-    fetch: InputSearchQueryWithFields | ((input: string) => PromiseLike<State>)
+    fetch: SearchQuery | ((input: string) => PromiseLike<State>)
     /**
      * The function to use to submit the search
      */
@@ -102,7 +102,7 @@ export function getDefaultConfig<State>() {
                     },
                     {
                         redirect: true,
-                        track: config.nostoAnalytics ? "serp" : undefined,
+                        track: (config.nostoAnalytics ? "serp" : undefined)!,
                         ...options,
                     }
                 )

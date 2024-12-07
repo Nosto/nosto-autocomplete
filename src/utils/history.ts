@@ -13,7 +13,7 @@ export function createHistory(size: number) {
                 JSON.parse(localStorage.getItem(localStorageKey) ?? "[]") ?? []
             )
         } catch (err) {
-            log("Could not get history items.", err, "error")
+            log("error", "Could not get history items.", err)
             return []
         }
     }
@@ -22,7 +22,7 @@ export function createHistory(size: number) {
         try {
             localStorage.setItem(localStorageKey, JSON.stringify(data))
         } catch (err) {
-            log("Could not set history items.", err, "error")
+            log("error", "Could not set history items.", err)
         }
     }
 
