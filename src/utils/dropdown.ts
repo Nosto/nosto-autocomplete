@@ -275,7 +275,7 @@ export function parseHit(hit: string): Hit {
         const parsedHit: Hit | undefined | null = JSON.parse(hit)
         return parsedHit ?? {}
     } catch (error) {
-        log("Could not parse hit", error, "warn")
+        log("warn", "Could not parse hit", error)
         return {}
     }
 }
