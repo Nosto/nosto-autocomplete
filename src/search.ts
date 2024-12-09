@@ -101,7 +101,7 @@ export async function search(
                 from,
             },
         },
-        { redirect, track: track!, isKeyword }
+        { redirect, track, isKeyword }
     )
 
     return { query, response }

@@ -57,7 +57,7 @@ export const getStateActions = <State>({
                     ...config.fetch,
                 },
                 {
-                    track: (config.nostoAnalytics ? "autocomplete" : undefined)!,
+                    track: config.nostoAnalytics ? "autocomplete" : undefined,
                     redirect: false,
                     ...options,
                 }

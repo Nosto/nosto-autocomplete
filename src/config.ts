@@ -102,7 +102,7 @@ export function getDefaultConfig<State>() {
                     },
                     {
                         redirect: true,
-                        track: (config.nostoAnalytics ? "serp" : undefined)!,
+                        track: config.nostoAnalytics ? "serp" : undefined,
                         ...options,
                     }
                 )
