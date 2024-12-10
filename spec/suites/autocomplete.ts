@@ -9,21 +9,19 @@ import {
     autocomplete,
 } from "../../src/entries/base"
 import { getDefaultConfig } from "../../src/config"
-import type { API } from "@nosto/nosto-js/client"
+import type { API, SearchResult } from "@nosto/nosto-js/client"
+
+type MockSearch = jest.Mock<ReturnType<API["search"]>>
+type MockRecordSearchSubmit = jest.Mock<ReturnType<API["recordSearchSubmit"]>>
+type MockRecordSearchClick = jest.Mock<ReturnType<API["recordSearchClick"]>>
+
+type MockApi = Pick<API, "search" | "recordSearchSubmit" | "recordSearchClick">
 
 interface WindowWithNostoJS extends Window {
     nostojs: jest.Mock<
         unknown,
         [
-            callback: (api: {
-                search: jest.Mock<ReturnType<API["search"]>>
-                recordSearchSubmit: jest.Mock<
-                    ReturnType<API["recordSearchSubmit"]>
-                >
-                recordSearchClick: jest.Mock<
-                    ReturnType<API["recordSearchClick"]>
-                >
-            }) => unknown,
+            callback: (api: MockApi) => unknown,
         ]
     >
 }
@@ -66,13 +64,9 @@ const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 const w = window as unknown as WindowWithNostoJS
 
-let searchSpy: jest.Mock<ReturnType<API["search"]>>
-let recordSearchSubmitSpy: jest.Mock<
-    ReturnType<API["recordSearchSubmit"]>
->
-let recordSearchClickSpy: jest.Mock<
-    ReturnType<API["recordSearchClick"]>
->
+let searchSpy: MockSearch
+let recordSearchSubmitSpy: MockRecordSearchSubmit
+let recordSearchClickSpy: MockRecordSearchClick
 
 export function hooks(libraryScript: () => void) {
     beforeEach(() => {
@@ -86,38 +80,13 @@ export function hooks(libraryScript: () => void) {
 
         libraryScript()
 
-        searchSpy = jest.fn(
-            () =>
-                Promise.resolve(searchResponse) as unknown as ReturnType<
-                    API["search"]
-                >
-        )
-
-        recordSearchSubmitSpy = jest.fn(
-            () =>
-                Promise.resolve() as unknown as ReturnType<
-                    API["recordSearchSubmit"]
-                >
-        )
-
-        recordSearchClickSpy = jest.fn(
-            () =>
-                Promise.resolve() as unknown as ReturnType<
-                    API["recordSearchClick"]
-                >
-        )
+        searchSpy = jest.fn(async () => (searchResponse as unknown as SearchResult))
+        recordSearchSubmitSpy = jest.fn()
+        recordSearchClickSpy = jest.fn()
 
         w.nostojs = jest.fn(
             (
-                callback: (api: {
-                    search: jest.Mock<ReturnType<API["search"]>>
-                    recordSearchSubmit: jest.Mock<
-                        ReturnType<API["recordSearchSubmit"]>
-                    >
-                    recordSearchClick: jest.Mock<
-                        ReturnType<API["recordSearchClick"]>
-                    >
-                }) => unknown
+                callback: (api: MockApi) => unknown
             ) =>
                 callback({
                     search: searchSpy,
