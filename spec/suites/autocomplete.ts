@@ -10,21 +10,11 @@ import {
 } from "../../src/entries/base"
 import { getDefaultConfig } from "../../src/config"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
+import { mockNostojs } from "@nosto/nosto-js/testing"
 
 type MockSearch = jest.Mock<ReturnType<API["search"]>>
 type MockRecordSearchSubmit = jest.Mock<ReturnType<API["recordSearchSubmit"]>>
 type MockRecordSearchClick = jest.Mock<ReturnType<API["recordSearchClick"]>>
-
-type MockApi = Pick<API, "search" | "recordSearchSubmit" | "recordSearchClick">
-
-interface WindowWithNostoJS extends Window {
-    nostojs: jest.Mock<
-        unknown,
-        [
-            callback: (api: MockApi) => unknown,
-        ]
-    >
-}
 
 export const handleAutocomplete = async (
     render: AutocompleteConfig<DefaultState>["render"],
@@ -62,8 +52,6 @@ export const handleAutocomplete = async (
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-const w = window as unknown as WindowWithNostoJS
-
 let searchSpy: MockSearch
 let recordSearchSubmitSpy: MockRecordSearchSubmit
 let recordSearchClickSpy: MockRecordSearchClick
@@ -84,16 +72,11 @@ export function hooks(libraryScript: () => void) {
         recordSearchSubmitSpy = jest.fn()
         recordSearchClickSpy = jest.fn()
 
-        w.nostojs = jest.fn(
-            (
-                callback: (api: MockApi) => unknown
-            ) =>
-                callback({
-                    search: searchSpy,
-                    recordSearchSubmit: recordSearchSubmitSpy,
-                    recordSearchClick: recordSearchClickSpy,
-                })
-        )
+        mockNostojs({
+            search: searchSpy,
+            recordSearchSubmit: recordSearchSubmitSpy,
+            recordSearchClick: recordSearchClickSpy,
+        })
     })
 
     afterEach(() => {
@@ -402,10 +385,10 @@ export function autocompleteSuite({
 
             const assignMock = jest.fn(() => ({}))
 
-            const oldLocation = w.location
+            const oldLocation = window.location
             // @ts-expect-error: mock location
-            delete w.location
-            w.location = { ...oldLocation, assign: assignMock }
+            delete window.location
+            window.location = { ...oldLocation, assign: assignMock }
 
             await waitFor(() => handleAutocomplete(render()))
             await user.type(screen.getByTestId("input"), "black")
@@ -443,10 +426,10 @@ export function autocompleteSuite({
 
             const assignMock = jest.fn(() => ({}))
 
-            const oldLocation = w.location
+            const oldLocation = window.location
             // @ts-expect-error: mock location
-            delete w.location
-            w.location = { ...oldLocation, assign: assignMock }
+            delete window.location
+            window.location = { ...oldLocation, assign: assignMock }
 
             await waitFor(() => handleAutocomplete(render()))
 
