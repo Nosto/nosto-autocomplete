@@ -4,7 +4,7 @@ import { DefaultState } from "./state"
 type Items = NonNullable<DefaultState["history"]>
 
 export function createHistory(size: number) {
-    const localStorageKey = "nostoAutocomplete:history"
+    const localStorageKey = "nosto:autocomplete:history"
     let items = get()
 
     function get(): Items {

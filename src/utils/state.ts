@@ -31,7 +31,7 @@ export type StateActions<State> = {
     clearHistory(): PromiseLike<State>
 }
 
-export const getStateActions = <State>({
+export function getStateActions<State>({
     config,
     history,
     input,
@@ -39,7 +39,7 @@ export const getStateActions = <State>({
     config: Required<AutocompleteConfig<State>>
     history?: History
     input: HTMLInputElement
-}): StateActions<State> => {
+}): StateActions<State> {
     let cancellable: Cancellable<State> | undefined
 
     const fetchState = (
@@ -75,39 +75,47 @@ export const getStateActions = <State>({
         })
     }
 
+    function updateState(inputValue?: string, options?: SearchAutocompleteOptions): PromiseLike<State> {
+        cancellable?.cancel()
+
+        if (inputValue && inputValue.length >= config.minQueryLength) {
+            cancellable = makeCancellable(fetchState(inputValue, config, options))
+            return cancellable.promise
+        } else if (history) {
+            return getHistoryState(inputValue ?? "")
+        }
+
+        return (
+            // @ts-expect-error type mismatch
+            cancellable?.promise ?? Promise.resolve<State>({})
+        )
+    }
+
+    function addHistoryItem(item: string): PromiseLike<State> {
+        if (history) {
+            history.add(item)
+        }
+        return getHistoryState(input.value)
+    }
+
+    function removeHistoryItem(item: string): PromiseLike<State> {
+        if (history) {
+            history.remove(item)
+        }
+        return getHistoryState(input.value)
+    }
+
+    function clearHistory(): PromiseLike<State> {
+        if (history) {
+            history.clear()
+        }
+        return getHistoryState(input.value)
+    }
+
     return {
-        updateState: (inputValue?: string, options?: SearchAutocompleteOptions): PromiseLike<State> => {
-            cancellable?.cancel()
-
-            if (inputValue && inputValue.length >= config.minQueryLength) {
-                cancellable = makeCancellable(fetchState(inputValue, config, options))
-                return cancellable.promise
-            } else if (history) {
-                return getHistoryState(inputValue ?? "")
-            }
-
-            return (
-                // @ts-expect-error type mismatch
-                cancellable?.promise ?? Promise.resolve<State>({})
-            )
-        },
-        addHistoryItem: (item: string) => {
-            if (history) {
-                history.add(item)
-            }
-            return getHistoryState(input.value)
-        },
-        removeHistoryItem: (item: string) => {
-            if (history) {
-                history.remove(item)
-            }
-            return getHistoryState(input.value)
-        },
-        clearHistory: () => {
-            if (history) {
-                history.clear()
-            }
-            return getHistoryState(input.value)
-        },
+        updateState,
+        addHistoryItem,
+        removeHistoryItem,
+        clearHistory,
     }
 }
