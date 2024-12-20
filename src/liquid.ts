@@ -37,21 +37,21 @@ export { defaultLiquidTemplate } from "./defaults/_generated"
  * ```
  */
 export function fromLiquidTemplate<State extends object = DefaultState>(
-    template: string
+  template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-    const instance = Liquid ? new Liquid() : undefined
+  const instance = Liquid ? new Liquid() : undefined
 
-    if (instance === undefined) {
-        throw new Error(
-            "Liquid is not defined. Please include the Liquid library in your page."
-        )
-    }
+  if (instance === undefined) {
+    throw new Error(
+      "Liquid is not defined. Please include the Liquid library in your page."
+    )
+  }
 
-    return (container, state) => {
-        container.innerHTML = instance.parseAndRenderSync(template, state)
+  return (container, state) => {
+    container.innerHTML = instance.parseAndRenderSync(template, state)
 
-        return Promise.resolve(undefined)
-    }
+    return Promise.resolve(undefined)
+  }
 }
 
 /**
@@ -69,32 +69,30 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
  * ```
  */
 export function fromRemoteLiquidTemplate<State extends object = DefaultState>(
-    url: string
+  url: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-    return (container, state) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest()
-            xhr.open("GET", url)
-            xhr.onload = async () => {
-                if (xhr.status === 200) {
-                    await fromLiquidTemplate(xhr.responseText)(container, state)
-                    resolve(undefined)
-                } else {
-                    reject(
-                        new Error(
-                            `Failed to fetch remote liquid template: ${xhr.statusText}`
-                        )
-                    )
-                }
-            }
-            xhr.onerror = () => {
-                reject(
-                    new Error(
-                        `Failed to fetch remote liquid template: ${xhr.statusText}`
-                    )
-                )
-            }
-            xhr.send()
-        })
-    }
+  return (container, state) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open("GET", url)
+      xhr.onload = async () => {
+        if (xhr.status === 200) {
+          await fromLiquidTemplate(xhr.responseText)(container, state)
+          resolve(undefined)
+        } else {
+          reject(
+            new Error(
+              `Failed to fetch remote liquid template: ${xhr.statusText}`
+            )
+          )
+        }
+      }
+      xhr.onerror = () => {
+        reject(
+          new Error(`Failed to fetch remote liquid template: ${xhr.statusText}`)
+        )
+      }
+      xhr.send()
+    })
+  }
 }
