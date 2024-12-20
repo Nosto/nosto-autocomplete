@@ -14,7 +14,7 @@
     "license": "BSD-3-Clause",
     "author": "Nosto",
     "main": "dist/autocomplete.cjs",
-    "module": "dist/autocomplete.module.js",
+    "module": "dist/autocomplete.mjs",
     "source": "src/index.ts",
     "exports": {
         ".": {
