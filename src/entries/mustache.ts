@@ -1,6 +1,6 @@
 export {
-    fromMustacheTemplate,
-    fromRemoteMustacheTemplate,
-    defaultMustacheTemplate,
+  fromMustacheTemplate,
+  fromRemoteMustacheTemplate,
+  defaultMustacheTemplate,
 } from "../mustache"
 export * from "./base"

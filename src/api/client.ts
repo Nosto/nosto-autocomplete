@@ -12,9 +12,9 @@ type LogLevel = "error" | "warn" | "info" | "debug"
  * @category Core
  */
 export function getNostoClient(): Promise<API> {
-    return new Promise(nostojs)
+  return new Promise(nostojs)
 }
 
 export function log(level: LogLevel, ...args: unknown[]) {
-    nostojs(api => api.internal.logger[level](...args))
+  nostojs(api => api.internal.logger[level](...args))
 }

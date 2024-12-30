@@ -1,6 +1,6 @@
 export {
-    fromLiquidTemplate,
-    fromRemoteLiquidTemplate,
-    defaultLiquidTemplate,
+  fromLiquidTemplate,
+  fromRemoteLiquidTemplate,
+  defaultLiquidTemplate,
 } from "../liquid"
 export * from "./base"
