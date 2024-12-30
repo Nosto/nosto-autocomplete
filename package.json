@@ -134,13 +134,21 @@
     },
     "peerDependencies": {
         "liquidjs": "10.x",
-        "mustache": "4.x"
+        "mustache": "4.x",
+        "react": "18.x",
+        "react-dom": "18.x"
     },
     "peerDependenciesMeta": {
         "mustache": {
             "optional": true
         },
         "liquidjs": {
+            "optional": true
+        },
+        "react": {
+            "optional": true
+        },
+        "react-dom": {
             "optional": true
         }
     },
