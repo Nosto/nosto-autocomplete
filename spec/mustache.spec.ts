@@ -10,6 +10,7 @@ import {
   hooks,
 } from "./suites/autocomplete"
 import { waitFor } from "@testing-library/dom"
+import { mockFetch } from "./utils"
 
 function libraryScript() {
   const mustacheScript = document.createElement("script")
@@ -30,17 +31,7 @@ describe("fromRemoteMustacheTemplate", () => {
   it("fetches remote templates url", async () => {
     const mockUrl = "template.mustache"
     const render = fromRemoteMustacheTemplate(mockUrl)
-
-    // @ts-expect-error partial mock
-    global.fetch = jest.fn(url => {
-      if (url === mockUrl) {
-        return Promise.resolve({
-          status: 200,
-          ok: true,
-          text: () => Promise.resolve(mustacheTemplate),
-        })
-      }
-    })
+    mockFetch(mockUrl, mustacheTemplate)
 
     await waitFor(() => handleAutocomplete(render))
 

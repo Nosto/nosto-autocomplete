@@ -10,6 +10,7 @@ import {
   autocompleteSuite,
 } from "./suites/autocomplete"
 import { waitFor } from "@testing-library/dom"
+import { mockFetch } from "./utils"
 
 function libraryScript() {
   const liquidScript = document.createElement("script")
@@ -31,17 +32,7 @@ describe("fromRemoteLiquidTemplate", () => {
   it("fetches remote templates url", async () => {
     const mockUrl = "template.liquid"
     const render = fromRemoteLiquidTemplate(mockUrl)
-
-    // @ts-expect-error partial mock
-    global.fetch = jest.fn(url => {
-      if (url === mockUrl) {
-        return Promise.resolve({
-          status: 200,
-          ok: true,
-          text: () => Promise.resolve(liquidTemplate),
-        })
-      }
-    })
+    mockFetch(mockUrl, liquidTemplate)
 
     await waitFor(() => handleAutocomplete(render))
 
