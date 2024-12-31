@@ -11,6 +11,12 @@ const preactAlias = alias({
   ]
 })
 
+const external = [
+  "react/jsx-runtime",
+  "mustache",
+  "liquidjs"
+]
+
 export default [
   ...createConfigs('src/entries/base.ts', 'dist/autocomplete.[ext]'),
   ...createConfigs('src/entries/preact.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
@@ -35,6 +41,7 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
       ...plugins
     ],
     jsx: "react-jsx",
+    external,
     input,
     output: [["mjs", "es"], ["cjs", "cjs"]].map(([ext, format]) => ({
       file: outputTemplate.replace("[ext]", ext),

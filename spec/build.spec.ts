@@ -14,3 +14,19 @@ describe("exports", () => {
     })
   })
 })
+
+describe("externals", () => {
+  function verify(file: string, deps: string[]) {
+    const content = fs.readFileSync(file, "utf-8")
+    deps.forEach(dep => {
+      it(`${file} should have external dependency ${dep}`, () => {
+        expect(content).toContain(`from '${dep}'`)
+      })
+    })
+  }
+
+  verify("./dist/react/autocomplete.mjs", ["react/jsx-runtime"])
+  verify("./dist/liquid/autocomplete.mjs", ["liquidjs"])
+  verify("./dist/mustache/autocomplete.mjs", ["mustache"])
+  
+})
