@@ -1,4 +1,4 @@
-import { log } from "../api/client"
+import { logger } from "../api/client"
 import { SearchAutocompleteOptions } from "../autocomplete"
 
 type OnClickBindings<State> = {
@@ -271,7 +271,7 @@ export function parseHit(hit: string): Hit {
     const parsedHit: Hit | undefined | null = JSON.parse(hit)
     return parsedHit ?? {}
   } catch (error) {
-    log("warn", "Could not parse hit", error)
+    logger.warn("Could not parse hit", error)
     return {}
   }
 }

@@ -1,4 +1,4 @@
-import { log } from "../api/client"
+import { logger } from "../api/client"
 import { AutocompleteConfig, defaultGaConfig } from "../config"
 
 const localStorageKey = "nostoAutocomplete:gaEvent"
@@ -54,7 +54,7 @@ export function trackGaPageView(options?: {
           trackers[0]?.send("pageview", url.pathname + url.search)
         }
       } catch (error) {
-        log("warn", "Could not send pageview to GA", error)
+        logger.warn("Could not send pageview to GA", error)
       }
     }
   }
@@ -88,7 +88,7 @@ export const getGaTrackUrl = <State>(
         window.location.origin
       ).toString()
     } catch (error) {
-      log("warn", "Could not create track url", error)
+      logger.warn("Could not create track url", error)
       return undefined
     }
   }
@@ -111,7 +111,7 @@ function consumeLocalStorageEvent(): void {
       const event: Event = JSON.parse(eventString)
       trackGaPageView(event)
     } catch (e) {
-      log("warn", "Could not consume pageView", e)
+      logger.warn("Could not consume pageView", e)
     }
   }
 }

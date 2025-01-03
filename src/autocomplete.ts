@@ -1,4 +1,4 @@
-import { getNostoClient, log } from "./api/client"
+import { getNostoClient, logger } from "./api/client"
 import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./utils/dropdown"
 import { DefaultState, StateActions, getStateActions } from "./utils/state"
@@ -262,11 +262,10 @@ function createInputDropdown<State>({
       : findAll(config.dropdownSelector, HTMLElement)
 
   if (dropdownElements.length === 0) {
-    log("error", `No dropdown element found for input ${input}`)
+    logger.error(`No dropdown element found for input ${input}`)
     return
   } else if (dropdownElements.length > 1) {
-    log(
-      "error",
+    logger.error(
       `Multiple dropdown elements found for input ${input}, using the first element`
     )
   }
