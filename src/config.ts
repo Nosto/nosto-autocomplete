@@ -1,4 +1,4 @@
-import type { SearchQuery } from "@nosto/nosto-js/client"
+import type { SearchProduct, SearchQuery } from "@nosto/nosto-js/client"
 import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
 
@@ -75,7 +75,13 @@ export interface AutocompleteConfig<State> {
    * Google Analytics configuration. Set to `false` to disable.
    */
   googleAnalytics?: GoogleAnalyticsConfig | boolean
+  /**
+   * Decorate the search hit before rendering
+   */
+  hitDecorators?: HitDecorator[]
 }
+
+export type HitDecorator = (hit: SearchProduct) => SearchProduct
 
 export const defaultGaConfig = {
   serpPath: "/search",
@@ -88,6 +94,7 @@ export function getDefaultConfig<State>() {
     minQueryLength: 2,
     historyEnabled: true,
     historySize: 5,
+    hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
     submit: (query, config, options) => {
