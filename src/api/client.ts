@@ -5,16 +5,17 @@ import { API } from "@nosto/nosto-js/client"
  * @group Nosto Client
  * @category Core
  */
-type LogLevel = "error" | "warn" | "info" | "debug"
-
-/**
- * @group Nosto Client
- * @category Core
- */
 export function getNostoClient(): Promise<API> {
   return new Promise(nostojs)
 }
 
-export function log(level: LogLevel, ...args: unknown[]) {
+export const logger = {
+  error: (...args: unknown[]) => log("error", ...args),
+  warn: (...args: unknown[]) => log("warn", ...args),
+  info: (...args: unknown[]) => log("info", ...args),
+  debug: (...args: unknown[]) => log("debug", ...args),
+}
+
+function log(level: keyof typeof logger, ...args: unknown[]) {
   nostojs(api => api.internal.logger[level](...args))
 }
