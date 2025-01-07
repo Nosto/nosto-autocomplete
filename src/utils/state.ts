@@ -59,9 +59,9 @@ export function getStateActions<State>({
         {
           track: config.nostoAnalytics ? "autocomplete" : undefined,
           redirect: false,
+          hitDecorators: config.hitDecorators,
           ...options,
-        }
-      )
+        })
     }
   }
 

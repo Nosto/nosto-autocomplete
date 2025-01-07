@@ -1,6 +1,7 @@
 import type { SearchQuery } from "@nosto/nosto-js/client"
 import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
+import { HitDecorator } from "./search-js"
 
 /**
  * @group Autocomplete
@@ -75,6 +76,10 @@ export interface AutocompleteConfig<State> {
    * Google Analytics configuration. Set to `false` to disable.
    */
   googleAnalytics?: GoogleAnalyticsConfig | boolean
+  /**
+   * Decorate each search hit before rendering
+   */
+  hitDecorators?: HitDecorator[]
 }
 
 export const defaultGaConfig = {
@@ -88,6 +93,7 @@ export function getDefaultConfig<State>() {
     minQueryLength: 2,
     historyEnabled: true,
     historySize: 5,
+    hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
     submit: (query, config, options) => {
@@ -102,6 +108,7 @@ export function getDefaultConfig<State>() {
           {
             redirect: true,
             track: config.nostoAnalytics ? "serp" : undefined,
+            hitDecorators: config.hitDecorators,
             ...options,
           }
         )
