@@ -36,20 +36,20 @@ export async function search(
 export type HitDecorator = (hit: SearchProduct) => SearchProduct
 
 function applyDecorators(response: SearchResult, decorators: HitDecorator[]) {
-  if (response.products) {
-    const decorator: HitDecorator = product => {
-        return decorators.reduce((acc, decorator) => {
-            return decorator(acc)
-        }, product)
-    }
-
-    return {
-      ...response,
-      products: {
-        ...response.products,
-        hits: response.products.hits.map(decorator),
-      }
-    }
+  if (!response.products) {
+    return response
   }
-  return response
+  const decorator: HitDecorator = product => {
+    return decorators.reduce((acc, decorator) => {
+      return decorator(acc)
+    }, product)
+  }
+
+  return {
+    ...response,
+    products: {
+      ...response.products,
+      hits: response.products.hits.map(decorator),
+    },
+  }
 }

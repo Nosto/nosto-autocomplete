@@ -35,18 +35,15 @@ export function priceDecorator(config?: Partial<CurrencyConfig>) {
     }
 
   return function decorator(hit: SearchProduct): Result {
-    if (hasPrices(hit)) {
-      const copy = formatPrices(hit, hit.priceCurrencyCode)
-      if (copy.skus && copy.skus.some(hasPrices)) {
-        copy.skus = copy.skus.map(sku => {
-          if (hasPrices(sku)) {
-            return formatPrices(sku, hit.priceCurrencyCode)
-          }
-          return sku
-        })
-      }
-      return copy
+    if (!hasPrices(hit)) {
+      return hit
     }
-    return hit
+    const copy = formatPrices(hit, hit.priceCurrencyCode)
+    if (copy.skus && copy.skus.some(hasPrices)) {
+      copy.skus = copy.skus.map(sku => {
+        return !hasPrices(sku) ? sku : formatPrices(sku, hit.priceCurrencyCode)
+      })
+    }
+    return copy
   }
 }

@@ -77,7 +77,7 @@ export interface AutocompleteConfig<State> {
    */
   googleAnalytics?: GoogleAnalyticsConfig | boolean
   /**
-   * Decorate the search hit before rendering
+   * Decorate each search hit before rendering
    */
   hitDecorators?: HitDecorator[]
 }
