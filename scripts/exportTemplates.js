@@ -11,10 +11,11 @@ function generateTemplate(filePath, exportName) {
     return templateLinesWithConst;
 }
 
+const hidden = "/** @hidden */"
 const liquidTemplate = generateTemplate("./src/defaults/autocomplete.liquid", "defaultLiquidTemplate");
 const mustacheTemplate = generateTemplate("./src/defaults/autocomplete.mustache", "defaultMustacheTemplate");
 
 fs.writeFileSync(
     "./src/defaults/_generated.ts",
-    liquidTemplate + `\n` + mustacheTemplate
+    [hidden, liquidTemplate, hidden, mustacheTemplate].join("\n")
 );
