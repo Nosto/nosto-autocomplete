@@ -1,4 +1,4 @@
-import { AutocompleteConfig, HitDecorator } from "../config"
+import { AutocompleteConfig } from "../config"
 import { History } from "./history"
 import { Cancellable, makeCancellable } from "./promise"
 import { search } from "../search"
@@ -31,33 +31,6 @@ export type StateActions<State> = {
   clearHistory(): PromiseLike<State>
 }
 
-function applyDecorators(response: SearchResult, decorators: HitDecorator[]) {
-  return {
-    ...response,
-    products: {
-      ...response.products,
-      hits: response.products?.hits?.map((product) => {
-        return decorators.reduce((acc, decorator) => {
-          return decorator(acc)
-        }, product)
-      })
-    }
-  }
-}
-
-async function decorated<State>(
-  result: ReturnType<typeof search>, 
-  config: AutocompleteConfig<State>) {
-  if (config.hitDecorators?.length) {
-    const { query, response } = await result
-    return {
-      query,
-      response: applyDecorators(response, config.hitDecorators)
-    }
-  }  
-  return result
-}
-
 export function getStateActions<State>({
   config,
   history,
@@ -78,7 +51,7 @@ export function getStateActions<State>({
       return config.fetch(value)
     } else {
       // @ts-expect-error type mismatch
-      return decorated(search(
+      return search(
         {
           query: value,
           ...config.fetch,
@@ -86,9 +59,9 @@ export function getStateActions<State>({
         {
           track: config.nostoAnalytics ? "autocomplete" : undefined,
           redirect: false,
+          hitDecorators: config.hitDecorators,
           ...options,
-        }
-      ), config)
+        })
     }
   }
 

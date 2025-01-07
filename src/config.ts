@@ -1,6 +1,7 @@
-import type { SearchProduct, SearchQuery } from "@nosto/nosto-js/client"
+import type { SearchQuery } from "@nosto/nosto-js/client"
 import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
+import { HitDecorator } from "./search-js"
 
 /**
  * @group Autocomplete
@@ -81,8 +82,6 @@ export interface AutocompleteConfig<State> {
   hitDecorators?: HitDecorator[]
 }
 
-export type HitDecorator = (hit: SearchProduct) => SearchProduct
-
 export const defaultGaConfig = {
   serpPath: "/search",
   queryParamName: "query",
@@ -109,6 +108,7 @@ export function getDefaultConfig<State>() {
           {
             redirect: true,
             track: config.nostoAnalytics ? "serp" : undefined,
+            hitDecorators: config.hitDecorators,
             ...options,
           }
         )
