@@ -1,3 +1,4 @@
+/** @hidden */
 export const defaultLiquidTemplate = `
 {% assign hasKeywords = response.keywords.hits.length > 0 %}
 {% assign hasProducts = response.products.hits.length > 0 %}
@@ -98,6 +99,7 @@ export const defaultLiquidTemplate = `
 </div>
 `
 
+/** @hidden */
 export const defaultMustacheTemplate = `
 <div class="ns-autocomplete-results">
   {{#response.keywords.hits.length}}

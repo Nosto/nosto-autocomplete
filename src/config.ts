@@ -78,6 +78,17 @@ export interface AutocompleteConfig<State> {
   googleAnalytics?: GoogleAnalyticsConfig | boolean
   /**
    * Decorate each search hit before rendering
+   * 
+   * @example
+   * ```ts
+   * import { priceDecorator } from "@nosto/autocomplete"
+   * 
+   * autocomplete({
+   *   hitDecorators: [
+   *     priceDecorator({ defaultCurrency: "USD" })
+   *   ]
+   * })
+   * ```
    */
   hitDecorators?: HitDecorator[]
 }

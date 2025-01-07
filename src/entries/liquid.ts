@@ -1,3 +1,4 @@
+/** @module liquid */
 export {
   fromLiquidTemplate,
   fromRemoteLiquidTemplate,

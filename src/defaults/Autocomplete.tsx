@@ -1,3 +1,4 @@
+/** @module react */
 import type { SearchKeyword, SearchProduct } from "@nosto/nosto-js/client"
 
 export interface AutocompleteProps {

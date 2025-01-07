@@ -1,3 +1,4 @@
+/** @module mustache */
 export {
   fromMustacheTemplate,
   fromRemoteMustacheTemplate,
