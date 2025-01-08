@@ -5,11 +5,14 @@ const defaultConfig = {
   defaultCurrency: "EUR",
   defaultLocale: "en-US",
   /** @hidden  */
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  currencySettings: {} as CurrencyFormats
-}
+  currencySettings: {}
+} satisfies CurrencyConfig
 
-export type CurrencyConfig = typeof defaultConfig
+export interface CurrencyConfig {
+  defaultCurrency: string
+  defaultLocale: string
+  currencySettings: CurrencyFormats
+}
 
 const currencyLocales: Record<string, string> = {
   EUR: "de-DE",
@@ -28,7 +31,7 @@ const currencyLocales: Record<string, string> = {
 }
 
 export function getCurrencyFormatting(overrides: Partial<CurrencyConfig> = {}) {
-  const config = {
+  const config: CurrencyConfig = {
     ...defaultConfig,
     ...overrides
   }
