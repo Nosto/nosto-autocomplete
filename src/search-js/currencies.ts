@@ -1,4 +1,4 @@
-import { CurrencyFormats } from "@nosto/nosto-js/client"
+import { CurrencySettingsDTO } from "@nosto/nosto-js/client"
 import { nostojs } from "@nosto/nosto-js"
 
 const defaultConfig = {
@@ -7,6 +7,8 @@ const defaultConfig = {
   /** @hidden  */
   currencySettings: {}
 } satisfies CurrencyConfig
+
+type CurrencyFormats = Record<string, CurrencySettingsDTO>
 
 export interface CurrencyConfig {
   defaultCurrency: string
