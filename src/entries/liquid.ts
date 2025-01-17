@@ -4,4 +4,9 @@ export {
   fromRemoteLiquidTemplate,
   defaultLiquidTemplate,
 } from "../liquid"
-export * from "./base"
+export {
+  autocomplete, type AutocompleteInstance, search, 
+  type AutocompleteConfig, type GoogleAnalyticsConfig,
+  type DefaultState,
+  priceDecorator
+} from "./base"
