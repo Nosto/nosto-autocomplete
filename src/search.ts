@@ -1,5 +1,5 @@
 import type { SearchQuery } from "@nosto/nosto-js/client"
-import { search as searchFn, Options } from "./search-js"
+import { search as searchFn, Options } from "@nosto/search-js"
 
 const defaultProductFields = [
   "productId",

@@ -1,7 +1,7 @@
 import { logger } from "../api/client"
 import { AutocompleteConfig, defaultGaConfig } from "../config"
 
-const localStorageKey = "nostoAutocomplete:gaEvent"
+const localStorageKey = "nosto:autocomplete:gaEvent"
 
 export function trackGaPageView(options?: {
   delay?: boolean
