@@ -1,5 +1,5 @@
 import { mockNostojs } from "@nosto/nosto-js/testing"
-import { search, HitDecorator } from "../../src/search-js"
+import { search, HitDecorator } from "@nosto/search-js"
 import {
   SearchQuery,
   SearchProduct,

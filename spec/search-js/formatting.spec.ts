@@ -1,4 +1,4 @@
-import { getCurrencyFormatting } from "../../src/search-js/currencies"
+import { getCurrencyFormatting } from "@nosto/search-js/currencies"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 
 const currencyFormatsMock = {

@@ -1,4 +1,4 @@
-import { priceDecorator } from "../../src/search-js/decorator"
+import { priceDecorator } from "@nosto/search-js/currencies"
 import { SearchProduct } from "@nosto/nosto-js/client"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 

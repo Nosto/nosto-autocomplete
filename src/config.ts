@@ -1,7 +1,7 @@
 import type { SearchQuery } from "@nosto/nosto-js/client"
 import { SearchAutocompleteOptions } from "./autocomplete"
 import { search } from "./search"
-import { HitDecorator } from "./search-js"
+import { HitDecorator } from "@nosto/search-js"
 
 /**
  * @group Autocomplete
