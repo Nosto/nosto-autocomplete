@@ -30,7 +30,7 @@ jobs:
         run: tar cf targets.tar dist
 
       - name: Upload targets.tar
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main')
         with:
           name: target-${{ runner.os }}
