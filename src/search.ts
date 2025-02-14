@@ -6,6 +6,7 @@ const defaultProductFields = [
   "url",
   "name",
   "imageUrl",
+  "imageHash",
   "thumbUrl",
   "description",
   "brand",
@@ -78,9 +79,7 @@ const defaultProductFields = [
  * })
  * ```
  */
-export async function search(query: SearchQuery, options?: Options) {
-  const { redirect = false, track, isKeyword = false, hitDecorators } = options ?? {}
-
+export async function search(query: SearchQuery, options: Options = {}) {
   const fields = query.products?.fields ?? defaultProductFields
   const facets = query.products?.facets ?? ["*"]
   const size = query.products?.size ?? 20
@@ -97,7 +96,7 @@ export async function search(query: SearchQuery, options?: Options) {
         from,
       },
     },
-    { redirect, track, isKeyword, hitDecorators }
+    options
   )
 
   return { query, response }
