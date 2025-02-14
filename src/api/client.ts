@@ -1,12 +1,8 @@
 import { nostojs } from "@nosto/nosto-js"
-import { API } from "@nosto/nosto-js/client"
+import { SearchHit } from "@nosto/nosto-js/client"
 
-/**
- * @group Nosto Client
- * @category Core
- */
-export function getNostoClient(): Promise<API> {
-  return new Promise(nostojs)
+function log(level: keyof typeof logger, ...args: unknown[]) {
+  nostojs(api => api.internal.logger[level](...args))
 }
 
 export const logger = {
@@ -16,6 +12,10 @@ export const logger = {
   debug: (...args: unknown[]) => log("debug", ...args),
 }
 
-function log(level: keyof typeof logger, ...args: unknown[]) {
-  nostojs(api => api.internal.logger[level](...args))
+export function recordSearchClick(hit: SearchHit) {
+  nostojs(api => api.recordSearchClick("autocomplete", hit))
+}
+
+export function recordSearchSubmit(query: string) {
+  nostojs(api => api.recordSearchSubmit(query))
 }

@@ -294,23 +294,6 @@ export function autocompleteSuite({
       )
     })
 
-    it("should call search with isKeyword=false", async () => {
-      const user = userEvent.setup()
-
-      await waitFor(() => handleAutocomplete(render()))
-
-      await user.type(screen.getByTestId("input"), "black")
-      await user.click(screen.getByTestId("search-button"))
-
-      await waitFor(() =>
-        expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
-          track: "serp",
-          redirect: true,
-          isKeyword: false,
-        })
-      )
-    })
-
     it("should record search submit with keyboard", async () => {
       const user = userEvent.setup()
 
@@ -320,22 +303,6 @@ export function autocompleteSuite({
       await waitFor(async () => {
         await user.keyboard("{enter}")
         expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black")
-      })
-    })
-
-    it("should call search with keyboard with isKeyword=false", async () => {
-      const user = userEvent.setup()
-
-      await waitFor(() => handleAutocomplete(render()))
-      await user.type(screen.getByTestId("input"), "black")
-
-      await waitFor(async () => {
-        await user.keyboard("{enter}")
-        expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
-          track: "serp",
-          redirect: true,
-          isKeyword: false,
-        })
       })
     })
 

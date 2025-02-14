@@ -1,4 +1,4 @@
-import { getNostoClient, logger } from "./api/client"
+import { logger, recordSearchClick, recordSearchSubmit } from "./api/client"
 import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./utils/dropdown"
 import { DefaultState, StateActions, getStateActions } from "./utils/state"
@@ -317,9 +317,8 @@ async function trackClick<State>({
 
   if (config.nostoAnalytics) {
     if (parsedHit) {
-      const api = await getNostoClient()
       // @ts-expect-error type mismatch
-      api?.recordSearchClick?.("autocomplete", parsedHit)
+      recordSearchClick(parsedHit)
     }
   }
 
@@ -354,8 +353,7 @@ function submitWithContext<State>(context: {
       }
 
       if (config.nostoAnalytics) {
-        const api = await getNostoClient()
-        api?.recordSearchSubmit?.(value)
+        recordSearchSubmit(value)
       }
 
       if (isGaEnabled(config)) {
