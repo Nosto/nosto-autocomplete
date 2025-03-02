@@ -8,14 +8,14 @@
 
 **The library is designed to simplify the implementation of Search Autocomplete functionality by providing:**
 
-&nbsp; &nbsp; &nbsp; 🌟 Autocomplete products, keywords and history visualization.<br/>
-&nbsp; &nbsp; &nbsp; 🔄 Automatic bindings to Nosto Search API.<br />
-&nbsp; &nbsp; &nbsp; 🧩 Autocomplete component state management.<br />
-&nbsp; &nbsp; &nbsp; 📊 Nosto Analytics out of the box, Google Analytics support. <br />
-&nbsp; &nbsp; &nbsp; 🏗️ Default Autocomplete components and templates.<br />
-&nbsp; &nbsp; &nbsp; 🎮 Keyboard navigation.
+* Autocomplete products, keywords and history visualization.
+* Automatic bindings to Nosto Search API.
+* Autocomplete component state management.
+* Nosto Analytics out of the box, Google Analytics support.
+* Default Autocomplete components and templates.
+* Keyboard navigation.
 
-## 💾 Installation
+## Installation
 
 You can install the `Nosto Autocomplete` library via npm:
 
@@ -36,12 +36,10 @@ The Nosto Autocomplete library can be imported and used in various ways, dependi
 
 Choose the import method that aligns with your project's requirements and technology stack.
 
-<font size="3">❗Do not combine multiple imports as it will fetch multiple bundles.❗
-</font>
+❗Do not combine multiple imports as it will fetch multiple bundles.❗
 
-## 📚 Documentation
+## Documentation
 
-<font size="3">**Read [Nosto Techdocs](https://docs.nosto.com/techdocs/implementing-nosto/implement-search/implement-autocomplete-using-library/initialization) for more information on how to use the library.**
-</font>
+Read [Nosto Techdocs](https://docs.nosto.com/techdocs/implementing-nosto/implement-search/implement-autocomplete-using-library/initialization) for more information on how to use the library.
 
-***[Library TypeDoc page](https://nosto.github.io/nosto-autocomplete/) includes detailed library helpers documentation and examples.***
+[Library TypeDoc page](https://nosto.github.io/nosto-autocomplete/) includes detailed library helpers documentation and examples.
