@@ -3,7 +3,7 @@ import Mustache from "mustache"
 
 export { defaultMustacheTemplate } from "./defaults/_generated"
 
-type Options = {
+export type Options = {
   /**
    * Mustache helpers to extend template functionality.
    */
