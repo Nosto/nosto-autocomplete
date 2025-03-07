@@ -8,12 +8,12 @@
 
 **The library is designed to simplify the implementation of Search Autocomplete functionality by providing:**
 
-* Autocomplete products, keywords and history visualization.
-* Automatic bindings to Nosto Search API.
-* Autocomplete component state management.
-* Nosto Analytics out of the box, Google Analytics support.
-* Default Autocomplete components and templates.
-* Keyboard navigation.
+* Autocomplete products, keywords and history visualization
+* Automatic bindings to Nosto Search API
+* Autocomplete component state management
+* Nosto Analytics out of the box, Google Analytics support
+* Default Autocomplete components and templates
+* Keyboard navigation
 
 ## Installation
 

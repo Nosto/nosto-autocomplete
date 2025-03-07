@@ -58,7 +58,7 @@
         "build:liquid": "cp src/defaults/autocomplete.liquid dist/liquid/autocomplete.liquid",
         "build:mustache": "cp src/defaults/autocomplete.mustache dist/mustache/autocomplete.mustache",
         "build:styles": "cp src/styles.css dist/styles.css",
-        "build:docs": "typedoc src/entries/base.ts src/entries/liquid.ts src/entries/mustache.ts src/entries/react.ts",
+        "build:docs": "typedoc --treatWarningsAsErrors src/entries/base.ts src/entries/liquid.ts src/entries/mustache.ts src/entries/react.ts",
         "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r ./docs ./site && cp -r ./coverage ./site/coverage",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",

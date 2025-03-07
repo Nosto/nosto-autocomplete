@@ -3,6 +3,7 @@ export {
   fromMustacheTemplate,
   fromRemoteMustacheTemplate,
   defaultMustacheTemplate,
+  type Options
 } from "../mustache"
 export {
   autocomplete, type AutocompleteInstance, search, 

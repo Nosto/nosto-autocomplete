@@ -25,7 +25,7 @@ export interface GoogleAnalyticsConfig {
   enabled?: boolean
 }
 
-type Selector = string | Element
+export type Selector = string | Element
 
 /**
  * @group Autocomplete
