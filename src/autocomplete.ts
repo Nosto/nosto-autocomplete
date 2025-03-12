@@ -4,9 +4,8 @@ import { Dropdown, createDropdown, parseHit } from "./utils/dropdown"
 import { DefaultState, StateActions, getStateActions } from "./utils/state"
 import { bindClickOutside, findAll } from "./utils/dom"
 import { bindInput } from "./utils/input"
-import { LimiterError, createLimiter } from "./utils/limiter"
-import { CancellableError } from "./utils/promise"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "./utils/ga"
+import createDebouncer from "./utils/debounce"
 import { createHistory } from "./utils/history"
 import type { SearchOptions } from "@nosto/nosto-js/client"
 
@@ -126,7 +125,7 @@ export function autocomplete<State = DefaultState>(
     ? createHistory(fullConfig.historySize)
     : undefined
 
-  const limiter = createLimiter(300, 1)
+  const debounce = createDebouncer(300)  
 
   const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
     inputElement => {
@@ -148,18 +147,10 @@ export function autocomplete<State = DefaultState>(
 
       const input = bindInput(inputElement, {
         onInput: async value => {
-          try {
-            await limiter.limited(async () => {
-              const state = await actions.updateState(value)
-              dropdown.update(state)
-            })
-          } catch (err) {
-            if (
-              !(err instanceof LimiterError || err instanceof CancellableError)
-            ) {
-              throw err
-            }
-          }
+          debounce(async () => {
+            const state = await actions.updateState(value)
+            dropdown.update(state)
+          })
         },
         onClick() {
           dropdown.resetHighlight()
