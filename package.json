@@ -110,6 +110,7 @@
         "@testing-library/jest-dom": "^6.0.0",
         "@testing-library/user-event": "^14.4.3",
         "@types/jest": "^29.5.3",
+        "@types/lodash": "^4.17.16",
         "@types/mustache": "4.x",
         "@types/react": "18.x",
         "@types/react-dom": "18.x",
@@ -171,5 +172,8 @@
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21"
     }
 }
