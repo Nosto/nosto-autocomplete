@@ -1,3 +1,4 @@
+import { describe, expect, it, beforeAll, afterAll, vi } from "vitest"
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
@@ -23,7 +24,7 @@ describe("autocomplete", () => {
   it("supports hit decorators", async () => {
     const user = userEvent.setup()
 
-    const render = jest.fn()
+    const render = vi.fn()
 
     const mockQuery = {
       products: {
@@ -76,7 +77,7 @@ describe("autocomplete", () => {
           }
         })
       },
-      search: jest.fn().mockResolvedValue(mockResponse)
+      search: vi.fn().mockResolvedValue(mockResponse)
     })
 
     autocomplete({

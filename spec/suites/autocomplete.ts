@@ -1,3 +1,4 @@
+import { describe, expect, it, Mock, beforeEach, afterEach, vi } from "vitest"
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import searchResponse from "../responses/search.json"
@@ -12,9 +13,9 @@ import { getDefaultConfig } from "../../src/config"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 
-type MockSearch = jest.Mock<ReturnType<API["search"]>>
-type MockRecordSearchSubmit = jest.Mock<ReturnType<API["recordSearchSubmit"]>>
-type MockRecordSearchClick = jest.Mock<ReturnType<API["recordSearchClick"]>>
+type MockSearch = Mock<API["search"]>
+type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
+type MockRecordSearchClick = Mock<API["recordSearchClick"]>
 
 export const handleAutocomplete = async (
   render: AutocompleteConfig<DefaultState>["render"],
@@ -49,7 +50,7 @@ let searchSpy: MockSearch
 let recordSearchSubmitSpy: MockRecordSearchSubmit
 let recordSearchClickSpy: MockRecordSearchClick
 
-export function hooks(libraryScript: () => void) {
+export function hooks() {
   beforeEach(() => {
     document.body.innerHTML = `
         <form id="search-form">
@@ -59,11 +60,9 @@ export function hooks(libraryScript: () => void) {
         </form>
     `
 
-    libraryScript()
-
-    searchSpy = jest.fn(async () => searchResponse as unknown as SearchResult)
-    recordSearchSubmitSpy = jest.fn()
-    recordSearchClickSpy = jest.fn()
+    searchSpy = vi.fn(async () => searchResponse as unknown as SearchResult)
+    recordSearchSubmitSpy = vi.fn()
+    recordSearchClickSpy = vi.fn()
 
     mockNostojs({
       search: searchSpy,
@@ -73,7 +72,7 @@ export function hooks(libraryScript: () => void) {
   })
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
     const dropdown = screen.getByTestId("dropdown")
     const newElement = dropdown.cloneNode(true)
     dropdown?.parentNode?.replaceChild(newElement, dropdown)
@@ -81,19 +80,17 @@ export function hooks(libraryScript: () => void) {
   })
 }
 
-export function autocompleteSuite({
-  render,
-  libraryScript,
-}: {
-  render: () => AutocompleteConfig<DefaultState>["render"]
-  libraryScript: () => void
-}) {
-  hooks(libraryScript)
+interface SuiteProps {
+  render: AutocompleteConfig<DefaultState>["render"]
+}
+
+export function autocompleteSuite({ render }: SuiteProps) {
+  hooks()
 
   it("renders autocomplete", async () => {
     const user = userEvent.setup()
 
-    await waitFor(() => handleAutocomplete(render()))
+    await waitFor(() => handleAutocomplete(render))
 
     await waitFor(
       () => {
@@ -125,7 +122,7 @@ export function autocompleteSuite({
   describe("history", () => {
     it("should see results after typing", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
 
@@ -147,7 +144,7 @@ export function autocompleteSuite({
 
     it("should see history on empty input", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "black")
@@ -162,7 +159,7 @@ export function autocompleteSuite({
 
     it("should show history keyword", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "black")
@@ -177,7 +174,7 @@ export function autocompleteSuite({
       const expectedQuery = "black"
       let exactQuery = ""
       await waitFor(() =>
-        handleAutocomplete(render(), query => {
+        handleAutocomplete(render, query => {
           exactQuery = query
         })
       )
@@ -200,7 +197,7 @@ export function autocompleteSuite({
 
     it("should show two history keywords", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "red")
@@ -217,7 +214,7 @@ export function autocompleteSuite({
 
     it("should clear history keyword", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "red")
@@ -240,7 +237,7 @@ export function autocompleteSuite({
 
     it("should clear history", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "red")
@@ -257,7 +254,7 @@ export function autocompleteSuite({
 
     it("should highlight history keyword with keyboard navigation", async () => {
       const user = userEvent.setup()
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.clear(screen.getByTestId("input"))
       await user.type(screen.getByTestId("input"), "red")
@@ -284,7 +281,7 @@ export function autocompleteSuite({
     it("should record search submit", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
       await user.click(screen.getByTestId("search-button"))
@@ -297,7 +294,7 @@ export function autocompleteSuite({
     it("should record search submit with keyboard", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
       await user.type(screen.getByTestId("input"), "black")
 
       await waitFor(async () => {
@@ -309,7 +306,7 @@ export function autocompleteSuite({
     it("should record search click on keyword click", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
       await user.type(screen.getByTestId("input"), "black")
 
       await waitFor(async () => {
@@ -324,7 +321,7 @@ export function autocompleteSuite({
     it("should call search on keyword click with isKeyword=true", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
       await user.type(screen.getByTestId("input"), "black")
 
       await waitFor(async () => {
@@ -341,14 +338,14 @@ export function autocompleteSuite({
     it("should record search click on product click", async () => {
       const user = userEvent.setup()
 
-      const assignMock = jest.fn(() => ({}))
+      const assignMock = vi.fn(() => ({}))
 
       const oldLocation = window.location
       // @ts-expect-error: mock location
       delete window.location
       window.location = { ...oldLocation, assign: assignMock }
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
       await user.type(screen.getByTestId("input"), "black")
 
       await waitFor(async () => {
@@ -365,7 +362,7 @@ export function autocompleteSuite({
     it("should record search click on keyword submitted with keyboard", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
 
@@ -382,14 +379,14 @@ export function autocompleteSuite({
     it("should record search click on product submitted with keyboard", async () => {
       const user = userEvent.setup()
 
-      const assignMock = jest.fn(() => ({}))
+      const assignMock = vi.fn(() => ({}))
 
       const oldLocation = window.location
       // @ts-expect-error: mock location
       delete window.location
       window.location = { ...oldLocation, assign: assignMock }
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
       await wait(500)
@@ -414,7 +411,7 @@ export function autocompleteSuite({
     it("should call search when keyword is submitted with keyboard, with isKeyword=true", async () => {
       const user = userEvent.setup()
 
-      await waitFor(() => handleAutocomplete(render()))
+      await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
 

@@ -1,12 +1,13 @@
+import { describe, expect, it, vi, beforeEach, Mock } from "vitest"
 import debounce from "../src/utils/debounce"
 
-jest.useFakeTimers()
+vi.useFakeTimers()
 
 describe("debounce", () => {
-  let callback: jest.Mock
+  let callback: Mock
 
   beforeEach(() => {
-    callback = jest.fn()
+    callback = vi.fn()
   })
 
   it("should execute the callback immediately on the first call", () => {
@@ -26,7 +27,7 @@ describe("debounce", () => {
     const debouncedFunction = debounce(1000)
     debouncedFunction(callback)
     debouncedFunction(callback)
-    jest.advanceTimersByTime(1000)
+    vi.advanceTimersByTime(1000)
     expect(callback).toHaveBeenCalledTimes(2)
   })
 
@@ -34,11 +35,11 @@ describe("debounce", () => {
     const debouncedFunction = debounce(1000)
     debouncedFunction(callback)
     debouncedFunction(callback)
-    jest.advanceTimersByTime(500)
+    vi.advanceTimersByTime(500)
     debouncedFunction(callback)
-    jest.advanceTimersByTime(500)
+    vi.advanceTimersByTime(500)
     expect(callback).toHaveBeenCalledTimes(1)
-    jest.advanceTimersByTime(500)
+    vi.advanceTimersByTime(500)
     expect(callback).toHaveBeenCalledTimes(2)
   })
 })
