@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from "vitest"
 import { getCurrencyFormatting } from "@nosto/search-js/currencies"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 
@@ -75,7 +76,7 @@ describe("currency formatting", () => {
   it("should load currency settings from nosto", async () => {
     const mockApi = {
       internal: {
-        getSettings: jest.fn(() => ({
+        getSettings: vi.fn(() => ({
           currencySettings: currencyFormatsMock
         }))
       }

@@ -1,3 +1,4 @@
+import { describe, expect, it, beforeEach, vi } from "vitest"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import { search, HitDecorator } from "@nosto/search-js"
 import {
@@ -8,7 +9,7 @@ import {
 describe("search", () => {
   beforeEach(() => {
     mockNostojs({
-      search: jest.fn().mockResolvedValue({
+      search: vi.fn().mockResolvedValue({
         products: {
           hits: [
             { id: "1", name: "Product 1" },
@@ -43,7 +44,7 @@ describe("search", () => {
 
   it("should handle empty search results", async () => {
     mockNostojs({
-      search: jest.fn().mockResolvedValue({ products: { hits: [] } }),
+      search: vi.fn().mockResolvedValue({ products: { hits: [] } }),
     })
     const result = await search(query)
     expect(result.products?.hits).toEqual([])
