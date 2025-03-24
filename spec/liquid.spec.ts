@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest"
 import "@testing-library/jest-dom"
 import {
   fromLiquidTemplate,
@@ -12,22 +13,15 @@ import {
 import { waitFor } from "@testing-library/dom"
 import { mockFetch } from "./utils"
 
-function libraryScript() {
-  const liquidScript = document.createElement("script")
-  liquidScript.src =
-    "https://cdn.jsdelivr.net/npm/liquidjs@10.9.3/dist/liquid.browser.min.js"
-  document.body.appendChild(liquidScript)
-}
 
 describe("fromLiquidTemplate", () => {
   autocompleteSuite({
-    render: () => fromLiquidTemplate(liquidTemplate),
-    libraryScript,
+    render: fromLiquidTemplate(liquidTemplate)
   })
 })
 
 describe("fromRemoteLiquidTemplate", () => {
-  hooks(libraryScript)
+  hooks()
 
   it("fetches remote templates url", async () => {
     const mockUrl = "template.liquid"
