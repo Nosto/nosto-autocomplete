@@ -1,4 +1,6 @@
-export default {
+import { defineConfig } from "vite"
+
+export default defineConfig({
   test: {
     include: ["./spec/**/*.spec.{ts,tsx}"],
     environment: "jsdom",
@@ -11,4 +13,4 @@ export default {
     },
     silent: true
   }
-}
+})
