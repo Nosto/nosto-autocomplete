@@ -1,19 +1,6 @@
-export {
-    autocomplete, type AutocompleteInstance, search, 
-    type AutocompleteConfig, type GoogleAnalyticsConfig,
-    type DefaultState,
-    priceDecorator
-  } from "./entries/base"
-export {
-    fromMustacheTemplate,
-    fromRemoteMustacheTemplate,
-    defaultMustacheTemplate
-} from "./entries/mustache"
-export {
-    fromLiquidTemplate,
-    fromRemoteLiquidTemplate,
-    defaultLiquidTemplate,
-} from "./entries/liquid"
-export {
-    Autocomplete, type AutocompleteProps
-} from "./entries/react"
+/** @module ./ */
+export { autocomplete, type AutocompleteInstance, type SearchAutocompleteOptions } from "./lib/autocomplete"
+export { search } from "./lib/search"
+export type { AutocompleteConfig, GoogleAnalyticsConfig, Selector } from "./lib/config"
+export { type DefaultState } from "./utils/state"
+export { priceDecorator } from "@nosto/search-js/currencies"

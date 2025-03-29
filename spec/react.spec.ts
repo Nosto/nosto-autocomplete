@@ -1,6 +1,6 @@
 import { describe, afterEach } from "vitest"
 import "@testing-library/jest-dom"
-import { Autocomplete } from "../src/defaults/Autocomplete"
+import { Autocomplete } from "../src/react/Autocomplete"
 import { createElement } from "react"
 import { createRoot, Root } from "react-dom/client"
 import { DefaultState } from "../src/utils/state"

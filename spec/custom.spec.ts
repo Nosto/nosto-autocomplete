@@ -2,7 +2,7 @@ import { describe, expect, it, beforeAll, afterAll } from "vitest"
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
-import { autocomplete } from "../src/autocomplete"
+import { autocomplete } from "../src/lib/autocomplete"
 
 beforeAll(() => {
   document.body.innerHTML = `

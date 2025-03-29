@@ -3,6 +3,8 @@ import commonjs from '@rollup/plugin-commonjs'
 import esbuild from "rollup-plugin-esbuild"
 import dts from "rollup-plugin-dts"
 import alias from '@rollup/plugin-alias'
+import { string } from 'rollup-plugin-string'
+import { visualizer } from "rollup-plugin-visualizer"
 
 const preactAlias = alias({
   entries: [
@@ -18,11 +20,11 @@ const external = [
 ]
 
 export default [
-  ...createConfigs('src/entries/base.ts', 'dist/autocomplete.[ext]'),
-  ...createConfigs('src/entries/preact.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
-  ...createConfigs('src/entries/react.ts', 'dist/react/autocomplete.[ext]'),
-  ...createConfigs('src/entries/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
-  ...createConfigs('src/entries/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
+  ...createConfigs('src/index.ts', 'dist/autocomplete.[ext]'),
+  ...createConfigs('src/react.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
+  ...createConfigs('src/react.ts', 'dist/react/autocomplete.[ext]'),
+  ...createConfigs('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
+  ...createConfigs('src/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
 ]
 
 function createConfigs(input, outputTemplate, ...plugins) {
@@ -37,7 +39,14 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
     plugins: [
       resolve(), 
       commonjs(),
-      esbuild(),
+      esbuild({
+        minifyIdentifiers: true,
+        minifySyntax: true,
+      }),
+      string({
+        include: '**/*.{mustache,liquid}',
+      }),
+      visualizer(),
       ...plugins
     ],
     jsx: "react-jsx",
@@ -54,7 +63,10 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
 function createDtsConfig(input, outputTemplate) {
   return {
     plugins: [
-      dts()
+      dts(),
+      string({
+        include: '**/*.{mustache,liquid}',
+      })
     ],
     input,
     output: {

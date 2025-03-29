@@ -1,5 +1,5 @@
-import { logger } from "../api/client"
-import { AutocompleteConfig, defaultGaConfig } from "../config"
+import { logger } from "../lib/client"
+import { AutocompleteConfig, defaultGaConfig } from "../lib/config"
 
 const localStorageKey = "nosto:autocomplete:gaEvent"
 
