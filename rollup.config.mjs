@@ -4,6 +4,7 @@ import esbuild from "rollup-plugin-esbuild"
 import dts from "rollup-plugin-dts"
 import alias from '@rollup/plugin-alias'
 import { string } from 'rollup-plugin-string'
+import { visualizer } from "rollup-plugin-visualizer"
 
 const preactAlias = alias({
   entries: [
@@ -38,10 +39,14 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
     plugins: [
       resolve(), 
       commonjs(),
-      esbuild(),
+      esbuild({
+        minifyIdentifiers: true,
+        minifySyntax: true,
+      }),
       string({
         include: '**/*.{mustache,liquid}',
       }),
+      visualizer(),
       ...plugins
     ],
     jsx: "react-jsx",
