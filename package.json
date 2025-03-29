@@ -42,8 +42,6 @@
             "require": "./dist/preact/autocomplete.cjs",
             "types": "./dist/preact/autocomplete.d.ts"
         },
-        "./liquid/template": "./dist/liquid/autocomplete.liquid",
-        "./mustache/template": "./dist/mustache/autocomplete.mustache",
         "./styles": "./dist/styles.css",
         "./styles.css": "./dist/styles.css",
         "./dist/styles.css": "./dist/styles.css"
@@ -53,12 +51,10 @@
         "dist/**/*"
     ],
     "scripts": {
-        "build": "npm run exportTemplates && npm run typecheck && npm run lint && npm run build:rollup && npm run build:liquid && npm run build:mustache && npm run build:styles",
+        "build": "npm run typecheck && npm run lint && npm run build:rollup && npm run build:styles",
         "build:rollup": "rollup --config rollup.config.mjs",
-        "build:liquid": "cp src/defaults/autocomplete.liquid dist/liquid/autocomplete.liquid",
-        "build:mustache": "cp src/defaults/autocomplete.mustache dist/mustache/autocomplete.mustache",
         "build:styles": "cp src/styles.css dist/styles.css",
-        "build:docs": "typedoc --treatWarningsAsErrors src/entries/base.ts src/entries/liquid.ts src/entries/mustache.ts src/entries/react.ts",
+        "build:docs": "typedoc --treatWarningsAsErrors src/index.ts src/liquid.ts src/mustache.ts src/react.ts",
         "build:site": "npm run build:docs && npm run test:cov && rm -rf site && cp -r ./docs ./site && cp -r ./coverage ./site/coverage",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
@@ -125,6 +121,7 @@
         "rollup": "^4.28.0",
         "rollup-plugin-dts": "^6.1.1",
         "rollup-plugin-esbuild": "^6.1.1",
+        "rollup-plugin-string": "^3.0.0",
         "typedoc": "^0.28.0",
         "typescript": "5.7.x",
         "typescript-eslint": "^8.13.0",

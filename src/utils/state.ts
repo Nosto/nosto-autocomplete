@@ -1,8 +1,8 @@
-import { AutocompleteConfig } from "../config"
+import { AutocompleteConfig } from "../lib/config"
 import { History } from "./history"
 import { Cancellable, makeCancellable } from "./promise"
-import { search } from "../search"
-import { SearchAutocompleteOptions } from "../autocomplete"
+import { search } from "../lib/search"
+import { SearchAutocompleteOptions } from "../lib/autocomplete"
 import type { InputSearchQuery, SearchResult } from "@nosto/nosto-js/client"
 
 /**

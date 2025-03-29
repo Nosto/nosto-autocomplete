@@ -10,3 +10,13 @@ interface Window {
   gtag?: unknown
   google_tag_manager?: unknown
 }
+
+declare module "*.liquid" {
+  const content: string
+  export default content
+}
+
+declare module "*.mustache" {
+  const content: string
+  export default content
+}

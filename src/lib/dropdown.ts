@@ -1,5 +1,5 @@
-import { logger } from "../api/client"
-import { SearchAutocompleteOptions } from "../autocomplete"
+import { logger } from "./client"
+import { SearchAutocompleteOptions } from "./autocomplete"
 
 type OnClickBindings<State> = {
   [key: string]: (obj: {

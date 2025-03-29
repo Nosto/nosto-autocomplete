@@ -1,4 +1,4 @@
-import { logger } from "../api/client"
+import { logger } from "../lib/client"
 import { DefaultState } from "./state"
 
 type Items = NonNullable<DefaultState["history"]>

@@ -2,7 +2,7 @@ import { describe, expect, it, beforeAll, afterAll, vi } from "vitest"
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
-import { autocomplete } from "../src/autocomplete"
+import { autocomplete } from "../src/lib/autocomplete"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import { priceDecorator } from "../src"
 
