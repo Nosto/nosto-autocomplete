@@ -49,9 +49,8 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
 
   const tmpl = instance.parse(template)
 
-  return (container, state) => {
-    container.innerHTML = instance.renderSync(tmpl, state)
-
-    return Promise.resolve(undefined)
+  return async (container, state) => {
+    const result = await instance.render(tmpl, state)
+    container.innerHTML = result
   }
 }
