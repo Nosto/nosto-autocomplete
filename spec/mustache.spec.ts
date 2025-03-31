@@ -3,7 +3,7 @@ import "@testing-library/jest-dom"
 import {
   fromMustacheTemplate,
   defaultMustacheTemplate as mustacheTemplate,
-} from "../src/mustache/mustache"
+} from "../src/mustache/fromMustacheTemplate"
 import {
   autocompleteSuite
 } from "./suites/autocomplete"

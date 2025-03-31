@@ -3,7 +3,7 @@ import "@testing-library/jest-dom"
 import {
   fromLiquidTemplate,
   defaultLiquidTemplate as liquidTemplate,
-} from "../src/liquid/liquid"
+} from "../src/liquid/fromLiquidTemplate"
 import {
   autocompleteSuite,
 } from "./suites/autocomplete"

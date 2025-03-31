@@ -3,7 +3,7 @@ export {
   fromMustacheTemplate,
   defaultMustacheTemplate,
   type Options
-} from "./mustache/mustache"
+} from "./mustache/fromMustacheTemplate"
 export {
   autocomplete, type AutocompleteInstance, search, 
   type AutocompleteConfig, type GoogleAnalyticsConfig,

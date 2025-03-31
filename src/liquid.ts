@@ -2,7 +2,7 @@
 export {
   fromLiquidTemplate,
   defaultLiquidTemplate,
-} from "./liquid/liquid"
+} from "./liquid/fromLiquidTemplate"
 export {
   autocomplete, type AutocompleteInstance, search, 
   type AutocompleteConfig, type GoogleAnalyticsConfig,
