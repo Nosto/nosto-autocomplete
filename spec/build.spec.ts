@@ -21,7 +21,7 @@ describe("externals", () => {
     const content = fs.readFileSync(file, "utf-8")
     deps.forEach(dep => {
       it(`${file} should have external dependency ${dep}`, () => {
-        expect(content).toContain(`from '${dep}'`)
+        expect(content).toContain(`from "${dep}"`)
       })
     })
   }
