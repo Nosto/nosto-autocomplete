@@ -8,7 +8,7 @@ import {
   AutocompleteConfig,
   DefaultState,
   autocomplete,
-} from "../../src/index"
+} from "../../src"
 import { getDefaultConfig } from "../../src/lib/config"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
 import { mockNostojs } from "@nosto/nosto-js/testing"
