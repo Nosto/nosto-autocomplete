@@ -21,6 +21,13 @@ const api = {
           dummyProduct(4),
         ],
       },
+      keywords: {
+        hits: [
+          { keyword: "keyword1" },
+          { keyword: "keyword2" },
+          { keyword: "keyword3" },
+        ],
+      }
     }),
   recordSearchClick: () => {},
   internal: {
