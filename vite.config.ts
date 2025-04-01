@@ -14,6 +14,9 @@ export default defineConfig({
       },
     }
   ],
+  server: {
+    port: 8080
+  },
   test: {
     include: ["./spec/**/*.spec.{ts,tsx}"],
     environment: "jsdom",
