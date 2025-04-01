@@ -56,6 +56,7 @@
         "build:styles": "cp src/styles.css dist/styles.css",
         "build:docs": "typedoc --treatWarningsAsErrors src/index.ts src/liquid.ts src/mustache.ts src/react.ts",
         "build:site": "npm run build:docs && rm -rf site && cp -r ./docs ./site",
+        "dev": "vite dev",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
         "exportTemplates": "node scripts/exportTemplates.js",
@@ -126,6 +127,7 @@
         "typedoc": "^0.28.0",
         "typescript": "5.7.x",
         "typescript-eslint": "^8.13.0",
+        "vite": "^6.2.4",
         "vitest": "^3.0.9"
     },
     "peerDependencies": {

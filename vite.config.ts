@@ -1,4 +1,4 @@
-import { defineConfig } from "vite"
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   plugins: [
@@ -14,6 +14,9 @@ export default defineConfig({
       },
     }
   ],
+  server: {
+    port: 8080
+  },
   test: {
     include: ["./spec/**/*.spec.{ts,tsx}"],
     environment: "jsdom",
