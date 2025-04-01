@@ -1,4 +1,5 @@
 import { SearchKeyword, SearchResult } from "@nosto/nosto-js/client"
+import { mockNostojs } from "@nosto/nosto-js/testing"
 
 function dummyProduct(index: number) {
   return {
@@ -12,7 +13,7 @@ function dummyProduct(index: number) {
   }
 }
 
-const api = {
+mockNostojs({
   search: () =>
     Promise.resolve({
       products: {
@@ -33,11 +34,8 @@ const api = {
         total: 3
       }
     } as SearchResult),
-  recordSearchClick: () => {},
+  recordSearchClick: () => Promise.resolve(),
   internal: {
     getSettings: () => {},
   },
-}
-
-// @ts-expect-error not typed
-window.nostojs = cb => cb(api)
+})
