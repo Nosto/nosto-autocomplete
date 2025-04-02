@@ -117,8 +117,8 @@
         "make-coverage-badge": "^1.2.0",
         "mustache": "^4.2.0",
         "prettier": "^3.0.2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
         "rollup": "^4.28.0",
         "rollup-plugin-dts": "^6.1.1",
         "rollup-plugin-esbuild": "^6.2.1",
@@ -133,8 +133,8 @@
     "peerDependencies": {
         "liquidjs": "10.x",
         "mustache": "4.x",
-        "react": "18.x",
-        "react-dom": "18.x"
+        "react": "19.x",
+        "react-dom": "19.x"
     },
     "peerDependenciesMeta": {
         "mustache": {
