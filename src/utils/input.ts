@@ -1,5 +1,3 @@
-import { findAll } from "./dom"
-
 type Callbacks = {
   onSubmit?: (value: string) => void
   onInput?: (value: string) => void
@@ -9,17 +7,17 @@ type Callbacks = {
   onClick?: (value: string) => void
 }
 
+export function disableNativeAutocomplete(target: HTMLInputElement) {
+  target.setAttribute("autocomplete", "off")
+}
+
 export function bindInput(
-  selector: string | HTMLInputElement,
+  target: HTMLInputElement,
   callbacks: Callbacks
 ): {
   destroy: () => void
 } {
-  const target =
-    selector instanceof HTMLInputElement
-      ? [selector]
-      : findAll(selector, HTMLInputElement)
-  const unbindCallbacks = target.flatMap(el => {
+  const unbindCallbacks = [target].flatMap(el => {
     const cbs: Array<() => void> = []
 
     if (callbacks.onSubmit) {
