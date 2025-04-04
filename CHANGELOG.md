@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.0.0...v2.1.0) (2025-04-04)
+
+
+### Features
+
+* Disable native autocomplete ([162db39](https://github.com/Nosto/nosto-autocomplete/commit/162db39f311da5e0f8d45d3b5ffe4a88ebb50df5))
+
 # [2.0.0](https://github.com/Nosto/nosto-autocomplete/compare/v1.1.2...v2.0.0) (2025-04-01)
 
 
