@@ -3,7 +3,7 @@ import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "../utils/state"
 import { bindClickOutside, findAll } from "../utils/dom"
-import { bindInput } from "../utils/input"
+import { bindInput, disableNativeAutocomplete } from "../utils/input"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
 import createDebouncer from "../utils/debounce"
 import { createHistory } from "../utils/history"
@@ -144,6 +144,8 @@ export function autocomplete<State = DefaultState>(
       if (!dropdown) {
         return
       }
+
+      disableNativeAutocomplete(inputElement)
 
       const input = bindInput(inputElement, {
         onInput: async value => {

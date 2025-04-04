@@ -42,6 +42,8 @@ describe("autocomplete", () => {
       },
     })
 
+    expect(screen.getByTestId("input")).toHaveAttribute("autocomplete", "off")
+
     await waitFor(
       () => {
         expect(screen.getByTestId("dropdown")).not.toBeVisible()
