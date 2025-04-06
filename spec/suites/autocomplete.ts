@@ -338,13 +338,6 @@ export function autocompleteSuite({ render }: SuiteProps) {
     it("should record search click on product click", async () => {
       const user = userEvent.setup()
 
-      const assignMock = vi.fn(() => ({}))
-
-      const oldLocation = window.location
-      // @ts-expect-error: mock location
-      delete window.location
-      window.location = { ...oldLocation, assign: assignMock }
-
       await waitFor(() => handleAutocomplete(render))
       await user.type(screen.getByTestId("input"), "black")
 
@@ -355,8 +348,6 @@ export function autocompleteSuite({ render }: SuiteProps) {
           searchResponse.products.hits[0]
         )
       })
-
-      assignMock.mockClear()
     })
 
     it("should record search click on keyword submitted with keyboard", async () => {
@@ -379,13 +370,6 @@ export function autocompleteSuite({ render }: SuiteProps) {
     it("should record search click on product submitted with keyboard", async () => {
       const user = userEvent.setup()
 
-      const assignMock = vi.fn(() => ({}))
-
-      const oldLocation = window.location
-      // @ts-expect-error: mock location
-      delete window.location
-      window.location = { ...oldLocation, assign: assignMock }
-
       await waitFor(() => handleAutocomplete(render))
 
       await user.type(screen.getByTestId("input"), "black")
@@ -404,8 +388,6 @@ export function autocompleteSuite({ render }: SuiteProps) {
           searchResponse.products.hits[0]
         )
       })
-
-      assignMock.mockClear()
     })
 
     it("should call search when keyword is submitted with keyboard, with isKeyword=true", async () => {
