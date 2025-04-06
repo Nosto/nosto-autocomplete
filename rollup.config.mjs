@@ -16,6 +16,7 @@ const preactAlias = alias({
 const external = [
   "react/jsx-runtime",
   "mustache",
+  "handlebars",
   "liquidjs"
 ]
 
@@ -24,6 +25,7 @@ export default [
   ...createConfigs('src/react.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
   ...createConfigs('src/react.ts', 'dist/react/autocomplete.[ext]'),
   ...createConfigs('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
+  ...createConfigs('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]'),
   ...createConfigs('src/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
 ]
 
@@ -44,7 +46,7 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
         minifySyntax: true,
       }),
       string({
-        include: '**/*.{mustache,liquid}',
+        include: '**/*.{handlebars,mustache,liquid}',
       }),
       visualizer(),
       ...plugins
@@ -65,7 +67,7 @@ function createDtsConfig(input, outputTemplate) {
     plugins: [
       dts(),
       string({
-        include: '**/*.{mustache,liquid}',
+        include: '**/*.{mustache,handlebars,liquid}',
       })
     ],
     input,

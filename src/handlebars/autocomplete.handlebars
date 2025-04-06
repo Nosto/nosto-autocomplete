@@ -1,0 +1,88 @@
+<div class="ns-autocomplete-results">
+  {{#if response.keywords.hits.length}}
+    <div class="ns-autocomplete-keywords">
+      <div class="ns-autocomplete-header">
+        Keywords
+      </div>
+      {{#each response.keywords.hits}}
+        <div class="ns-autocomplete-keyword" data-ns-hit="{{toJson this}}" data-testid="keyword">
+          {{#if _highlight.keyword}}
+            <span>{{{_highlight.keyword}}}</span>
+          {{else}}
+            <span>{{keyword}}</span>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if response.products.hits.length}}
+    <div class="ns-autocomplete-products">
+      <div class="ns-autocomplete-header">
+        Products
+      </div>
+      {{#each response.products.hits}}
+        <a class="ns-autocomplete-product" href="{{url}}" data-ns-hit="{{toJson this}}" data-testid="product"></a>
+          <img
+              class="ns-autocomplete-product-image"
+              src="{{#if imageUrl}}{{ imageUrl }}{{else}}{{ imagePlaceholder }}{{/if}}"
+              alt="{{name}}"
+              width="60"
+              height="40"
+          />
+          <div class="ns-autocomplete-product-info">
+            {{#if brand}}
+              <div class="ns-autocomplete-product-brand">
+                {{brand}}
+              </div>
+            {{/if}}
+            <div class="ns-autocomplete-product-name">
+              {{name}}
+            </div>
+            <div>
+              <span>
+                {{price}}&euro;
+              </span>
+              {{#if showListPrice}}
+                <span class="ns-autocomplete-product-list-price">
+                  {{listPrice}}&euro;
+                </span>
+              {{/if}}
+            </div>
+          </div>
+        </a>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if history.length}}
+    <div class="ns-autocomplete-history">
+      <div class="ns-autocomplete-header">
+        Recently searched
+      </div>
+      {{#each history}}
+        <div class="ns-autocomplete-history-item" data-ns-hit="{{toJson this}}" data-testid="history">
+          {{item}}
+          <a href="#" class="ns-autocomplete-history-item-remove" data-ns-remove-history="{{item}}">
+            &#x2715;
+          </a>
+        </div>
+      {{/each}}
+    </div>
+    <div class="ns-autocomplete-history-clear">
+      <button type="button" class="ns-autocomplete-button" data-ns-remove-history="all">
+        Clear history
+      </button>
+    </div>
+  {{/if}}
+
+  {{#if response.keywords.hits.length}}
+    {{#if response.products.hits.length}}
+      <div class="ns-autocomplete-submit">
+        <button type="submit" class="ns-autocomplete-button">
+          See all search results
+        </button>
+      </div>
+    {{/if}}
+  {{/if}}
+</div>

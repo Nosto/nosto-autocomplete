@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe } from "vitest"
 import "@testing-library/jest-dom"
 import {
   fromMustacheTemplate,
@@ -7,6 +7,7 @@ import {
 import {
   autocompleteSuite
 } from "./suites/autocomplete"
+
 describe("fromMustacheTemplate", () => {
   autocompleteSuite({
     render: fromMustacheTemplate(mustacheTemplate)

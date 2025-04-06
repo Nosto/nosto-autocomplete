@@ -32,6 +32,11 @@
             "require": "./dist/mustache/autocomplete.cjs",
             "types": "./dist/mustache/autocomplete.d.ts"
         },
+        "./handlebars": {
+            "import": "./dist/handlebars/autocomplete.mjs",
+            "require": "./dist/handlebars/autocomplete.cjs",
+            "types": "./dist/handlebars/autocomplete.d.ts"
+        },
         "./react": {
             "import": "./dist/react/autocomplete.mjs",
             "require": "./dist/react/autocomplete.cjs",
@@ -113,6 +118,7 @@
         "eslint-plugin-barrel-files": "^3.0.1",
         "eslint-plugin-promise": "^7.1.0",
         "globals": "^16.0.0",
+        "handlebars": "^4.7.8",
         "liquidjs": "^10.9.4",
         "make-coverage-badge": "^1.2.0",
         "mustache": "^4.2.0",
@@ -132,12 +138,16 @@
     },
     "peerDependencies": {
         "liquidjs": "10.x",
+        "handlebars": "4.x",
         "mustache": "4.x",
         "react": "18.x",
         "react-dom": "18.x"
     },
     "peerDependenciesMeta": {
         "mustache": {
+            "optional": true
+        },
+        "handlebars": {
             "optional": true
         },
         "liquidjs": {

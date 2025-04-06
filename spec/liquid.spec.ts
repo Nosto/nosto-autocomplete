@@ -8,7 +8,6 @@ import {
   autocompleteSuite,
 } from "./suites/autocomplete"
 
-
 describe("fromLiquidTemplate", () => {
   autocompleteSuite({
     render: fromLiquidTemplate(liquidTemplate)
