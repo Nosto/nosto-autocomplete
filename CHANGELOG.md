@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.1.0...v2.2.0) (2025-04-07)
+
+
+### Features
+
+* Add handlebars support ([e67cff4](https://github.com/Nosto/nosto-autocomplete/commit/e67cff44a4b9229b068e552b21a39864b65c079e))
+
 # [2.1.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.0.0...v2.1.0) (2025-04-04)
 
 
