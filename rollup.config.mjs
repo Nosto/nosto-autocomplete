@@ -70,7 +70,10 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
 function createBundleConfig(input, outputTemplate) {
   return {
     plugins: [
-      resolve(), 
+      resolve({ 
+        browser: true,
+        mainFields: ['browser', 'module', 'main']
+      }), 
       commonjs(),
       esbuild({
         minify: true
