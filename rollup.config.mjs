@@ -70,10 +70,14 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
 function createBundleConfig(input, outputTemplate) {
   return {
     plugins: [
-      resolve({ 
-        browser: true,
-        mainFields: ['browser', 'module', 'main']
-      }), 
+      resolve(),
+      alias({
+        entries: [
+          { find: 'handlebars', replacement: 'handlebars/lib/handlebars.js' },
+          { find: 'mustache', replacement: 'mustache/mustache.mjs' },
+          { find: 'liquid', replacement: 'liquid/dist/liquid.browser.mjs' }
+        ]
+      }),
       commonjs(),
       esbuild({
         minify: true
