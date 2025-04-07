@@ -3,9 +3,9 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
   plugins: [
     {
-      name: 'transform-mustache-liquid',
+      name: 'transform-templates',
       transform(code, id) {
-        if (/\.(mustache|liquid)$/.test(id)) {
+        if (/\.(handlebars|mustache|liquid)$/.test(id)) {
           return {
             code: `export default ${JSON.stringify(code)};`,
             map: null,

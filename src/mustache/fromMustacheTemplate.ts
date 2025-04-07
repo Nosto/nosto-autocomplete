@@ -73,6 +73,6 @@ export function fromMustacheTemplate<State extends object = DefaultState>(
       ...helpers,
     })
 
-    return Promise.resolve(undefined)
+    return Promise.resolve()
   }
 }

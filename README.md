@@ -29,8 +29,9 @@ The Nosto Autocomplete library can be imported and used in various ways, dependi
 | Framework | Import Statement |
 |-----------|-----------------|
 | Base      | `import { autocomplete } from "@nosto/autocomplete"` |
-| Mustache  | `import { autocomplete, fromMustacheTemplate, defaultMustacheTemplate } from "@nosto/autocomplete/mustache"` |
+| Handlebars  | `import { autocomplete, fromHandlebarsTemplate, defaultHandlebarsTemplate } from "@nosto/autocomplete/handlebars"` |
 | Liquid    | `import { autocomplete, fromLiquidTemplate, defaultLiquidTemplate } from "@nosto/autocomplete/liquid"` |
+| Mustache  | `import { autocomplete, fromMustacheTemplate, defaultMustacheTemplate } from "@nosto/autocomplete/mustache"` |
 | Preact    | `import { autocomplete, Autocomplete } from "@nosto/autocomplete/preact"` |
 | React     | `import { autocomplete, Autocomplete } from "@nosto/autocomplete/react"` |
 
