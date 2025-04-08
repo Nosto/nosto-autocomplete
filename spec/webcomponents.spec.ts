@@ -29,7 +29,7 @@ describe("Handlebars supported web component wrapper", () => {
       },
       keywords: {
         size: 5,
-        fields: ["keyword", "_highlight.keyword"]
+        fields: ["keyword", "_highlight.keyword"],
       },
     },
     submit: getDefaultConfig<DefaultState>().submit,
@@ -76,6 +76,12 @@ describe("Handlebars supported web component wrapper", () => {
     ) as NostoAutocompleteHandlebars
     const scriptElement = element.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
+    const templateEl = document.querySelector("template")!
+    templateEl.innerText = `
+    <div data-testid="custom-template">
+     ${handlebarsTemplate}
+    </div>
+    `
 
     await waitFor(() => element.connectedCallback())
 
@@ -100,7 +106,24 @@ describe("Handlebars supported web component wrapper", () => {
         timeout: 4000,
       }
     )
-    await waitFor(() => expect(screen.getByText("black")).toBeVisible())
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).toBeVisible()
+
+        expect(screen.getByText("Keywords")).toBeVisible()
+        expect(screen.getAllByTestId("keyword")).toHaveLength(5)
+
+        expect(screen.getByText("Products")).toBeVisible()
+        expect(screen.getAllByTestId("product")).toHaveLength(5)
+      },
+      {
+        timeout: 4000,
+      }
+    )
+
+    await waitFor(() =>
+      expect(screen.getByTestId("custom-template")).toBeTruthy()
+    )
   })
 
   it("should use the default template if custom template is not supplied", async () => {
@@ -133,6 +156,17 @@ describe("Handlebars supported web component wrapper", () => {
         timeout: 4000,
       }
     )
-    await waitFor(() => expect(screen.getByText("black")).toBeVisible())
+    await waitFor(() => {
+      expect(
+        screen
+          .getByTestId("dropdown")
+          .querySelector(".ns-autocomplete-keywords")
+      ).toBeTruthy()
+      expect(
+        screen
+          .getByTestId("dropdown")
+          .querySelector(".ns-autocomplete-products")
+      ).toBeTruthy()
+    })
   })
 })
