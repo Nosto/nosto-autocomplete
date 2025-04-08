@@ -70,7 +70,10 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
 function createBundleConfig(input, outputTemplate) {
   return {
     plugins: [
-      resolve(),
+      resolve({ 
+        browser: true,
+        mainFields: ['browser', 'module', 'main']
+      }),
       alias({
         entries: [
           { find: 'handlebars', replacement: 'handlebars/lib/handlebars.js' },
