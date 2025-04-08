@@ -24,16 +24,19 @@
         },
         "./liquid": {
             "import": "./dist/liquid/autocomplete.mjs",
+            "browser": "./dist/liquid/autocomplete.bundle.mjs",
             "require": "./dist/liquid/autocomplete.cjs",
             "types": "./dist/liquid/autocomplete.d.ts"
         },
         "./mustache": {
             "import": "./dist/mustache/autocomplete.mjs",
+            "browser": "./dist/mustache/autocomplete.bundle.mjs",
             "require": "./dist/mustache/autocomplete.cjs",
             "types": "./dist/mustache/autocomplete.d.ts"
         },
         "./handlebars": {
             "import": "./dist/handlebars/autocomplete.mjs",
+            "browser": "./dist/handlebars/autocomplete.bundle.mjs",
             "require": "./dist/handlebars/autocomplete.cjs",
             "types": "./dist/handlebars/autocomplete.d.ts"
         },
