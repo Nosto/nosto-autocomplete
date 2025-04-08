@@ -1,14 +1,14 @@
 import { describe, beforeEach, Mock, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
-import { NostoAutocomplete as NostoAutocompleteHandlebars } from "../src/handlebars/NostoAutocomplete"
-import { defaultHandlebarsTemplate as handlebarsTemplate } from "../src/handlebars/fromHandlebarsTemplate"
+import { NostoAutocomplete as NostoAutocompleteHandlebars } from "../../src/handlebars/NostoAutocomplete"
+import { defaultHandlebarsTemplate as handlebarsTemplate } from "../../src/handlebars/fromHandlebarsTemplate"
 import { screen, waitFor } from "@testing-library/dom"
 import "@testing-library/jest-dom"
-import { DefaultState } from "../src"
-import { getDefaultConfig } from "../src/lib/config"
+import { DefaultState } from "../../src"
+import { getDefaultConfig } from "../../src/lib/config"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
 import { mockNostojs } from "@nosto/nosto-js/testing"
-import searchResponse from "./responses/search.json"
+import searchResponse from "../responses/search.json"
 
 type MockSearch = Mock<API["search"]>
 type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
