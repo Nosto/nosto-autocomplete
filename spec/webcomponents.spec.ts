@@ -1,12 +1,23 @@
-import { describe, beforeEach, vi } from "vitest"
+import { describe, beforeEach, Mock, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
-import { screen, waitFor } from "@testing-library/dom"
 import { NostoAutocomplete as NostoAutocompleteHandlebars } from "../src/handlebars/NostoAutocomplete"
 import { defaultHandlebarsTemplate as handlebarsTemplate } from "../src/handlebars/fromHandlebarsTemplate"
+import { screen, waitFor } from "@testing-library/dom"
 import "@testing-library/jest-dom"
-// import searchResponse from "./responses/search.json"
+import { DefaultState } from "../src"
+import { getDefaultConfig } from "../src/lib/config"
+import type { API, SearchResult } from "@nosto/nosto-js/client"
+import { mockNostojs } from "@nosto/nosto-js/testing"
+import searchResponse from "./responses/search.json"
+
+type MockSearch = Mock<API["search"]>
+type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
+type MockRecordSearchClick = Mock<API["recordSearchClick"]>
 
 describe("Handlebars supported web component wrapper", () => {
+  let searchSpy: MockSearch
+  let recordSearchSubmitSpy: MockRecordSearchSubmit
+  let recordSearchClickSpy: MockRecordSearchClick
 
   const config = {
     inputSelector: "#search-wc",
@@ -18,16 +29,13 @@ describe("Handlebars supported web component wrapper", () => {
       },
       keywords: {
         size: 5,
-        fields: ["keyword", "_highlight.keyword"],
-        highlight: {
-          preTag: `<strong>`,
-          postTag: "</strong>",
-        },
+        fields: ["keyword", "_highlight.keyword"]
       },
     },
+    submit: getDefaultConfig<DefaultState>().submit,
   }
 
-  beforeEach(() => {   
+  beforeEach(() => {
     document.body.innerHTML = `
         <nosto-autocomplete>
           <form>
@@ -39,6 +47,14 @@ describe("Handlebars supported web component wrapper", () => {
           <template type="text/x-handlebars-template">${handlebarsTemplate}</template>
         </nosto-autocomplete>
       `
+    searchSpy = vi.fn(async () => searchResponse as unknown as SearchResult)
+    recordSearchSubmitSpy = vi.fn()
+    recordSearchClickSpy = vi.fn()
+    mockNostojs({
+      search: searchSpy,
+      recordSearchSubmit: recordSearchSubmitSpy,
+      recordSearchClick: recordSearchClickSpy,
+    })
   })
 
   afterEach(() => {
@@ -74,7 +90,7 @@ describe("Handlebars supported web component wrapper", () => {
       }
     )
 
-    await user.type(screen.getByTestId("input"), "with handlebars")
+    await user.type(screen.getByTestId("input"), "black")
 
     await waitFor(
       () => {
@@ -84,7 +100,7 @@ describe("Handlebars supported web component wrapper", () => {
         timeout: 4000,
       }
     )
-    expect(screen.getByText("with handlebars")).toBeVisible()
+    await waitFor(() => expect(screen.getByText("black")).toBeVisible())
   })
 
   it("should use the default template if custom template is not supplied", async () => {
@@ -107,7 +123,7 @@ describe("Handlebars supported web component wrapper", () => {
       }
     )
 
-    await user.type(screen.getByTestId("input"), "with default template")
+    await user.type(screen.getByTestId("input"), "black")
 
     await waitFor(
       () => {
@@ -117,6 +133,6 @@ describe("Handlebars supported web component wrapper", () => {
         timeout: 4000,
       }
     )
-    expect(screen.getByText("with default template")).toBeVisible()
+    await waitFor(() => expect(screen.getByText("black")).toBeVisible())
   })
 })
