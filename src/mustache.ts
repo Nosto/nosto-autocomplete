@@ -10,3 +10,6 @@ export {
   type DefaultState,
   priceDecorator
 } from "."
+export {
+  NostoAutocomplete
+} from "./mustache/NostoAutocomplete"

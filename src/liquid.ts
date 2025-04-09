@@ -9,3 +9,6 @@ export {
   type DefaultState,
   priceDecorator
 } from "."
+export {
+  NostoAutocomplete
+} from "./liquid/NostoAutocomplete"
