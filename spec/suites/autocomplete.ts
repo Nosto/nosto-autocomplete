@@ -82,9 +82,10 @@ export function hooks() {
 
 interface SuiteProps {
   render: AutocompleteConfig<DefaultState>["render"]
+  basic?: boolean
 }
 
-export function autocompleteSuite({ render }: SuiteProps) {
+export function autocompleteSuite({ render, basic }: SuiteProps) {
   hooks()
 
   it("renders autocomplete", async () => {
@@ -118,6 +119,10 @@ export function autocompleteSuite({ render }: SuiteProps) {
       }
     )
   })
+
+  if (basic) {
+    return
+  }
 
   describe("history", () => {
     it("should see results after typing", async () => {

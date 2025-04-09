@@ -21,12 +21,17 @@ const external = [
 ]
 
 export default [
+  // library artifacts
   ...createConfigs('src/index.ts', 'dist/autocomplete.[ext]'),
   ...createConfigs('src/react.ts', 'dist/preact/autocomplete.[ext]', preactAlias),
   ...createConfigs('src/react.ts', 'dist/react/autocomplete.[ext]'),
   ...createConfigs('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
   ...createConfigs('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]'),
   ...createConfigs('src/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
+  // bundle artifacts
+  createBundleConfig('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
+  createBundleConfig('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]'),
+  createBundleConfig('src/mustache.ts', 'dist/mustache/autocomplete.[ext]')
 ]
 
 function createConfigs(input, outputTemplate, ...plugins) {
@@ -59,6 +64,39 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
       format,
       sourcemap: true,
     }))
+  }
+}
+
+function createBundleConfig(input, outputTemplate) {
+  return {
+    plugins: [
+      resolve({ 
+        browser: true,
+        mainFields: ['browser', 'module', 'main']
+      }),
+      alias({
+        entries: [
+          { find: 'handlebars', replacement: 'handlebars/lib/handlebars.js' },
+          { find: 'mustache', replacement: 'mustache/mustache.mjs' },
+          { find: 'liquid', replacement: 'liquid/dist/liquid.browser.mjs' }
+        ]
+      }),
+      commonjs(),
+      esbuild({
+        minify: true
+      }),
+      string({
+        include: '**/*.{handlebars,mustache,liquid}',
+      })
+    ],
+    input,
+    output: [
+      {
+        file: outputTemplate.replace("[ext]", "bundle.mjs"),
+        format: "es",
+        sourcemap: true,
+      }
+    ]
   }
 }
 
