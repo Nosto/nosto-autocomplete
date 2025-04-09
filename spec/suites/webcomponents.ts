@@ -7,6 +7,9 @@ import { getDefaultConfig } from "../../src/lib/config"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import searchResponse from "../responses/search.json"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
+import { NostoAutocomplete as NSLiquid } from "../../src/liquid/NostoAutocomplete"
+import { NostoAutocomplete as NSMustache } from "../../src/mustache/NostoAutocomplete"
+import { NostoAutocomplete as NSHandlebars } from "../../src/handlebars/NostoAutocomplete"
 
 type MockSearch = Mock<API["search"]>
 type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
@@ -15,13 +18,10 @@ type WCSuiteProps = {
   template: string
   lang: string
 }
-type Autocomplete = Awaited<ReturnType<typeof getAutoCompleteComponent>>
+type NostoAutocompleteType = NSHandlebars | NSLiquid | NSMustache
+type Autocomplete = Awaited<ReturnType<typeof getAutocompleteComponent>>
 let NostoAutocompleteModule: Autocomplete
 
-async function getAutoCompleteComponent(lang: string) {
-  const module = await import(`../../src/${lang}/NostoAutocomplete`)
-  return module.NostoAutocomplete
-}
 
 const config = {
   inputSelector: "#search-wc",
@@ -39,13 +39,18 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
+async function getAutocompleteComponent(lang: string): Promise<NostoAutocompleteType> {
+  const module = await import(`../../src/${lang}/NostoAutocomplete`)
+  return module.NostoAutocomplete
+}
+
 function webComponentSuiteHooks(template: string, lang: string) {
   let searchSpy: MockSearch
   let recordSearchSubmitSpy: MockRecordSearchSubmit
   let recordSearchClickSpy: MockRecordSearchClick
 
   beforeAll(async () => {
-    NostoAutocompleteModule = await getAutoCompleteComponent(lang)
+    NostoAutocompleteModule = await getAutocompleteComponent(lang)
   })
 
   beforeEach(() => {
