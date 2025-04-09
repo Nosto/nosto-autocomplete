@@ -1,4 +1,4 @@
-import { describe, beforeEach, Mock, vi } from "vitest"
+import { beforeEach, Mock, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
 import { screen, waitFor } from "@testing-library/dom"
 import "@testing-library/jest-dom"
@@ -7,9 +7,7 @@ import { getDefaultConfig } from "../../src/lib/config"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import searchResponse from "../responses/search.json"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
-import { NostoAutocomplete as NSLiquid } from "../../src/liquid/NostoAutocomplete"
-import { NostoAutocomplete as NSMustache } from "../../src/mustache/NostoAutocomplete"
-import { NostoAutocomplete as NSHandlebars } from "../../src/handlebars/NostoAutocomplete"
+import { NostoAutocomplete } from "../../src/liquid/NostoAutocomplete"
 
 type MockSearch = Mock<API["search"]>
 type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
@@ -18,9 +16,7 @@ type WCSuiteProps = {
   template: string
   lang: string
 }
-type NostoAutocompleteType = NSHandlebars | NSLiquid | NSMustache
-type Autocomplete = Awaited<ReturnType<typeof getAutocompleteComponent>>
-let NostoAutocompleteModule: Autocomplete
+let NostoAutocompleteModule: NostoAutocomplete
 
 
 const config = {
@@ -39,7 +35,7 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
-async function getAutocompleteComponent(lang: string): Promise<NostoAutocompleteType> {
+async function getAutocompleteComponent(lang: string): Promise<NostoAutocomplete> {
   const module = await import(`../../src/${lang}/NostoAutocomplete`)
   return module.NostoAutocomplete
 }
@@ -94,7 +90,7 @@ export function webComponentSuite({ template, lang }: WCSuiteProps) {
   it("should render autocomplete with the correct config and template", async () => {
     const element = document.querySelector(
       "nosto-autocomplete"
-    )! as Autocomplete
+    )! as NostoAutocomplete
     const user = userEvent.setup()
     const scriptElement = element?.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
@@ -151,7 +147,7 @@ export function webComponentSuite({ template, lang }: WCSuiteProps) {
     const user = userEvent.setup()
     const element = document.querySelector(
       "nosto-autocomplete"
-    )! as Autocomplete
+    )! as NostoAutocomplete
     element.querySelector("template")?.remove()
     const scriptElement = element.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
