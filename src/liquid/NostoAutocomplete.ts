@@ -13,13 +13,13 @@ import { fromLiquidTemplate, defaultLiquidTemplate } from "./fromLiquidTemplate"
  * ```html
  * <nosto-autocomplete>
  *   <form>
- *     <input type="text" id="search-input" />
- *     <div id="search-results"></div>
+ *     <input type="text" id="input" />
+ *     <div id="results"></div>
  *   </form>
  *   <script autocomplete-config type="application/json">
  *     {
- *       "inputSelector": "#search-input",
- *       "dropdownSelector": "#search-results",
+ *       "inputSelector": "#input",
+ *       "dropdownSelector": "#results",
  *       "fetch": {
  *         "products": {
  *           "fields": ["name", "url", "imageUrl", "price", "listPrice", "brand"],

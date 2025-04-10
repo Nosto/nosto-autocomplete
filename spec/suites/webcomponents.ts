@@ -35,8 +35,10 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
-async function getAutocompleteComponent(lang: string): Promise<NostoAutocomplete> {
-  const module = await import(`../../src/${lang}/NostoAutocomplete`)
+async function getAutocompleteComponent(
+  lang: string
+): Promise<NostoAutocomplete> {
+  const module = await import(`../../src/${lang}/NostoAutocomplete.ts`)
   return module.NostoAutocomplete
 }
 
@@ -58,7 +60,7 @@ function webComponentSuiteHooks(template: string, lang: string) {
             <div id="search-results-wc" class="ns-autocomplete" data-testid="dropdown"></div>
           </form>
           <script autocomplete-config>${JSON.stringify(config)}</script>
-          <template type="text/x-mustache-template">${template}</template>
+          <template>${template}</template>
         </nosto-autocomplete>
       `
     searchSpy = vi.fn(async () => searchResponse as unknown as SearchResult)
