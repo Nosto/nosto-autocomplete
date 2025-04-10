@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.2.0...v2.3.0) (2025-04-10)
+
+
+### Features
+
+* NostoAutocomplete web component ([fdb71a6](https://github.com/Nosto/nosto-autocomplete/commit/fdb71a60a659506957e1df07bfe0b1c8af650100))
+
 # [2.2.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.1.0...v2.2.0) (2025-04-07)
 
 

@@ -1,6 +1,6 @@
 {
     "name": "@nosto/autocomplete",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "description": "Library designed to simplify the implementation of search autocomplete functionality",
     "keywords": [
         "nosto"
