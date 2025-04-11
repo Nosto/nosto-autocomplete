@@ -7,17 +7,16 @@ import { getDefaultConfig } from "../../src/lib/config"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import searchResponse from "../responses/search.json"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
-import { NostoAutocomplete } from "../../src/liquid/NostoAutocomplete"
+import type { NostoAutocomplete } from "../../src/liquid/NostoAutocomplete"
 
 type MockSearch = Mock<API["search"]>
 type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
 type MockRecordSearchClick = Mock<API["recordSearchClick"]>
-type WCSuiteProps = {
-  template: string
-  lang: string
-}
-let NostoAutocompleteModule: NostoAutocomplete
 
+type SuiteProps = {
+  template: string
+  component: CustomElementConstructor
+}
 
 const config = {
   inputSelector: "#search-wc",
@@ -35,21 +34,10 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
-async function getAutocompleteComponent(
-  lang: string
-): Promise<NostoAutocomplete> {
-  const module = await import(`../../src/${lang}/NostoAutocomplete.ts`)
-  return module.NostoAutocomplete
-}
-
-function webComponentSuiteHooks(template: string, lang: string) {
+function webComponentSuiteHooks(template: string) {
   let searchSpy: MockSearch
   let recordSearchSubmitSpy: MockRecordSearchSubmit
   let recordSearchClickSpy: MockRecordSearchClick
-
-  beforeAll(async () => {
-    NostoAutocompleteModule = await getAutocompleteComponent(lang)
-  })
 
   beforeEach(() => {
     document.body.innerHTML = `
@@ -80,19 +68,17 @@ function webComponentSuiteHooks(template: string, lang: string) {
   })
 }
 
-export function webComponentSuite({ template, lang }: WCSuiteProps) {
-  webComponentSuiteHooks(template, lang)
+export function webComponentSuite({ template, component }: SuiteProps) {
+  webComponentSuiteHooks(template)
 
   it("should define the custom element", () => {
-    expect(customElements.get("nosto-autocomplete")).toBe(
-      NostoAutocompleteModule
-    )
+    expect(customElements.get("nosto-autocomplete")).toBe(component)
   })
 
   it("should render autocomplete with the correct config and template", async () => {
-    const element = document.querySelector(
+    const element = document.querySelector<HTMLElement>(
       "nosto-autocomplete"
-    )! as NostoAutocomplete
+    ) as NostoAutocomplete
     const user = userEvent.setup()
     const scriptElement = element?.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
