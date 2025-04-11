@@ -77,30 +77,6 @@
         "arrowParens": "avoid",
         "tabWidth": 2
     },
-    "release": {
-        "branches": [
-            "+([0-9])?(.{+([0-9]),x}).x",
-            "main",
-            "next",
-            "next-major",
-            {
-                "name": "beta",
-                "prerelease": true
-            },
-            {
-                "name": "alpha",
-                "prerelease": true
-            }
-        ],
-        "plugins": [
-            "@semantic-release/commit-analyzer",
-            "@semantic-release/release-notes-generator",
-            "@semantic-release/changelog",
-            "@semantic-release/npm",
-            "@semantic-release/git",
-            "@semantic-release/github"
-        ]
-    },
     "devDependencies": {
         "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.13.0",
