@@ -69,7 +69,8 @@
         "typecheck": "tsc --noEmit",
         "exportTemplates": "node scripts/exportTemplates.js",
         "prettify": "prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
-        "test": "vitest run"
+        "test": "vitest run",
+        "prepare": "husky"
     },
     "prettier": {
         "trailingComma": "es5",
@@ -122,6 +123,7 @@
         "eslint-plugin-promise": "^7.1.0",
         "globals": "^16.0.0",
         "handlebars": "^4.7.8",
+        "husky": "^9.1.7",
         "liquidjs": "^10.9.4",
         "make-coverage-badge": "^1.2.0",
         "mustache": "^4.2.0",
@@ -140,8 +142,8 @@
         "vitest": "^3.0.9"
     },
     "peerDependencies": {
-        "liquidjs": "10.x",
         "handlebars": "4.x",
+        "liquidjs": "10.x",
         "mustache": "4.x",
         "react": "19.x",
         "react-dom": "19.x"
