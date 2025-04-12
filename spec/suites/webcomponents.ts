@@ -18,7 +18,6 @@ type WCSuiteProps = {
 }
 let NostoAutocompleteModule: NostoAutocomplete
 
-
 const config = {
   inputSelector: "#search-wc",
   dropdownSelector: "#search-results-wc",
@@ -186,5 +185,36 @@ export function webComponentSuite({ template, lang }: WCSuiteProps) {
           .querySelector(".ns-autocomplete-products")
       ).toBeTruthy()
     })
+  })
+
+  it("should use the template with specified template id", async () => {
+    const user = userEvent.setup()
+
+    const templateEl = document.createElement("template")
+    templateEl.setAttribute("id", "external-template")
+    templateEl.innerText = `
+      <div data-testid="custom-template">
+        External Template Content
+      </div>
+    `
+    document.body.append(templateEl)
+
+    const element = document.querySelector(
+      "nosto-autocomplete"
+    ) as NostoAutocomplete
+
+    element.setAttribute("template", "external-template")
+    element.querySelector("template")?.remove()
+
+    const scriptElement = element.querySelector("script[autocomplete-config]")
+    scriptElement!.textContent = JSON.stringify(config)
+
+    await waitFor(() => element.connectedCallback())
+    await user.type(screen.getByTestId("input"), "black")
+    await waitFor(() =>
+      expect(screen.getByTestId("custom-template")).toHaveTextContent(
+        "External Template Content"
+      )
+    )
   })
 }
