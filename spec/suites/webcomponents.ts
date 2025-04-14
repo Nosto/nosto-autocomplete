@@ -7,16 +7,17 @@ import { getDefaultConfig } from "../../src/lib/config"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import searchResponse from "../responses/search.json"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
-import { NostoAutocomplete } from "../../src/liquid/NostoAutocomplete"
 
 type MockSearch = Mock<API["search"]>
 type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
 type MockRecordSearchClick = Mock<API["recordSearchClick"]>
-type WCSuiteProps = {
+
+type SuiteProps = {
   template: string
-  lang: string
+  component: CustomElementConstructor
 }
-let NostoAutocompleteModule: NostoAutocomplete
+
+type CustomElement = HTMLElement & { connectedCallback: () => void }
 
 const config = {
   inputSelector: "#search-wc",
@@ -34,21 +35,10 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
-async function getAutocompleteComponent(
-  lang: string
-): Promise<NostoAutocomplete> {
-  const module = await import(`../../src/${lang}/NostoAutocomplete.ts`)
-  return module.NostoAutocomplete
-}
-
-function webComponentSuiteHooks(template: string, lang: string) {
+function webComponentSuiteHooks(template: string) {
   let searchSpy: MockSearch
   let recordSearchSubmitSpy: MockRecordSearchSubmit
   let recordSearchClickSpy: MockRecordSearchClick
-
-  beforeAll(async () => {
-    NostoAutocompleteModule = await getAutocompleteComponent(lang)
-  })
 
   beforeEach(() => {
     document.body.innerHTML = `
@@ -79,19 +69,15 @@ function webComponentSuiteHooks(template: string, lang: string) {
   })
 }
 
-export function webComponentSuite({ template, lang }: WCSuiteProps) {
-  webComponentSuiteHooks(template, lang)
+export function webComponentSuite({ template, component }: SuiteProps) {
+  webComponentSuiteHooks(template)
 
   it("should define the custom element", () => {
-    expect(customElements.get("nosto-autocomplete")).toBe(
-      NostoAutocompleteModule
-    )
+    expect(customElements.get("nosto-autocomplete")).toBe(component)
   })
 
   it("should render autocomplete with the correct config and template", async () => {
-    const element = document.querySelector(
-      "nosto-autocomplete"
-    )! as NostoAutocomplete
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
     const user = userEvent.setup()
     const scriptElement = element?.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
@@ -146,9 +132,7 @@ export function webComponentSuite({ template, lang }: WCSuiteProps) {
 
   it("should use the default template if custom template is not supplied", async () => {
     const user = userEvent.setup()
-    const element = document.querySelector(
-      "nosto-autocomplete"
-    )! as NostoAutocomplete
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
     element.querySelector("template")?.remove()
     const scriptElement = element.querySelector("script[autocomplete-config]")
     scriptElement!.textContent = JSON.stringify(config)
@@ -199,9 +183,7 @@ export function webComponentSuite({ template, lang }: WCSuiteProps) {
     `
     document.body.append(templateEl)
 
-    const element = document.querySelector(
-      "nosto-autocomplete"
-    ) as NostoAutocomplete
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
 
     element.setAttribute("template", "external-template")
     element.querySelector("template")?.remove()
