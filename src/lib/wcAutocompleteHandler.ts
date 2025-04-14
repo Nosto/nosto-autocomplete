@@ -1,7 +1,7 @@
 import { autocomplete, AutocompleteInstance } from "./autocomplete"
-import { NostoAutocomplete } from "../handlebars/NostoAutocomplete"
 
-type TemplateLib = {
+type CustomElement = HTMLElement & { connectedCallback: () => void }
+type TemplateProps = {
   handler: (
     template: string,
     options?: object
@@ -10,8 +10,8 @@ type TemplateLib = {
 }
 
 export async function initAutocomplete(
-  element: NostoAutocomplete,
-  lib: TemplateLib
+  element: CustomElement,
+  lib: TemplateProps
 ): Promise<AutocompleteInstance> {
   const { handler, template } = lib
   const templateId = element.getAttribute("template")
@@ -30,7 +30,7 @@ export async function initAutocomplete(
   })
 }
 
-function getConfigFromScript(element: NostoAutocomplete) {
+function getConfigFromScript(element: CustomElement) {
   const config = element.querySelector("script[autocomplete-config]")
   return config ? JSON.parse(config.textContent!) : {}
 }
