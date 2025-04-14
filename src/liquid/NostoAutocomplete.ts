@@ -1,4 +1,4 @@
-import { autocomplete } from "../lib/autocomplete"
+import { initAutocomplete } from "../lib/wcAutocompleteHandler"
 import { fromLiquidTemplate, defaultLiquidTemplate } from "./fromLiquidTemplate"
 
 /**
@@ -14,8 +14,8 @@ import { fromLiquidTemplate, defaultLiquidTemplate } from "./fromLiquidTemplate"
  * <nosto-autocomplete>
  *   <form>
  *     <input type="text" id="input" />
- *     <div id="results"></div>
  *   </form>
+ *     <div id="results"></div>
  *   <script autocomplete-config type="application/json">
  *     {
  *       "inputSelector": "#input",
@@ -49,32 +49,11 @@ export class NostoAutocomplete extends HTMLElement {
   }
 
   async connectedCallback() {
-    return initAutocomplete(this)
+    return initAutocomplete(this, {
+      handler: fromLiquidTemplate,
+      template: defaultLiquidTemplate,
+    })
   }
-}
-
-async function initAutocomplete(element: NostoAutocomplete) {
-  const templateId = element.getAttribute("template")
-  const templateElement = templateId
-    ? document.getElementById(templateId)
-    : element.querySelector<HTMLTemplateElement>("template")
-
-  if (!Object.keys(getConfigFromScript(element)).length) {
-    throw new Error("NostoAutocomplete: Missing required config.")
-  }
-
-  const config = getConfigFromScript(element)
-  return await autocomplete({
-    ...config,
-    render: fromLiquidTemplate(
-      templateElement?.innerText ?? defaultLiquidTemplate
-    ),
-  })
-}
-
-function getConfigFromScript(element: NostoAutocomplete) {
-  const config = element.querySelector("script[autocomplete-config]")
-  return config ? JSON.parse(config.textContent!) : {}
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)
