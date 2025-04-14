@@ -1,19 +1,22 @@
 import { autocomplete, AutocompleteInstance } from "./autocomplete"
+import type { AutocompleteConfig } from "./config"
+import type { DefaultState } from "../index"
 
 type CustomElement = HTMLElement & { connectedCallback: () => void }
+
 type TemplateProps = {
   handler: (
     template: string,
     options?: object
-  ) => (container: HTMLElement, state: object) => Promise<void> | PromiseLike<void>
-  template: string
+  ) => AutocompleteConfig<DefaultState>["render"]
+  defaultTemplate: string
 }
 
 export async function initAutocomplete(
   element: CustomElement,
   lib: TemplateProps
 ): Promise<AutocompleteInstance> {
-  const { handler, template } = lib
+  const { handler, defaultTemplate } = lib
   const templateId = element.getAttribute("template")
   const templateElement = templateId
     ? document.getElementById(templateId)
@@ -26,7 +29,7 @@ export async function initAutocomplete(
   const config = getConfigFromScript(element)
   return await autocomplete({
     ...config,
-    render: handler(templateElement?.innerText ?? template),
+    render: handler(templateElement?.innerText ?? defaultTemplate),
   })
 }
 

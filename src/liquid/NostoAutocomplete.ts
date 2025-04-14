@@ -51,7 +51,7 @@ export class NostoAutocomplete extends HTMLElement {
   async connectedCallback() {
     return initAutocomplete(this, {
       handler: fromLiquidTemplate,
-      template: defaultLiquidTemplate,
+      defaultTemplate: defaultLiquidTemplate,
     })
   }
 }

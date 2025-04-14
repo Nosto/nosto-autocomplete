@@ -54,7 +54,7 @@ export class NostoAutocomplete extends HTMLElement {
   async connectedCallback() {
     return initAutocomplete(this, {
       handler: fromMustacheTemplate,
-      template: defaultMustacheTemplate,
+      defaultTemplate: defaultMustacheTemplate,
     })
   }
 }
