@@ -170,23 +170,32 @@ export function webComponentSuite({ template, component }: SuiteProps) {
     })
   })
 
-  it("should get external template", async () => {
+  it("should get custom template", async () => {
     const user = userEvent.setup()
 
+    document.body.innerHTML = `
+      <nosto-autocomplete>
+        <form>
+          <input type="text" id="search-wc" placeholder="search" data-testid="input" />
+          <button type="submit" id="search-button">Search</button>
+          <div id="search-results-wc" class="ns-autocomplete" data-testid="dropdown"></div>
+        </form>
+        <script autocomplete-config>${JSON.stringify(config)}</script>
+        <script type="text/template" autocomplete-template>
+          <div data-testid="custom-template">
+            Custom Template Content
+          </div>
+        </script>
+      </nosto-autocomplete>
+      `
+
     const element = document.querySelector<CustomElement>("nosto-autocomplete")!
-
-    const templateEl = document.createElement("script")
-    templateEl.setAttribute("type", "text/template")
-    templateEl.setAttribute("autocomplete-template", "")
-
-    templateEl.textContent = `<div data-testid="custom-template">External Template Content</div>`
-    document.body.append(templateEl)
 
     await waitFor(() => element.connectedCallback())
     await user.type(screen.getByTestId("input"), "black")
     await waitFor(() =>
       expect(screen.getByTestId("custom-template")).toHaveTextContent(
-        "External Template Content"
+        "Custom Template Content"
       )
     )
   })

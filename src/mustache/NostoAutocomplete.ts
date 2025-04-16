@@ -35,14 +35,14 @@ import {
  *       }
  *     }
  *   </script>
- *   <template>
+ *   <script type="text/x-mustache-template" autocomplete-template>
  *     <h1>{{query}}</h1>
  *     <ul>
  *       {{#products}}
  *         <li>{{name}}</li>
  *       {{/products}}
  *     </ul>
- *   </template>
+ *   </script>
  * </nosto-autocomplete>
  * ```
  */

@@ -32,14 +32,14 @@ import { fromLiquidTemplate, defaultLiquidTemplate } from "./fromLiquidTemplate"
  *       }
  *     }
  *   </script>
- *   <template>
+ *   <script type="text/x-liquid" autocomplete-template>
  *     <h1>{{ query }}</h1>
  *     <ul>
  *       {% for product in products %}
  *         <li>{{ product.name }}</li>
  *       {% endfor %}
  *     </ul>
- *   </template>
+ *   </script>
  * </nosto-autocomplete>
  * ```
  */
