@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.3.0...v2.3.1) (2025-04-16)
+
+
+### Bug Fixes
+
+* support custom templates through script element ([43733a0](https://github.com/Nosto/nosto-autocomplete/commit/43733a0b8e8959465dd17b29fb049b58580bd8b0))
+
 # [2.3.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.2.0...v2.3.0) (2025-04-10)
 
 
