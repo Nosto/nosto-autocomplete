@@ -14,10 +14,7 @@ export async function initAutocomplete(
   element: HTMLElement,
   { handler, defaultTemplate }: TemplateProps,
 ): Promise<AutocompleteInstance> {
-  const templateId = element.getAttribute("template")
-  const templateElement = templateId
-    ? document.getElementById(templateId)
-    : element.querySelector<HTMLTemplateElement>("template")
+  const templateElement = document.querySelector<HTMLScriptElement>("script[autocomplete-template]")?.textContent
 
   if (!Object.keys(getConfigFromScript(element)).length) {
     throw new Error("NostoAutocomplete: Missing required config.")
@@ -26,7 +23,7 @@ export async function initAutocomplete(
   const config = getConfigFromScript(element)
   return await autocomplete({
     ...config,
-    render: handler(templateElement?.innerText ?? defaultTemplate),
+    render: handler(templateElement ?? defaultTemplate),
   })
 }
 
