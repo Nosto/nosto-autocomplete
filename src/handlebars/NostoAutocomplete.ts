@@ -1,5 +1,8 @@
-import { autocomplete } from "../lib/autocomplete"
-import { fromHandlebarsTemplate, defaultHandlebarsTemplate } from "./fromHandlebarsTemplate"
+import { initAutocomplete } from "../lib/wcAutocompleteHandler"
+import {
+  fromHandlebarsTemplate,
+  defaultHandlebarsTemplate,
+} from "./fromHandlebarsTemplate"
 
 /**
  * Nosto Autocomplete Web Component using Handlebars templates.
@@ -47,27 +50,13 @@ export class NostoAutocomplete extends HTMLElement {
   constructor() {
     super()
   }
+
   async connectedCallback() {
-    const templateElement = this.querySelector<HTMLTemplateElement>("template")
-
-    if (!Object.keys(this.getConfigFromScript()).length) {
-      throw new Error("NostoAutocomplete: Missing required config.")
-    }
-
-    const config = this.getConfigFromScript()
-    return await autocomplete({
-      ...config,
-      render: fromHandlebarsTemplate(templateElement?.innerText ?? defaultHandlebarsTemplate)
+    return initAutocomplete(this, {
+      handler: fromHandlebarsTemplate,
+      defaultTemplate: defaultHandlebarsTemplate,
     })
-  }
-
-  private getConfigFromScript() {
-    const config = this.querySelector("script[autocomplete-config]")
-    return config ? JSON.parse(config.textContent!) : {}
   }
 }
 
-customElements.define(
-  "nosto-autocomplete",
-  NostoAutocomplete
-)
+customElements.define("nosto-autocomplete", NostoAutocomplete)
