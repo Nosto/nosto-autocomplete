@@ -1,27 +1,25 @@
-import { autocomplete, AutocompleteInstance } from "./autocomplete"
+import { autocomplete } from "./autocomplete"
 import type { AutocompleteConfig } from "./config"
 import type { DefaultState } from "../index"
 
-
 type TemplateProps = {
-  handler: (
-    template: string,
-  ) => AutocompleteConfig<DefaultState>["render"]
+  handler: (template: string) => AutocompleteConfig<DefaultState>["render"]
   defaultTemplate: string
 }
 
 export async function initAutocomplete(
   element: HTMLElement,
-  { handler, defaultTemplate }: TemplateProps,
-): Promise<AutocompleteInstance> {
-  const templateContent = element.querySelector<HTMLScriptElement>("script[autocomplete-template]")?.textContent
-
-  if (!Object.keys(getConfigFromScript(element)).length) {
+  { handler, defaultTemplate }: TemplateProps
+) {
+  const templateContent = element.querySelector<HTMLScriptElement>(
+    "script[autocomplete-template]"
+  )?.textContent
+  
+  const config = getConfigFromScript(element)
+  if (!Object.keys(config).length) {
     throw new Error("NostoAutocomplete: Missing required config.")
   }
-
-  const config = getConfigFromScript(element)
-  return await autocomplete({
+  return autocomplete({
     ...config,
     render: handler(templateContent ?? defaultTemplate),
   })
