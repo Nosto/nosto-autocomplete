@@ -1,4 +1,4 @@
-import { initAutocomplete } from "../lib/wcAutocompleteHandler"
+import { initAutocomplete } from "../lib/components"
 import {
   fromMustacheTemplate,
   defaultMustacheTemplate,
