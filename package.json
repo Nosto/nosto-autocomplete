@@ -82,7 +82,7 @@
         "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "^9.13.0",
         "@nosto/nosto-js": "^2.0.0",
-        "@nosto/search-js": "^1.2.0",
+        "@nosto/search-js": "^2.0.0",
         "@preact/compat": "^18.3.1",
         "@rollup/plugin-alias": "^5.1.1",
         "@rollup/plugin-commonjs": "^28.0.1",
