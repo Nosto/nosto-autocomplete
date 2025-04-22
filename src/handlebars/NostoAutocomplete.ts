@@ -47,10 +47,6 @@ import {
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-  constructor() {
-    super()
-  }
-
   async connectedCallback() {
     return initAutocomplete(this, {
       handler: fromHandlebarsTemplate,
