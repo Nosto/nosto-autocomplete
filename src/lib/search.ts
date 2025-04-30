@@ -1,5 +1,5 @@
 import type { SearchQuery } from "@nosto/nosto-js/client"
-import { search as searchFn, Options } from "@nosto/search-js"
+import { search as searchFn, SearchOptions } from "@nosto/search-js"
 
 const defaultProductFields = [
   "productId",
@@ -79,7 +79,7 @@ const defaultProductFields = [
  * })
  * ```
  */
-export async function search(query: SearchQuery, options: Options = {}) {
+export async function search(query: SearchQuery, options: SearchOptions = {}) {
   const fields = query.products?.fields ?? defaultProductFields
   const facets = query.products?.facets ?? ["*"]
   const size = query.products?.size ?? 20
