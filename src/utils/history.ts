@@ -1,4 +1,4 @@
-import { logger } from "../lib/client"
+import { logger } from "@nosto/search-js/utils"
 import { DefaultState } from "./state"
 
 type Items = NonNullable<DefaultState["history"]>
