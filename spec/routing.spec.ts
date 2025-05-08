@@ -14,10 +14,6 @@ beforeAll(() => {
     `
 })
 
-afterAll(() => {
-  document.body.innerHTML = ""
-})
-
 describe("autocomplete dropdown interactions", () => {
   function makeLink(data: { url: string; name: string; id: number }) {
     const link = document.createElement("a")
