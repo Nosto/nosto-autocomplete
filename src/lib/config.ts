@@ -119,7 +119,7 @@ export function getDefaultConfig<State>() {
     hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
-    routingHandler: (url: string) => {
+    routingHandler: (url) => {
         location.href = url
     },
     submit: (query, config, options) => {

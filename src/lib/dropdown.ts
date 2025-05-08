@@ -15,7 +15,7 @@ export function createDropdown<State>(
   render: (container: HTMLElement, state: State) => void | PromiseLike<void>,
   submit: (inputValue: string, options?: SearchAutocompleteOptions) => unknown,
   updateInput: (inputValue: string) => void,
-  locationRedirect: (url: string) => void,
+  routingHandler: (url: string) => void,
   onClickBindings?: OnClickBindings<State>
 ) {
   let elements: HTMLElement[] = []
@@ -43,13 +43,13 @@ export function createDropdown<State>(
         })
 
         if (parsedHit?._redirect) {
-          locationRedirect(parsedHit._redirect)
+          routingHandler(parsedHit._redirect)
         }
         return
       }
 
       if (parsedHit?.url) {
-		locationRedirect(parsedHit.url)
+		routingHandler(parsedHit.url)
       }
     }
   }
