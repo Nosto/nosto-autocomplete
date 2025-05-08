@@ -125,7 +125,7 @@ export function autocomplete<State = DefaultState>(
     ? createHistory(fullConfig.historySize)
     : undefined
 
-  const debounce = createDebouncer(300)  
+  const debounce = createDebouncer(300)
 
   const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
     inputElement => {
@@ -265,6 +265,13 @@ function createInputDropdown<State>({
 
   const dropdownElement = dropdownElements[0]
 
+  const locationRedirect = (url: string) => {
+    if (typeof config.routingHandler === "function") {
+        config.routingHandler(url)
+        return
+    }
+    location.href = url
+  }
   return createDropdown<State>(
     dropdownElement,
     actions.updateState(input.value),
@@ -274,6 +281,7 @@ function createInputDropdown<State>({
       config,
     }),
     value => (input.value = value),
+    locationRedirect,
     {
       removeHistory: async function ({ data, update }) {
         if (data === "all") {
