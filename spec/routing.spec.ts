@@ -4,13 +4,6 @@ import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 import { autocomplete } from "../src/lib/autocomplete"
 
-const objectToHtmlAttribute = (obj: Record<string, unknown>) =>
-  JSON.stringify(obj)
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-
 beforeAll(() => {
   document.body.innerHTML = `
         <form id="search-form">
@@ -25,7 +18,16 @@ afterAll(() => {
   document.body.innerHTML = ""
 })
 
-describe("autocomplete routing", () => {
+describe("autocomplete dropdown interactions", () => {
+  function makeLink(data: { url: string; name: string; id: number }) {
+    const link = document.createElement("a")
+    link.setAttribute("data-testid", "product")
+    link.setAttribute("href", data.url)
+    link.setAttribute("data-ns-hit", JSON.stringify(data))
+    link.textContent = data.name
+    return link
+  }
+
   it("supports custom routing function", async () => {
     const user = userEvent.setup()
     const routingHandler = vi.fn()
@@ -33,26 +35,29 @@ describe("autocomplete routing", () => {
     autocomplete({
       inputSelector: "#search",
       dropdownSelector: "#search-results",
-      fetch(input) {
+      fetch() {
         return Promise.resolve({
           response: {
             products: [
-              { name: "Product1", url: "/product/1", price: 10, listPrice: 15 },
+              {
+                id: 1,
+                name: "Product1",
+                url: "/product/1",
+                price: 10,
+                listPrice: 15,
+              },
             ],
           },
         })
       },
       routingHandler: routingHandler,
       render: (container, state) => {
-        container.innerHTML =
-          state?.response?.products?.length > 0
-            ? state.response.products
-                .map(
-                  item =>
-                    `<a data-testid="product" data-ns-hit="${objectToHtmlAttribute(item)}">${item.name}</a>`
-                )
-                .join("")
-            : ""
+        container.innerHTML = ""
+        if (state?.response?.products?.length > 0) {
+          state.response.products.forEach(item => {
+            container.appendChild(makeLink(item))
+          })
+        }
       },
       submit: query => {
         console.log("Submitting search with query: ", query)
@@ -87,25 +92,30 @@ describe("autocomplete routing", () => {
     autocomplete({
       inputSelector: "#search",
       dropdownSelector: "#search-results",
-      fetch(input) {
+      fetch() {
         return Promise.resolve({
           response: {
             products: [
-              { name: "Product1", url: "/product/1", price: 10, listPrice: 15 },
+              {
+                id: 1,
+                name: "Product1",
+                url: "/product/1",
+                price: 10,
+                listPrice: 15,
+              },
             ],
           },
         })
       },
       render: (container, state) => {
-        container.innerHTML =
-          state?.response?.products?.length > 0
-            ? state.response.products
-                .map(
-                  item =>
-                    `<a data-testid="product" data-ns-hit="${objectToHtmlAttribute(item)}">${item.name}</a>`
-                )
-                .join("")
-            : ""
+        if (state?.response?.products?.length > 0) {
+          container.innerHTML = ""
+          if (state?.response?.products?.length > 0) {
+            state.response.products.forEach(item => {
+              container.appendChild(makeLink(item))
+            })
+          }
+        }
       },
       submit: query => {
         console.log("Submitting search with query: ", query)
