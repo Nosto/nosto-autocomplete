@@ -45,7 +45,7 @@ describe("autocomplete routing", () => {
       routingHandler: routingHandler,
       render: (container, state) => {
         container.innerHTML =
-          state?.response.products?.length > 0
+          state?.response?.products?.length > 0
             ? state.response.products
                 .map(
                   item =>
@@ -98,7 +98,7 @@ describe("autocomplete routing", () => {
       },
       render: (container, state) => {
         container.innerHTML =
-          state?.response.products?.length > 0
+          state?.response?.products?.length > 0
             ? state.response.products
                 .map(
                   item =>
