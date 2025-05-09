@@ -3,11 +3,10 @@ import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "../utils/state"
 import { bindClickOutside, findAll } from "../utils/dom"
-import { bindInput } from "../utils/input"
 import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
 import createDebouncer from "../utils/debounce"
 import { createHistory } from "../utils/history"
-import { disableNativeAutocomplete } from "@nosto/search-js/utils"
+import { bindInput, disableNativeAutocomplete } from "@nosto/search-js/utils"
 import type { SearchOptions } from "@nosto/nosto-js/client"
 
 export type AutocompleteInstance = {
@@ -160,9 +159,6 @@ export function autocomplete<State = DefaultState>(
         },
         onFocus() {
           dropdown.show()
-        },
-        onBlur() {
-          dropdown.hide()
         },
         onSubmit() {
           submitWithContext({
