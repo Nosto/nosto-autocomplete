@@ -1,4 +1,4 @@
-import { logger } from "./client"
+import { logger } from "@nosto/search-js/utils"
 import { SearchAutocompleteOptions } from "./autocomplete"
 
 type OnClickBindings<State> = {

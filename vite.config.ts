@@ -25,7 +25,7 @@ export default defineConfig({
         statements: 80,
         branches: 78, // TODO raise to 80
         lines: 80,
-        functions: 78 // TODO raise to 80
+        functions: 80
       }
     },
     include: ["./spec/**/*.spec.{js,ts,tsx}"],

@@ -1,4 +1,4 @@
-import { logger } from "../lib/client"
+import { logger } from "@nosto/search-js/utils"
 import { AutocompleteConfig, defaultGaConfig } from "../lib/config"
 
 const localStorageKey = "nosto:autocomplete:gaEvent"

@@ -1,4 +1,4 @@
-import { logger, recordSearchClick, recordSearchSubmit } from "./client"
+import { recordSearchClick, recordSearchSubmit } from "./client"
 import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "../utils/state"
@@ -8,6 +8,7 @@ import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
 import createDebouncer from "../utils/debounce"
 import { createHistory } from "../utils/history"
 import type { SearchOptions } from "@nosto/nosto-js/client"
+import { logger } from "@nosto/search-js/utils"
 
 export type AutocompleteInstance = {
   /**
