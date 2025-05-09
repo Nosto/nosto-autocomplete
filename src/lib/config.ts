@@ -78,11 +78,11 @@ export interface AutocompleteConfig<State> {
   googleAnalytics?: GoogleAnalyticsConfig | boolean
   /**
    * Decorate each search hit before rendering
-   * 
+   *
    * @example
    * ```ts
    * import { priceDecorator } from "@nosto/autocomplete"
-   * 
+   *
    * autocomplete({
    *   hitDecorators: [
    *     priceDecorator({ defaultCurrency: "USD" })
@@ -91,6 +91,18 @@ export interface AutocompleteConfig<State> {
    * ```
    */
   hitDecorators?: HitDecorator[]
+  /**
+   * A function to call when the user clicks on a search hit to use custom routing
+   * @example
+   * ```ts
+   * autocomplete({
+   *  routingHandler: (url) => {
+   *    location.href = url
+   *  }
+   * })
+   * ```
+   */
+  routingHandler?: (url: string) => void
 }
 
 export const defaultGaConfig = {
@@ -107,6 +119,9 @@ export function getDefaultConfig<State>() {
     hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
+    routingHandler: (url) => {
+        location.href = url
+    },
     submit: (query, config, options) => {
       if (
         query.length >=
