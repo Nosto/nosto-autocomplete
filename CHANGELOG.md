@@ -1,3 +1,19 @@
+# [2.4.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.3.1...v2.4.0) (2025-05-09)
+
+
+### Bug Fixes
+
+* defined check ([98fe088](https://github.com/Nosto/nosto-autocomplete/commit/98fe08878781ebec4f4e117e720627726fd396cf))
+* review test ([5fb5c26](https://github.com/Nosto/nosto-autocomplete/commit/5fb5c260ff81c6b254fbbb91fa1a350914cc0548))
+* reviews ([ca7cf48](https://github.com/Nosto/nosto-autocomplete/commit/ca7cf48f713caf94c3f2578010cd057c6788c90b))
+* reviews ([739cd0f](https://github.com/Nosto/nosto-autocomplete/commit/739cd0f84323d4017dd5411a8541563e211b2fa4))
+* reviews ([15a9d54](https://github.com/Nosto/nosto-autocomplete/commit/15a9d54651e02e69866b6fe24d76e18da92944ed))
+
+
+### Features
+
+* routing handling trough config ([70fd8fc](https://github.com/Nosto/nosto-autocomplete/commit/70fd8fcb93a7f890187162bc7d0e2ccab78dd714))
+
 ## [2.3.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.3.0...v2.3.1) (2025-04-16)
 
 
