@@ -1,8 +1,9 @@
-import { describe, expect, it, beforeAll, afterAll, vi } from "vitest"
+import { describe, expect, it, beforeAll, vi } from "vitest"
 import { screen, waitFor } from "@testing-library/dom"
 import userEvent from "@testing-library/user-event"
 import "@testing-library/jest-dom"
 import { autocomplete } from "../src/lib/autocomplete"
+import { AutocompleteConfig } from "../src"
 
 beforeAll(() => {
   document.body.innerHTML = `
@@ -24,40 +25,43 @@ describe("autocomplete dropdown interactions", () => {
     return link
   }
 
+  const response = {
+    response: {
+        products: [
+          {
+            id: 1,
+            name: "Product1",
+            url: "/product/1",
+            price: 10,
+            listPrice: 15,
+          },
+        ],
+      },
+    }
+
+  const autocompleteConfig: AutocompleteConfig<typeof response> = {
+    inputSelector: "#search",
+    dropdownSelector: "#search-results",
+    fetch() {
+      return Promise.resolve(response)
+    },
+    render: (container, state) => {
+      container.innerHTML = ""
+      if (state?.response?.products?.length > 0) {
+        state.response.products.forEach(item => {
+          container.appendChild(makeLink(item))
+        })
+      }
+    }
+  }
+
   it("supports custom routing function", async () => {
     const user = userEvent.setup()
     const routingHandler = vi.fn()
 
     autocomplete({
-      inputSelector: "#search",
-      dropdownSelector: "#search-results",
-      fetch() {
-        return Promise.resolve({
-          response: {
-            products: [
-              {
-                id: 1,
-                name: "Product1",
-                url: "/product/1",
-                price: 10,
-                listPrice: 15,
-              },
-            ],
-          },
-        })
-      },
-      routingHandler: routingHandler,
-      render: (container, state) => {
-        container.innerHTML = ""
-        if (state?.response?.products?.length > 0) {
-          state.response.products.forEach(item => {
-            container.appendChild(makeLink(item))
-          })
-        }
-      },
-      submit: query => {
-        console.log("Submitting search with query: ", query)
-      },
+        ...autocompleteConfig,
+        routingHandler: (url) => routingHandler(url),
     })
 
     await user.type(screen.getByTestId("input"), "red")
@@ -78,45 +82,12 @@ describe("autocomplete dropdown interactions", () => {
   it("routes with location if not provided", async () => {
     const user = userEvent.setup()
 
-    const originalLocation = window.location
-    const mockLocation = { href: "" }
     Object.defineProperty(window, "location", {
       configurable: true,
-      value: mockLocation,
+      value: {},
     })
 
-    autocomplete({
-      inputSelector: "#search",
-      dropdownSelector: "#search-results",
-      fetch() {
-        return Promise.resolve({
-          response: {
-            products: [
-              {
-                id: 1,
-                name: "Product1",
-                url: "/product/1",
-                price: 10,
-                listPrice: 15,
-              },
-            ],
-          },
-        })
-      },
-      render: (container, state) => {
-        if (state?.response?.products?.length > 0) {
-          container.innerHTML = ""
-          if (state?.response?.products?.length > 0) {
-            state.response.products.forEach(item => {
-              container.appendChild(makeLink(item))
-            })
-          }
-        }
-      },
-      submit: query => {
-        console.log("Submitting search with query: ", query)
-      },
-    })
+    autocomplete(autocompleteConfig)
 
     await user.type(screen.getByTestId("input"), "red")
 
@@ -129,10 +100,5 @@ describe("autocomplete dropdown interactions", () => {
     await user.click(element)
 
     expect(window.location.href).toBe("/product/1")
-
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: originalLocation,
-    })
   })
 })
