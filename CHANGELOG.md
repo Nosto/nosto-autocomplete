@@ -1,3 +1,15 @@
+# [2.5.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.4.0...v2.5.0) (2025-05-12)
+
+
+### Bug Fixes
+
+* drop bindInput wrapper, unused onBlur handling ([e40b70c](https://github.com/Nosto/nosto-autocomplete/commit/e40b70c7b7a8dd3232395fc1a6a696f690594f19))
+
+
+### Features
+
+* use bindInput ([73a2622](https://github.com/Nosto/nosto-autocomplete/commit/73a262279cfb0253b177d1b32f9f09f61087a1b6))
+
 # [2.4.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.3.1...v2.4.0) (2025-05-09)
 
 
