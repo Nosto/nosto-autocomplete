@@ -35,6 +35,7 @@ mockNostojs({
       }
     } as SearchResult),
   recordSearchClick: () => Promise.resolve(),
+  recordSearchSubmit: () => Promise.resolve(),
   internal: {
     getSettings: () => {},
   },
