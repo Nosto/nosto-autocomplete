@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.5.0...v2.6.0) (2025-05-15)
+
+
+### Features
+
+* bump search-js ([f626582](https://github.com/Nosto/nosto-autocomplete/commit/f62658292298b51dca1dce19fcc2be2b272e3631))
+
 # [2.5.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.4.0...v2.5.0) (2025-05-12)
 
 
