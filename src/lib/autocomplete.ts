@@ -162,11 +162,22 @@ export function autocomplete<State = DefaultState>(
           dropdown.show()
         },
         onSubmit() {
-          submitWithContext({
-            config: fullConfig,
-            actions,
-          })(inputElement.value)
-          dropdown.hide()
+          if (dropdown.isOpen() && dropdown.hasHighlight()) {
+            const data = dropdown.getHighlight()?.dataset?.nsHit
+            if (data) {
+              trackClick({
+                config: fullConfig,
+                data,
+                query: inputElement.value,
+              })
+            }
+            dropdown.handleSubmit()
+          } else {
+            submitWithContext({
+              actions,
+              config: fullConfig,
+            })(inputElement.value)
+          }
         },
         onKeyDown(_, key) {
           if (key === "Escape") {
@@ -180,23 +191,6 @@ export function autocomplete<State = DefaultState>(
           } else if (key === "ArrowUp") {
             if (dropdown.isOpen()) {
               dropdown.goUp()
-            }
-          } else if (key === "Enter") {
-            if (dropdown.isOpen() && dropdown.hasHighlight()) {
-              const data = dropdown.getHighlight()?.dataset?.nsHit
-              if (data) {
-                trackClick({
-                  config: fullConfig,
-                  data,
-                  query: inputElement.value,
-                })
-              }
-              dropdown.handleSubmit()
-            } else {
-              submitWithContext({
-                actions,
-                config: fullConfig,
-              })(inputElement.value)
             }
           }
         },
