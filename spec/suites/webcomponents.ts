@@ -2,8 +2,6 @@ import { beforeEach, Mock, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
 import { screen, waitFor } from "@testing-library/dom"
 import "@testing-library/jest-dom"
-import { DefaultState } from "../../src"
-import { getDefaultConfig } from "../../src/lib/config"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import searchResponse from "../responses/search.json"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
@@ -32,7 +30,7 @@ const config = {
       fields: ["keyword", "_highlight.keyword"],
     },
   },
-  submit: getDefaultConfig<DefaultState>().submit,
+  submit: vi.fn(),
 }
 
 function webComponentSuiteHooks(template: string) {

@@ -22,6 +22,8 @@ export async function initAutocomplete(
   return autocomplete({
     ...config,
     render: handler(templateContent ?? defaultTemplate),
+    // Omit submit handler from web component for native form submission behavior
+    submit: () => {}
   })
 }
 
