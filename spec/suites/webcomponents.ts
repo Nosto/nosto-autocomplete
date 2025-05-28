@@ -31,20 +31,20 @@ const config = {
       size: 5,
       fields: ["keyword", "_highlight.keyword"],
     },
-  },
-  submit: getDefaultConfig<DefaultState>().submit,
+  }
 }
 
+let searchSpy: MockSearch
+let recordSearchSubmitSpy: MockRecordSearchSubmit
+let recordSearchClickSpy: MockRecordSearchClick
+
 function webComponentSuiteHooks(template: string) {
-  let searchSpy: MockSearch
-  let recordSearchSubmitSpy: MockRecordSearchSubmit
-  let recordSearchClickSpy: MockRecordSearchClick
 
   beforeEach(() => {
     document.body.innerHTML = `
         <nosto-autocomplete>
-          <form>
-            <input type="text" id="search-wc" placeholder="search" data-testid="input" />
+          <form action="/search" method="get">
+            <input type="text" id="search-wc" placeholder="search" data-testid="input" name="search" />
             <button type="submit" id="search-button">Search</button>
             <div id="search-results-wc" class="ns-autocomplete" data-testid="dropdown"></div>
           </form>
@@ -198,5 +198,22 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         "Custom Template Content"
       )
     )
+  })
+  
+  it("should submit the form on search", async () => {
+    const user = userEvent.setup()
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
+    
+    await waitFor(() => element.connectedCallback())
+
+    const form = element.querySelector("form")!
+    const formSubmitSpy = vi.spyOn(form, "submit")
+    
+    await user.type(screen.getByTestId("input"), "black")
+    await user.keyboard("{enter}")
+
+    // Two calls - the native behavior before event.preventDefault() 
+    // and the one from the autocomplete submit handler
+    await waitFor(() => expect(formSubmitSpy).toHaveBeenCalledTimes(2))
   })
 }
