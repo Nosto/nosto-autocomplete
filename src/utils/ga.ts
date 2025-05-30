@@ -103,7 +103,7 @@ interface Event {
   location: string
 }
 
-function consumeLocalStorageEvent(): void {
+export function consumeLocalStorageEvent() {
   const eventString = localStorage.getItem(localStorageKey)
   if (typeof eventString === "string") {
     localStorage.removeItem(localStorageKey)
@@ -115,5 +115,3 @@ function consumeLocalStorageEvent(): void {
     }
   }
 }
-
-setTimeout(consumeLocalStorageEvent, 1000)

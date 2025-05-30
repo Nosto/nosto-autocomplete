@@ -21,7 +21,11 @@ export async function initAutocomplete(
   }
   return autocomplete({
     ...config,
+    nativeSubmit: true,
     render: handler(templateContent ?? defaultTemplate),
+    submit() {
+      // native submit is handled by the form
+    }
   })
 }
 

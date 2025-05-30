@@ -92,6 +92,10 @@ export interface AutocompleteConfig<State> {
    */
   hitDecorators?: HitDecorator[]
   /**
+   * Whether to submit the form natively or not
+   */
+  nativeSubmit?: boolean
+  /**
    * A function to call when the user clicks on a search hit to use custom routing
    * @example
    * ```ts
@@ -122,6 +126,7 @@ export function getDefaultConfig<State>() {
     routingHandler: (url) => {
         location.href = url
     },
+    nativeSubmit: false,
     submit: (query, config, options) => {
       if (
         query.length >=

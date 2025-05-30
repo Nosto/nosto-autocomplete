@@ -3,7 +3,7 @@ import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "../utils/state"
 import { bindClickOutside, findAll } from "../utils/dom"
-import { getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
+import { consumeLocalStorageEvent, getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
 import createDebouncer from "../utils/debounce"
 import { createHistory } from "../utils/history"
 import { bindInput, disableNativeAutocomplete } from "@nosto/search-js/utils"
@@ -128,6 +128,10 @@ export function autocomplete<State = DefaultState>(
 
   const debounce = createDebouncer(300)
 
+  if (isGaEnabled(config)) {
+    setTimeout(consumeLocalStorageEvent, 1000)
+  }
+
   const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
     inputElement => {
       const actions = getStateActions({
@@ -194,6 +198,8 @@ export function autocomplete<State = DefaultState>(
             }
           }
         },
+      }, {
+        nativeSubmit: fullConfig.nativeSubmit,
       })
 
       const clickOutside = bindClickOutside(

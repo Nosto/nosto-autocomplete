@@ -35,7 +35,7 @@ const config = {
   submit: getDefaultConfig<DefaultState>().submit,
 }
 
-function webComponentSuiteHooks(template: string) {
+function webComponentSuiteHooks() {
   let searchSpy: MockSearch
   let recordSearchSubmitSpy: MockRecordSearchSubmit
   let recordSearchClickSpy: MockRecordSearchClick
@@ -69,10 +69,17 @@ function webComponentSuiteHooks(template: string) {
 }
 
 export function webComponentSuite({ template, component }: SuiteProps) {
-  webComponentSuiteHooks(template)
+  webComponentSuiteHooks()
 
   it("should define the custom element", () => {
     expect(customElements.get("nosto-autocomplete")).toBe(component)
+  })
+
+  it("should use native submit by default", async () => {
+    const fn = vi.fn()
+    document.querySelector<HTMLFormElement>("form")!.addEventListener("submit", fn)
+    document.querySelector<HTMLElement>("#search-button")?.click()
+    await waitFor(() => expect(fn).toHaveBeenCalled(), { timeout: 1000 })
   })
 
   it("should render autocomplete with the correct config and template", async () => {
@@ -82,7 +89,7 @@ export function webComponentSuite({ template, component }: SuiteProps) {
     templateEl.setAttribute("type", "text/template")
     templateEl.setAttribute("autocomplete-template", "")
     templateEl.textContent = `
-    <div data-testid="custom-template"
+    <div data-testid="custom-template">
      ${template}
     </div>
     `
