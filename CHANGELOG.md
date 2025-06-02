@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.6.0...v2.7.0) (2025-06-02)
+
+
+### Features
+
+* add native submit ([57a7892](https://github.com/Nosto/nosto-autocomplete/commit/57a7892178a6aaa401b9dc2bd9fbf87d49665f43))
+
 # [2.6.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.5.0...v2.6.0) (2025-05-15)
 
 
