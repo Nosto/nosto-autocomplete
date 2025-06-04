@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta charset="utf-8" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <nosto-autocomplete>
+      <form>
+        <input type="text" name="q" placeholder="search" />
+        <button type="submit">Search</button>
+        <div class="search-results ns-autocomplete"></div>
+      </form>
+      <script type="application/json" autocomplete-config>
+      {
+        "inputSelector": "form input[name='q']",
+        "dropdownSelector": ".search-results",
+        "fetch": {
+          "products": {
+            "fields": ["name", "url", "imageUrl", "price", "listPrice", "brand"],
+            "size": 5
+          },
+          "keywords": {
+            "size": 5,
+            "fields": ["keyword", "_highlight.keyword"],
+            "highlight": {
+              "preTag": "<strong>",
+              "postTag": "</strong>"
+            }
+          }
+        }
+      }
+      </script>
+    </nosto-autocomplete>
+
+    <script type="module">
+      import "/dev/dummySearch.ts"
+      import "/src/liquid.ts"
+    </script>  
+  </body>
+</html>      
