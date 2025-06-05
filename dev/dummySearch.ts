@@ -14,8 +14,9 @@ function dummyProduct(index: number) {
 }
 
 mockNostojs({
-  search: () =>
-    Promise.resolve({
+  search: () => {
+    console.log("mock search invocation")
+    return Promise.resolve({
       products: {
         hits: [
           dummyProduct(1),
@@ -33,7 +34,8 @@ mockNostojs({
         ] as SearchKeyword[],
         total: 3
       }
-    } as SearchResult),
+    } as SearchResult)
+  },
   recordSearchClick: () => Promise.resolve(),
   recordSearchSubmit: () => Promise.resolve(),
   internal: {

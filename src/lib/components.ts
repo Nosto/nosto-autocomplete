@@ -23,8 +23,9 @@ export async function initAutocomplete(
     ...config,
     nativeSubmit: true,
     render: handler(templateContent ?? defaultTemplate),
-    submit() {
-      // native submit is handled by the form
+    submit(value) {
+      element.querySelector<HTMLInputElement>(config.inputSelector)!.value = value
+      element.querySelector("form")?.submit()
     }
   })
 }

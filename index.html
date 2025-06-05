@@ -7,13 +7,18 @@
     <meta charset="utf-8" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="/src/styles.css" />
+    <style>
+      form {
+        position: relative;
+      }
+    </style>
   </head>
   <body>
     <!-- TODO add mock search backend that is accessible via nostojs -->
     <form id="search-form">
       <input type="text" id="search" placeholder="search" />
       <button type="submit" id="search-button">Search</button>
-      <div id="search-results" className="ns-autocomplete"></div>
+      <div id="search-results" class="ns-autocomplete"></div>
     </form>
 
     <script type="module">
