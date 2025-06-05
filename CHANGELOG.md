@@ -1,3 +1,10 @@
+## [2.7.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.7.0...v2.7.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* add programmatic form submit ([2aec8d1](https://github.com/Nosto/nosto-autocomplete/commit/2aec8d1facb28e210ac91a18b80c573f1224e0d8))
+
 # [2.7.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.6.0...v2.7.0) (2025-06-02)
 
 
