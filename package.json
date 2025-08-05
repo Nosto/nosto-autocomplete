@@ -116,7 +116,7 @@
         "rollup-plugin-string": "^3.0.0",
         "rollup-plugin-visualizer": "^6.0.0",
         "typedoc": "^0.28.0",
-        "typescript": "5.8.x",
+        "typescript": "5.9.x",
         "typescript-eslint": "^8.13.0",
         "vite": "^7.0.0",
         "vitest": "^3.0.9"
