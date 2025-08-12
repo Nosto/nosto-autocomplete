@@ -37,20 +37,18 @@ export { default as defaultLiquidTemplate } from "./autocomplete.liquid"
  * ```
  */
 export function fromLiquidTemplate<State extends object = DefaultState>(
-  template: string
+    template: string
 ): (container: HTMLElement, state: State) => PromiseLike<void> {
-  const instance = Liquid ? new Liquid() : undefined
+    const instance = Liquid ? new Liquid() : undefined
 
-  if (instance === undefined) {
-    throw new Error(
-      "Liquid is not defined. Please include the Liquid library in your page."
-    )
-  }
+    if (instance === undefined) {
+        throw new Error("Liquid is not defined. Please include the Liquid library in your page.")
+    }
 
-  const tmpl = instance.parse(template)
+    const tmpl = instance.parse(template)
 
-  return async (container, state) => {
-    const result = await instance.render(tmpl, state)
-    container.innerHTML = result
-  }
+    return async (container, state) => {
+        const result = await instance.render(tmpl, state)
+        container.innerHTML = result
+    }
 }

@@ -1,8 +1,5 @@
 import { initAutocomplete } from "../lib/components"
-import {
-  fromHandlebarsTemplate,
-  defaultHandlebarsTemplate,
-} from "./fromHandlebarsTemplate"
+import { fromHandlebarsTemplate, defaultHandlebarsTemplate } from "./fromHandlebarsTemplate"
 
 /**
  * Nosto Autocomplete Web Component using Handlebars templates.
@@ -47,12 +44,12 @@ import {
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-  async connectedCallback() {
-    return initAutocomplete(this, {
-      handler: fromHandlebarsTemplate,
-      defaultTemplate: defaultHandlebarsTemplate,
-    })
-  }
+    async connectedCallback() {
+        return initAutocomplete(this, {
+            handler: fromHandlebarsTemplate,
+            defaultTemplate: defaultHandlebarsTemplate
+        })
+    }
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)

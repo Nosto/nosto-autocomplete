@@ -1,8 +1,5 @@
 import { initAutocomplete } from "../lib/components"
-import {
-  fromMustacheTemplate,
-  defaultMustacheTemplate,
-} from "./fromMustacheTemplate"
+import { fromMustacheTemplate, defaultMustacheTemplate } from "./fromMustacheTemplate"
 
 /**
  * Nosto Autocomplete Web Component using Mustache templates.
@@ -47,12 +44,12 @@ import {
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-  async connectedCallback() {
-    return initAutocomplete(this, {
-      handler: fromMustacheTemplate,
-      defaultTemplate: defaultMustacheTemplate,
-    })
-  }
+    async connectedCallback() {
+        return initAutocomplete(this, {
+            handler: fromMustacheTemplate,
+            defaultTemplate: defaultMustacheTemplate
+        })
+    }
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)
