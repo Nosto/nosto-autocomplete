@@ -7,7 +7,7 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
 ## Working Effectively
 
 ### Bootstrap and Install Dependencies
-- Install dependencies: `npm install` -- takes ~1 minute. Set timeout to 3+ minutes.
+- Install dependencies: `npm ci` -- takes ~1 minute. Set timeout to 3+ minutes.
 - The install process includes husky setup and runs successfully.
 
 ### Build Process
@@ -114,7 +114,7 @@ The build creates these directories in `dist/`:
 ## Timeout Recommendations
 
 **NEVER CANCEL these commands - set appropriate timeouts:**
-- `npm install` -- 3+ minutes
+- `npm ci` -- 3+ minutes
 - `npm run build` -- 2+ minutes  
 - `npm run test` -- 5+ minutes
 - `npm run dev` -- runs continuously until stopped
