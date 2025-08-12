@@ -4,7 +4,7 @@ import { fromMustacheTemplate, defaultMustacheTemplate as mustacheTemplate } fro
 import { autocompleteSuite } from "./suites/autocomplete"
 
 describe("fromMustacheTemplate", () => {
-    autocompleteSuite({
-        render: fromMustacheTemplate(mustacheTemplate)
-    })
+  autocompleteSuite({
+    render: fromMustacheTemplate(mustacheTemplate)
+  })
 })

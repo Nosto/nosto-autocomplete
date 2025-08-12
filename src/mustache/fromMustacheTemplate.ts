@@ -4,10 +4,10 @@ import Mustache from "mustache"
 export { default as defaultMustacheTemplate } from "./autocomplete.mustache"
 
 export type Options = {
-    /**
-     * Mustache helpers to extend template functionality.
-     */
-    helpers?: object
+  /**
+   * Mustache helpers to extend template functionality.
+   */
+  helpers?: object
 }
 
 /**
@@ -49,25 +49,25 @@ export type Options = {
  * ```
  */
 export function fromMustacheTemplate<State extends object = DefaultState>(template: string, options?: Options) {
-    if (Mustache === undefined) {
-        throw new Error("Mustache is not defined. Please include the Mustache dependency or library in your page.")
-    }
+  if (Mustache === undefined) {
+    throw new Error("Mustache is not defined. Please include the Mustache dependency or library in your page.")
+  }
 
-    const { helpers } = options || {}
+  const { helpers } = options || {}
 
-    return (container: HTMLElement, state: State) => {
-        container.innerHTML = Mustache.render(template, {
-            ...state,
-            imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
-            toJson: function () {
-                return JSON.stringify(this)
-            },
-            showListPrice: function () {
-                return this.listPrice !== this.price
-            },
-            ...helpers
-        })
+  return (container: HTMLElement, state: State) => {
+    container.innerHTML = Mustache.render(template, {
+      ...state,
+      imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
+      toJson: function () {
+        return JSON.stringify(this)
+      },
+      showListPrice: function () {
+        return this.listPrice !== this.price
+      },
+      ...helpers
+    })
 
-        return Promise.resolve()
-    }
+    return Promise.resolve()
+  }
 }

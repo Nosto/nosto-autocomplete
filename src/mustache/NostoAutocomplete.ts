@@ -44,12 +44,12 @@ import { fromMustacheTemplate, defaultMustacheTemplate } from "./fromMustacheTem
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-    async connectedCallback() {
-        return initAutocomplete(this, {
-            handler: fromMustacheTemplate,
-            defaultTemplate: defaultMustacheTemplate
-        })
-    }
+  async connectedCallback() {
+    return initAutocomplete(this, {
+      handler: fromMustacheTemplate,
+      defaultTemplate: defaultMustacheTemplate
+    })
+  }
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)

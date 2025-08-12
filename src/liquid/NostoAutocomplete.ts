@@ -44,12 +44,12 @@ import { fromLiquidTemplate, defaultLiquidTemplate } from "./fromLiquidTemplate"
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-    async connectedCallback() {
-        return initAutocomplete(this, {
-            handler: fromLiquidTemplate,
-            defaultTemplate: defaultLiquidTemplate
-        })
-    }
+  async connectedCallback() {
+    return initAutocomplete(this, {
+      handler: fromLiquidTemplate,
+      defaultTemplate: defaultLiquidTemplate
+    })
+  }
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)

@@ -4,7 +4,7 @@ import { fromLiquidTemplate, defaultLiquidTemplate as liquidTemplate } from "../
 import { autocompleteSuite } from "./suites/autocomplete"
 
 describe("fromLiquidTemplate", () => {
-    autocompleteSuite({
-        render: fromLiquidTemplate(liquidTemplate)
-    })
+  autocompleteSuite({
+    render: fromLiquidTemplate(liquidTemplate)
+  })
 })

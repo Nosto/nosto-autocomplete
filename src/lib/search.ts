@@ -2,57 +2,57 @@ import type { SearchQuery } from "@nosto/nosto-js/client"
 import { search as searchFn, SearchOptions } from "@nosto/search-js"
 
 const defaultProductFields = [
-    "productId",
-    "url",
-    "name",
-    "imageUrl",
-    "imageHash",
-    "thumbUrl",
-    "description",
-    "brand",
-    "variantId",
-    "availability",
-    "price",
-    "priceText",
-    "categoryIds",
-    "categories",
-    "customFields.key",
-    "customFields.value",
-    "priceCurrencyCode",
-    "datePublished",
-    "listPrice",
-    "unitPricingBaseMeasure",
-    "unitPricingUnit",
-    "unitPricingMeasure",
-    "googleCategory",
-    "gtin",
-    "ageGroup",
-    "gender",
-    "condition",
-    "alternateImageUrls",
-    "ratingValue",
-    "reviewCount",
-    "inventoryLevel",
-    "skus.id",
-    "skus.name",
-    "skus.price",
-    "skus.listPrice",
-    "skus.priceText",
-    "skus.url",
-    "skus.imageUrl",
-    "skus.inventoryLevel",
-    "skus.customFields.key",
-    "skus.customFields.value",
-    "skus.availability",
-    "pid",
-    "onDiscount",
-    "extra.key",
-    "extra.value",
-    "saleable",
-    "available",
-    "tags1",
-    "tags2",
-    "tags3"
+  "productId",
+  "url",
+  "name",
+  "imageUrl",
+  "imageHash",
+  "thumbUrl",
+  "description",
+  "brand",
+  "variantId",
+  "availability",
+  "price",
+  "priceText",
+  "categoryIds",
+  "categories",
+  "customFields.key",
+  "customFields.value",
+  "priceCurrencyCode",
+  "datePublished",
+  "listPrice",
+  "unitPricingBaseMeasure",
+  "unitPricingUnit",
+  "unitPricingMeasure",
+  "googleCategory",
+  "gtin",
+  "ageGroup",
+  "gender",
+  "condition",
+  "alternateImageUrls",
+  "ratingValue",
+  "reviewCount",
+  "inventoryLevel",
+  "skus.id",
+  "skus.name",
+  "skus.price",
+  "skus.listPrice",
+  "skus.priceText",
+  "skus.url",
+  "skus.imageUrl",
+  "skus.inventoryLevel",
+  "skus.customFields.key",
+  "skus.customFields.value",
+  "skus.availability",
+  "pid",
+  "onDiscount",
+  "extra.key",
+  "extra.value",
+  "saleable",
+  "available",
+  "tags1",
+  "tags2",
+  "tags3"
 ]
 
 /**
@@ -80,24 +80,24 @@ const defaultProductFields = [
  * ```
  */
 export async function search(query: SearchQuery, options: SearchOptions = {}) {
-    const fields = query.products?.fields ?? defaultProductFields
-    const facets = query.products?.facets ?? ["*"]
-    const size = query.products?.size ?? 20
-    const from = query.products?.from ?? 0
+  const fields = query.products?.fields ?? defaultProductFields
+  const facets = query.products?.facets ?? ["*"]
+  const size = query.products?.size ?? 20
+  const from = query.products?.from ?? 0
 
-    const response = await searchFn(
-        {
-            ...query,
-            products: {
-                ...query.products,
-                fields,
-                facets,
-                size,
-                from
-            }
-        },
-        options
-    )
+  const response = await searchFn(
+    {
+      ...query,
+      products: {
+        ...query.products,
+        fields,
+        facets,
+        size,
+        from
+      }
+    },
+    options
+  )
 
-    return { query, response }
+  return { query, response }
 }

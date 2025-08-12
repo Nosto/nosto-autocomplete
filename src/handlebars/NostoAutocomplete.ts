@@ -44,12 +44,12 @@ import { fromHandlebarsTemplate, defaultHandlebarsTemplate } from "./fromHandleb
  * ```
  */
 export class NostoAutocomplete extends HTMLElement {
-    async connectedCallback() {
-        return initAutocomplete(this, {
-            handler: fromHandlebarsTemplate,
-            defaultTemplate: defaultHandlebarsTemplate
-        })
-    }
+  async connectedCallback() {
+    return initAutocomplete(this, {
+      handler: fromHandlebarsTemplate,
+      defaultTemplate: defaultHandlebarsTemplate
+    })
+  }
 }
 
 customElements.define("nosto-autocomplete", NostoAutocomplete)

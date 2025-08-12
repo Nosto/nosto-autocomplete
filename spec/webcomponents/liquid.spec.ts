@@ -4,5 +4,5 @@ import { defaultLiquidTemplate as template, NostoAutocomplete } from "../../src/
 import { webComponentSuite } from "../suites/webcomponents"
 
 describe("Liquid web component", () => {
-    webComponentSuite({ template, component: NostoAutocomplete })
+  webComponentSuite({ template, component: NostoAutocomplete })
 })

@@ -4,5 +4,5 @@ import { defaultHandlebarsTemplate as template, NostoAutocomplete } from "../../
 import { webComponentSuite } from "../suites/webcomponents"
 
 describe("Handlebars web component", () => {
-    webComponentSuite({ template, component: NostoAutocomplete })
+  webComponentSuite({ template, component: NostoAutocomplete })
 })

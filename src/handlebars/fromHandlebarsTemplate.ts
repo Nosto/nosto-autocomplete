@@ -4,21 +4,21 @@ import Handlebars from "handlebars"
 export { default as defaultHandlebarsTemplate } from "./autocomplete.handlebars"
 
 const defaultOptions = {
-    helpers: {
-        toJson: function () {
-            return JSON.stringify(this)
-        },
-        showListPrice: function (this: { listPrice: number; price: number }) {
-            return this.listPrice !== this.price
-        }
+  helpers: {
+    toJson: function () {
+      return JSON.stringify(this)
+    },
+    showListPrice: function (this: { listPrice: number; price: number }) {
+      return this.listPrice !== this.price
     }
+  }
 }
 
 export type Options = {
-    /**
-     * Handlebars helpers to extend template functionality.
-     */
-    helpers?: Record<string, (...args: never[]) => unknown>
+  /**
+   * Handlebars helpers to extend template functionality.
+   */
+  helpers?: Record<string, (...args: never[]) => unknown>
 }
 
 /**
@@ -56,21 +56,21 @@ export type Options = {
  * ```
  */
 export function fromHandlebarsTemplate<State extends object = DefaultState>(template: string, options?: Options) {
-    if (Handlebars === undefined) {
-        throw new Error("Handlebars is not defined. Please include the Handlebars dependency or library in your page.")
-    }
+  if (Handlebars === undefined) {
+    throw new Error("Handlebars is not defined. Please include the Handlebars dependency or library in your page.")
+  }
 
-    const tmpl = Handlebars.compile(template)
+  const tmpl = Handlebars.compile(template)
 
-    return (container: HTMLElement, state: State) => {
-        container.innerHTML = tmpl(
-            {
-                ...state,
-                imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock"
-            },
-            options ?? defaultOptions
-        )
+  return (container: HTMLElement, state: State) => {
+    container.innerHTML = tmpl(
+      {
+        ...state,
+        imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock"
+      },
+      options ?? defaultOptions
+    )
 
-        return Promise.resolve()
-    }
+    return Promise.resolve()
+  }
 }

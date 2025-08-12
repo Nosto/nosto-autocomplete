@@ -13,35 +13,35 @@ type MockRecordSearchSubmit = Mock<API["recordSearchSubmit"]>
 type MockRecordSearchClick = Mock<API["recordSearchClick"]>
 
 type SuiteProps = {
-    template: string
-    component: CustomElementConstructor
+  template: string
+  component: CustomElementConstructor
 }
 
 type CustomElement = HTMLElement & { connectedCallback: () => void }
 
 const config = {
-    inputSelector: "#search-wc",
-    dropdownSelector: "#search-results-wc",
-    fetch: {
-        products: {
-            fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
-            size: 5
-        },
-        keywords: {
-            size: 5,
-            fields: ["keyword", "_highlight.keyword"]
-        }
+  inputSelector: "#search-wc",
+  dropdownSelector: "#search-results-wc",
+  fetch: {
+    products: {
+      fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
+      size: 5
     },
-    submit: getDefaultConfig<DefaultState>().submit
+    keywords: {
+      size: 5,
+      fields: ["keyword", "_highlight.keyword"]
+    }
+  },
+  submit: getDefaultConfig<DefaultState>().submit
 }
 
 function webComponentSuiteHooks() {
-    let searchSpy: MockSearch
-    let recordSearchSubmitSpy: MockRecordSearchSubmit
-    let recordSearchClickSpy: MockRecordSearchClick
+  let searchSpy: MockSearch
+  let recordSearchSubmitSpy: MockRecordSearchSubmit
+  let recordSearchClickSpy: MockRecordSearchClick
 
-    beforeEach(() => {
-        document.body.innerHTML = `
+  beforeEach(() => {
+    document.body.innerHTML = `
         <nosto-autocomplete>
           <form>
             <input type="text" id="search-wc" placeholder="search" data-testid="input" />
@@ -51,126 +51,126 @@ function webComponentSuiteHooks() {
           <script autocomplete-config>${JSON.stringify(config)}</script>
         </nosto-autocomplete>
       `
-        searchSpy = vi.fn(async () => searchResponse as unknown as SearchResult)
-        recordSearchSubmitSpy = vi.fn()
-        recordSearchClickSpy = vi.fn()
-        mockNostojs({
-            search: searchSpy,
-            recordSearchSubmit: recordSearchSubmitSpy,
-            recordSearchClick: recordSearchClickSpy
-        })
+    searchSpy = vi.fn(async () => searchResponse as unknown as SearchResult)
+    recordSearchSubmitSpy = vi.fn()
+    recordSearchClickSpy = vi.fn()
+    mockNostojs({
+      search: searchSpy,
+      recordSearchSubmit: recordSearchSubmitSpy,
+      recordSearchClick: recordSearchClickSpy
     })
+  })
 
-    afterEach(() => {
-        vi.restoreAllMocks()
-        // Clean up the DOM after each test
-        document.body.innerHTML = ""
-    })
+  afterEach(() => {
+    vi.restoreAllMocks()
+    // Clean up the DOM after each test
+    document.body.innerHTML = ""
+  })
 }
 
 export function webComponentSuite({ template, component }: SuiteProps) {
-    webComponentSuiteHooks()
+  webComponentSuiteHooks()
 
-    it("should define the custom element", () => {
-        expect(customElements.get("nosto-autocomplete")).toBe(component)
-    })
+  it("should define the custom element", () => {
+    expect(customElements.get("nosto-autocomplete")).toBe(component)
+  })
 
-    it("should use native submit by default", async () => {
-        const fn = vi.fn()
-        document.querySelector<HTMLFormElement>("form")!.addEventListener("submit", fn)
-        document.querySelector<HTMLElement>("#search-button")?.click()
-        await waitFor(() => expect(fn).toHaveBeenCalled(), { timeout: 1000 })
-    })
+  it("should use native submit by default", async () => {
+    const fn = vi.fn()
+    document.querySelector<HTMLFormElement>("form")!.addEventListener("submit", fn)
+    document.querySelector<HTMLElement>("#search-button")?.click()
+    await waitFor(() => expect(fn).toHaveBeenCalled(), { timeout: 1000 })
+  })
 
-    it("should render autocomplete with the correct config and template", async () => {
-        const element = document.querySelector<CustomElement>("nosto-autocomplete")!
-        const user = userEvent.setup()
-        const templateEl = document.createElement("script")
-        templateEl.setAttribute("type", "text/template")
-        templateEl.setAttribute("autocomplete-template", "")
-        templateEl.textContent = `
+  it("should render autocomplete with the correct config and template", async () => {
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
+    const user = userEvent.setup()
+    const templateEl = document.createElement("script")
+    templateEl.setAttribute("type", "text/template")
+    templateEl.setAttribute("autocomplete-template", "")
+    templateEl.textContent = `
     <div data-testid="custom-template">
      ${template}
     </div>
     `
-        element.append(templateEl)
+    element.append(templateEl)
 
-        await waitFor(() => element.connectedCallback())
+    await waitFor(() => element.connectedCallback())
 
-        expect(screen.getByTestId("input")).toHaveAttribute("autocomplete", "off")
+    expect(screen.getByTestId("input")).toHaveAttribute("autocomplete", "off")
 
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).not.toBeVisible()
-            },
-            {
-                timeout: 1000
-            }
-        )
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).not.toBeVisible()
+      },
+      {
+        timeout: 1000
+      }
+    )
 
-        await user.type(screen.getByTestId("input"), "black")
+    await user.type(screen.getByTestId("input"), "black")
 
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).toBeVisible()
-            },
-            {
-                timeout: 4000
-            }
-        )
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).toBeVisible()
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).toBeVisible()
+      },
+      {
+        timeout: 4000
+      }
+    )
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).toBeVisible()
 
-                expect(screen.getByText("Keywords")).toBeVisible()
-                expect(screen.getAllByTestId("keyword")).toHaveLength(5)
+        expect(screen.getByText("Keywords")).toBeVisible()
+        expect(screen.getAllByTestId("keyword")).toHaveLength(5)
 
-                expect(screen.getByText("Products")).toBeVisible()
-                expect(screen.getAllByTestId("product")).toHaveLength(5)
-            },
-            {
-                timeout: 4000
-            }
-        )
+        expect(screen.getByText("Products")).toBeVisible()
+        expect(screen.getAllByTestId("product")).toHaveLength(5)
+      },
+      {
+        timeout: 4000
+      }
+    )
 
-        await waitFor(() => expect(screen.getByTestId("custom-template")).toBeTruthy())
+    await waitFor(() => expect(screen.getByTestId("custom-template")).toBeTruthy())
+  })
+
+  it("should use the default template if custom template is not supplied", async () => {
+    const user = userEvent.setup()
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
+    element.querySelector("script[autocomplete-template]")?.remove()
+    await waitFor(() => element.connectedCallback())
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).not.toBeVisible()
+      },
+      {
+        timeout: 1000
+      }
+    )
+
+    await user.type(screen.getByTestId("input"), "black")
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("dropdown")).toBeVisible()
+      },
+      {
+        timeout: 4000
+      }
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-keywords")).toBeTruthy()
+      expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-products")).toBeTruthy()
     })
+  })
 
-    it("should use the default template if custom template is not supplied", async () => {
-        const user = userEvent.setup()
-        const element = document.querySelector<CustomElement>("nosto-autocomplete")!
-        element.querySelector("script[autocomplete-template]")?.remove()
-        await waitFor(() => element.connectedCallback())
+  it("should get custom template", async () => {
+    const user = userEvent.setup()
 
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).not.toBeVisible()
-            },
-            {
-                timeout: 1000
-            }
-        )
-
-        await user.type(screen.getByTestId("input"), "black")
-
-        await waitFor(
-            () => {
-                expect(screen.getByTestId("dropdown")).toBeVisible()
-            },
-            {
-                timeout: 4000
-            }
-        )
-        await waitFor(() => {
-            expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-keywords")).toBeTruthy()
-            expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-products")).toBeTruthy()
-        })
-    })
-
-    it("should get custom template", async () => {
-        const user = userEvent.setup()
-
-        document.body.innerHTML = `
+    document.body.innerHTML = `
       <nosto-autocomplete>
         <form>
           <input type="text" id="search-wc" placeholder="search" data-testid="input" />
@@ -186,10 +186,10 @@ export function webComponentSuite({ template, component }: SuiteProps) {
       </nosto-autocomplete>
       `
 
-        const element = document.querySelector<CustomElement>("nosto-autocomplete")!
+    const element = document.querySelector<CustomElement>("nosto-autocomplete")!
 
-        await waitFor(() => element.connectedCallback())
-        await user.type(screen.getByTestId("input"), "black")
-        await waitFor(() => expect(screen.getByTestId("custom-template")).toHaveTextContent("Custom Template Content"))
-    })
+    await waitFor(() => element.connectedCallback())
+    await user.type(screen.getByTestId("input"), "black")
+    await waitFor(() => expect(screen.getByTestId("custom-template")).toHaveTextContent("Custom Template Content"))
+  })
 }

@@ -4,5 +4,5 @@ import { defaultMustacheTemplate as template, NostoAutocomplete } from "../../sr
 import { webComponentSuite } from "../suites/webcomponents"
 
 describe("Mustache web component", () => {
-    webComponentSuite({ template, component: NostoAutocomplete })
+  webComponentSuite({ template, component: NostoAutocomplete })
 })
