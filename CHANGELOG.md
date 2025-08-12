@@ -1,3 +1,11 @@
+# [2.8.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.7.1...v2.8.0) (2025-08-12)
+
+
+### Features
+
+* add prettier configuration with requested settings ([488c77f](https://github.com/Nosto/nosto-autocomplete/commit/488c77f72e7cf1fd537dce2dd4a6a613b31548bc))
+* create comprehensive GitHub Copilot instructions with validated commands ([694dfe5](https://github.com/Nosto/nosto-autocomplete/commit/694dfe53aa2d60829a9ee55696955bb7e0381911))
+
 ## [2.7.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.7.0...v2.7.1) (2025-06-05)
 
 
