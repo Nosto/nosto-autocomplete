@@ -49,7 +49,7 @@ export function createDropdown<State>(
       }
 
       if (parsedHit?.url) {
-		routingHandler(parsedHit.url)
+        routingHandler(parsedHit.url)
       }
     }
   }

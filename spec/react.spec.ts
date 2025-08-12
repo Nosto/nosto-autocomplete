@@ -33,6 +33,6 @@ describe("from react component", () => {
   })
 
   autocompleteSuite({
-    render
+    render,
   })
 })

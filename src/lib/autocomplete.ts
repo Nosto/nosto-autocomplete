@@ -3,7 +3,12 @@ import { AutocompleteConfig, getDefaultConfig } from "./config"
 import { Dropdown, createDropdown, parseHit } from "./dropdown"
 import { DefaultState, StateActions, getStateActions } from "../utils/state"
 import { bindClickOutside, findAll } from "../utils/dom"
-import { consumeLocalStorageEvent, getGaTrackUrl, isGaEnabled, trackGaPageView } from "../utils/ga"
+import {
+  consumeLocalStorageEvent,
+  getGaTrackUrl,
+  isGaEnabled,
+  trackGaPageView,
+} from "../utils/ga"
 import createDebouncer from "../utils/debounce"
 import { createHistory } from "../utils/history"
 import { bindInput, disableNativeAutocomplete } from "@nosto/search-js/utils"
@@ -152,55 +157,59 @@ export function autocomplete<State = DefaultState>(
 
       disableNativeAutocomplete(inputElement)
 
-      const input = bindInput(inputElement, {
-        onInput: async value => {
-          debounce(async () => {
-            const state = await actions.updateState(value)
-            dropdown.update(state)
-          })
-        },
-        onClick() {
-          dropdown.resetHighlight()
-        },
-        onFocus() {
-          dropdown.show()
-        },
-        onSubmit() {
-          if (dropdown.isOpen() && dropdown.hasHighlight()) {
-            const data = dropdown.getHighlight()?.dataset?.nsHit
-            if (data) {
-              trackClick({
-                config: fullConfig,
-                data,
-                query: inputElement.value,
-              })
-            }
-            dropdown.handleSubmit()
-          } else {
-            submitWithContext({
-              actions,
-              config: fullConfig,
-            })(inputElement.value)
-          }
-        },
-        onKeyDown(_, key) {
-          if (key === "Escape") {
-            dropdown.hide()
-          } else if (key === "ArrowDown") {
-            if (dropdown.isOpen()) {
-              dropdown.goDown()
+      const input = bindInput(
+        inputElement,
+        {
+          onInput: async value => {
+            debounce(async () => {
+              const state = await actions.updateState(value)
+              dropdown.update(state)
+            })
+          },
+          onClick() {
+            dropdown.resetHighlight()
+          },
+          onFocus() {
+            dropdown.show()
+          },
+          onSubmit() {
+            if (dropdown.isOpen() && dropdown.hasHighlight()) {
+              const data = dropdown.getHighlight()?.dataset?.nsHit
+              if (data) {
+                trackClick({
+                  config: fullConfig,
+                  data,
+                  query: inputElement.value,
+                })
+              }
+              dropdown.handleSubmit()
             } else {
-              dropdown.show()
+              submitWithContext({
+                actions,
+                config: fullConfig,
+              })(inputElement.value)
             }
-          } else if (key === "ArrowUp") {
-            if (dropdown.isOpen()) {
-              dropdown.goUp()
+          },
+          onKeyDown(_, key) {
+            if (key === "Escape") {
+              dropdown.hide()
+            } else if (key === "ArrowDown") {
+              if (dropdown.isOpen()) {
+                dropdown.goDown()
+              } else {
+                dropdown.show()
+              }
+            } else if (key === "ArrowUp") {
+              if (dropdown.isOpen()) {
+                dropdown.goUp()
+              }
             }
-          }
+          },
         },
-      }, {
-        nativeSubmit: fullConfig.nativeSubmit,
-      })
+        {
+          nativeSubmit: fullConfig.nativeSubmit,
+        }
+      )
 
       const clickOutside = bindClickOutside(
         [dropdown.container, inputElement],

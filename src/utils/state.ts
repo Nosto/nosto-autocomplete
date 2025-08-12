@@ -61,7 +61,8 @@ export function getStateActions<State>({
           redirect: false,
           hitDecorators: config.hitDecorators,
           ...options,
-        })
+        }
+      )
     }
   }
 

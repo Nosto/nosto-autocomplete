@@ -14,7 +14,7 @@ export async function initAutocomplete(
   const templateContent = element.querySelector<HTMLScriptElement>(
     "script[autocomplete-template]"
   )?.textContent
-  
+
   const config = getConfigFromScript(element)
   if (!Object.keys(config).length) {
     throw new Error("NostoAutocomplete: Missing required config.")
@@ -24,9 +24,10 @@ export async function initAutocomplete(
     nativeSubmit: true,
     render: handler(templateContent ?? defaultTemplate),
     submit(value) {
-      element.querySelector<HTMLInputElement>(config.inputSelector)!.value = value
+      element.querySelector<HTMLInputElement>(config.inputSelector)!.value =
+        value
       element.querySelector("form")?.submit()
-    }
+    },
   })
 }
 

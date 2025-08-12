@@ -4,11 +4,12 @@ export {
   defaultLiquidTemplate,
 } from "./liquid/fromLiquidTemplate"
 export {
-  autocomplete, type AutocompleteInstance, search, 
-  type AutocompleteConfig, type GoogleAnalyticsConfig,
+  autocomplete,
+  type AutocompleteInstance,
+  search,
+  type AutocompleteConfig,
+  type GoogleAnalyticsConfig,
   type DefaultState,
-  priceDecorator
+  priceDecorator,
 } from "."
-export {
-  NostoAutocomplete
-} from "./liquid/NostoAutocomplete"
+export { NostoAutocomplete } from "./liquid/NostoAutocomplete"

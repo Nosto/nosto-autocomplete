@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest"
 
 mockNostojs({
   internal: {
-    getSettings: () => ({ currencySettings: {} })
-  }
+    getSettings: () => ({ currencySettings: {} }),
+  },
 })
 
 describe("priceDecorator", () => {
@@ -17,7 +17,7 @@ describe("priceDecorator", () => {
       price: 100,
       listPrice: 150,
       priceCurrencyCode: "USD",
-      skus: []
+      skus: [],
     } satisfies SearchProduct
     const result = decorator(product)
     expect(result.priceText).toBe("$100.00")
@@ -31,8 +31,8 @@ describe("priceDecorator", () => {
       priceCurrencyCode: "USD",
       skus: [
         { price: 50, listPrice: 75 },
-        { price: 60, listPrice: 80 }
-      ]
+        { price: 60, listPrice: 80 },
+      ],
     } satisfies SearchProduct
     const result = decorator(product)
     expect(result.skus?.[0].priceText).toBe("$50.00")
@@ -44,7 +44,7 @@ describe("priceDecorator", () => {
   it("should return the original product if no prices are present", () => {
     const product = {
       priceCurrencyCode: "USD",
-      skus: []
+      skus: [],
     } satisfies SearchProduct
     const result = decorator(product)
     expect(result).toEqual(product)
@@ -55,7 +55,7 @@ describe("priceDecorator", () => {
       price: undefined,
       listPrice: undefined,
       priceCurrencyCode: "USD",
-      skus: []
+      skus: [],
     } satisfies SearchProduct
     const result = decorator(product)
     expect(result.priceText).toBeUndefined()
@@ -66,7 +66,7 @@ describe("priceDecorator", () => {
     const product = {
       price: 100,
       listPrice: 150,
-      skus: []
+      skus: [],
     } satisfies SearchProduct
     const result = priceDecorator({ defaultCurrency: "EUR" })(product)
     expect(result.priceText).toBe("100,00 €")

@@ -123,8 +123,8 @@ export function getDefaultConfig<State>() {
     hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
-    routingHandler: (url) => {
-        location.href = url
+    routingHandler: url => {
+      location.href = url
     },
     nativeSubmit: false,
     submit: (query, config, options) => {

@@ -3,8 +3,9 @@ import fs from "fs"
 import json from "../package.json"
 
 describe("exports", () => {
-  const files = Object.values(json.exports)
-    .flatMap(v => typeof v === "string" ? [v] : Object.values(v))
+  const files = Object.values(json.exports).flatMap(v =>
+    typeof v === "string" ? [v] : Object.values(v)
+  )
   files.push(json.main)
   files.push(json.module)
   files.push(json.source)
@@ -30,5 +31,4 @@ describe("externals", () => {
   verify("./dist/liquid/autocomplete.mjs", ["liquidjs"])
   verify("./dist/mustache/autocomplete.mjs", ["mustache"])
   verify("./dist/handlebars/autocomplete.mjs", ["handlebars"])
-  
 })

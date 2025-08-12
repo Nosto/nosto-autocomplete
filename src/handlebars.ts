@@ -2,14 +2,15 @@
 export {
   fromHandlebarsTemplate,
   defaultHandlebarsTemplate,
-  type Options
+  type Options,
 } from "./handlebars/fromHandlebarsTemplate"
 export {
-  autocomplete, type AutocompleteInstance, search, 
-  type AutocompleteConfig, type GoogleAnalyticsConfig,
+  autocomplete,
+  type AutocompleteInstance,
+  search,
+  type AutocompleteConfig,
+  type GoogleAnalyticsConfig,
   type DefaultState,
-  priceDecorator
+  priceDecorator,
 } from "."
-export {
-  NostoAutocomplete
-} from "./handlebars/NostoAutocomplete"
+export { NostoAutocomplete } from "./handlebars/NostoAutocomplete"

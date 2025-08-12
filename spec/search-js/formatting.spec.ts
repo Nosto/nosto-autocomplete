@@ -8,36 +8,36 @@ const currencyFormatsMock = {
     currencyToken: "£",
     decimalCharacter: ".",
     groupingSeparator: "",
-    decimalPlaces: 1
+    decimalPlaces: 1,
   },
   EUR: {
     currencyBeforeAmount: true,
     currencyToken: "€",
     decimalCharacter: ",",
     groupingSeparator: ".",
-    decimalPlaces: 0
+    decimalPlaces: 0,
   },
   USD: {
     currencyBeforeAmount: false,
     currencyToken: "$",
     decimalCharacter: ".",
     groupingSeparator: ",",
-    decimalPlaces: 2
+    decimalPlaces: 2,
   },
   INR: {
     currencyBeforeAmount: true,
     currencyToken: "₹",
     decimalCharacter: ".",
     groupingSeparator: ",",
-    decimalPlaces: 2
-  }
+    decimalPlaces: 2,
+  },
 }
 
 describe("currency formatting", () => {
   it("should use currency formatting settings", () => {
     const { formatCurrency: format } = getCurrencyFormatting({
       defaultCurrency: "GBP",
-      currencySettings: currencyFormatsMock
+      currencySettings: currencyFormatsMock,
     })
 
     expect(format(12345.0)).toEqual("£12345.0")
@@ -60,7 +60,7 @@ describe("currency formatting", () => {
   it("should have proper fallback behaviour", () => {
     const { formatCurrency: format } = getCurrencyFormatting({
       defaultCurrency: "GBP",
-      currencySettings: {}
+      currencySettings: {},
     })
 
     expect(format(12345.0)).toEqual("£12,345.00")
@@ -77,9 +77,9 @@ describe("currency formatting", () => {
     const mockApi = {
       internal: {
         getSettings: vi.fn(() => ({
-          currencySettings: currencyFormatsMock
-        }))
-      }
+          currencySettings: currencyFormatsMock,
+        })),
+      },
     }
     mockNostojs(mockApi)
 

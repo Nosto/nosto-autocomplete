@@ -28,16 +28,9 @@ describe("autocomplete", () => {
 
     const mockQuery = {
       products: {
-        fields: [
-            "name",
-            "url",
-            "imageUrl",
-            "price",
-            "listPrice",
-            "brand",
-        ],
-        size: 5
-      }
+        fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
+        size: 5,
+      },
     }
 
     const mockResponse = {
@@ -58,26 +51,26 @@ describe("autocomplete", () => {
             price: 15,
             listPrice: 25,
             brand: "Acme",
-          }
-        ]
-      }
-    } 
+          },
+        ],
+      },
+    }
 
     mockNostojs({
       internal: {
-        getSettings: () => ({ 
+        getSettings: () => ({
           currencySettings: {
             USD: {
               currencyBeforeAmount: false,
               currencyToken: "$",
               decimalCharacter: ".",
               groupingSeparator: ",",
-              decimalPlaces: 2
-            }
-          }
-        })
+              decimalPlaces: 2,
+            },
+          },
+        }),
       },
-      search: vi.fn().mockResolvedValue(mockResponse)
+      search: vi.fn().mockResolvedValue(mockResponse),
     })
 
     autocomplete({
@@ -85,10 +78,8 @@ describe("autocomplete", () => {
       dropdownSelector: "#search-results",
       minQueryLength: 0,
       fetch: mockQuery,
-      hitDecorators: [
-        priceDecorator({ defaultCurrency: "USD" })
-      ],
-      render
+      hitDecorators: [priceDecorator({ defaultCurrency: "USD" })],
+      render,
     })
 
     await user.type(screen.getByTestId("input"), "red")
@@ -98,7 +89,7 @@ describe("autocomplete", () => {
       {
         query: {
           ...mockQuery,
-          query: "r"
+          query: "r",
         },
         response: {
           ...mockResponse,
@@ -108,16 +99,16 @@ describe("autocomplete", () => {
               {
                 ...mockResponse.products.hits[0],
                 priceText: "10.00$",
-                listPriceText: "20.00$"
+                listPriceText: "20.00$",
               },
               {
                 ...mockResponse.products.hits[1],
                 priceText: "15.00$",
-                listPriceText: "25.00$"
-              }
-            ]
-          }
-        }
+                listPriceText: "25.00$",
+              },
+            ],
+          },
+        },
       }
     )
   })

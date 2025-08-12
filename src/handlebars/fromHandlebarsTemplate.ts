@@ -10,8 +10,8 @@ const defaultOptions = {
     },
     showListPrice: function (this: { listPrice: number; price: number }) {
       return this.listPrice !== this.price
-    }
-  }
+    },
+  },
 }
 
 export type Options = {
@@ -68,10 +68,13 @@ export function fromHandlebarsTemplate<State extends object = DefaultState>(
   const tmpl = Handlebars.compile(template)
 
   return (container: HTMLElement, state: State) => {
-    container.innerHTML = tmpl({
-      ...state,
-      imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock"
-    }, options ?? defaultOptions)
+    container.innerHTML = tmpl(
+      {
+        ...state,
+        imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock",
+      },
+      options ?? defaultOptions
+    )
 
     return Promise.resolve()
   }

@@ -1,10 +1,7 @@
 import { describe, expect, it, beforeEach, vi } from "vitest"
 import { mockNostojs } from "@nosto/nosto-js/testing"
 import { search, HitDecorator } from "@nosto/search-js"
-import {
-  SearchQuery,
-  SearchProduct,
-} from "@nosto/nosto-js/client"
+import { SearchQuery, SearchProduct } from "@nosto/nosto-js/client"
 
 describe("search", () => {
   beforeEach(() => {
@@ -18,7 +15,7 @@ describe("search", () => {
         },
       }),
     })
-  }) 
+  })
 
   const query: SearchQuery = { query: "test" }
 

@@ -77,7 +77,9 @@ export function webComponentSuite({ template, component }: SuiteProps) {
 
   it("should use native submit by default", async () => {
     const fn = vi.fn()
-    document.querySelector<HTMLFormElement>("form")!.addEventListener("submit", fn)
+    document
+      .querySelector<HTMLFormElement>("form")!
+      .addEventListener("submit", fn)
     document.querySelector<HTMLElement>("#search-button")?.click()
     await waitFor(() => expect(fn).toHaveBeenCalled(), { timeout: 1000 })
   })
