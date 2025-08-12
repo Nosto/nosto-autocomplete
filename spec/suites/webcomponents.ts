@@ -25,14 +25,14 @@ const config = {
   fetch: {
     products: {
       fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
-      size: 5,
+      size: 5
     },
     keywords: {
       size: 5,
-      fields: ["keyword", "_highlight.keyword"],
-    },
+      fields: ["keyword", "_highlight.keyword"]
+    }
   },
-  submit: getDefaultConfig<DefaultState>().submit,
+  submit: getDefaultConfig<DefaultState>().submit
 }
 
 function webComponentSuiteHooks() {
@@ -57,7 +57,7 @@ function webComponentSuiteHooks() {
     mockNostojs({
       search: searchSpy,
       recordSearchSubmit: recordSearchSubmitSpy,
-      recordSearchClick: recordSearchClickSpy,
+      recordSearchClick: recordSearchClickSpy
     })
   })
 
@@ -104,7 +104,7 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         expect(screen.getByTestId("dropdown")).not.toBeVisible()
       },
       {
-        timeout: 1000,
+        timeout: 1000
       }
     )
 
@@ -115,7 +115,7 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         expect(screen.getByTestId("dropdown")).toBeVisible()
       },
       {
-        timeout: 4000,
+        timeout: 4000
       }
     )
     await waitFor(
@@ -129,13 +129,11 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         expect(screen.getAllByTestId("product")).toHaveLength(5)
       },
       {
-        timeout: 4000,
+        timeout: 4000
       }
     )
 
-    await waitFor(() =>
-      expect(screen.getByTestId("custom-template")).toBeTruthy()
-    )
+    await waitFor(() => expect(screen.getByTestId("custom-template")).toBeTruthy())
   })
 
   it("should use the default template if custom template is not supplied", async () => {
@@ -149,7 +147,7 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         expect(screen.getByTestId("dropdown")).not.toBeVisible()
       },
       {
-        timeout: 1000,
+        timeout: 1000
       }
     )
 
@@ -160,20 +158,12 @@ export function webComponentSuite({ template, component }: SuiteProps) {
         expect(screen.getByTestId("dropdown")).toBeVisible()
       },
       {
-        timeout: 4000,
+        timeout: 4000
       }
     )
     await waitFor(() => {
-      expect(
-        screen
-          .getByTestId("dropdown")
-          .querySelector(".ns-autocomplete-keywords")
-      ).toBeTruthy()
-      expect(
-        screen
-          .getByTestId("dropdown")
-          .querySelector(".ns-autocomplete-products")
-      ).toBeTruthy()
+      expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-keywords")).toBeTruthy()
+      expect(screen.getByTestId("dropdown").querySelector(".ns-autocomplete-products")).toBeTruthy()
     })
   })
 
@@ -200,10 +190,6 @@ export function webComponentSuite({ template, component }: SuiteProps) {
 
     await waitFor(() => element.connectedCallback())
     await user.type(screen.getByTestId("input"), "black")
-    await waitFor(() =>
-      expect(screen.getByTestId("custom-template")).toHaveTextContent(
-        "Custom Template Content"
-      )
-    )
+    await waitFor(() => expect(screen.getByTestId("custom-template")).toHaveTextContent("Custom Template Content"))
   })
 }

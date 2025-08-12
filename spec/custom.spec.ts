@@ -27,19 +27,17 @@ describe("autocomplete", () => {
       dropdownSelector: "#search-results",
       fetch(input) {
         return Promise.resolve({
-          items: [input, "blue"],
+          items: [input, "blue"]
         })
       },
       render: (container, state) => {
         container.innerHTML =
-          state?.items?.length > 0
-            ? state.items.map(item => `<div>keyword ${item}</div>`).join("")
-            : ""
+          state?.items?.length > 0 ? state.items.map(item => `<div>keyword ${item}</div>`).join("") : ""
       },
       submit: query => {
         // Handle search submit
         console.log("Submitting search with query: ", query)
-      },
+      }
     })
 
     expect(screen.getByTestId("input")).toHaveAttribute("autocomplete", "off")
@@ -49,7 +47,7 @@ describe("autocomplete", () => {
         expect(screen.getByTestId("dropdown")).not.toBeVisible()
       },
       {
-        timeout: 1000,
+        timeout: 1000
       }
     )
 
@@ -60,7 +58,7 @@ describe("autocomplete", () => {
         expect(screen.getByTestId("dropdown")).toBeVisible()
       },
       {
-        timeout: 4000,
+        timeout: 4000
       }
     )
 

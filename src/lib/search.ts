@@ -52,7 +52,7 @@ const defaultProductFields = [
   "available",
   "tags1",
   "tags2",
-  "tags3",
+  "tags3"
 ]
 
 /**
@@ -93,8 +93,8 @@ export async function search(query: SearchQuery, options: SearchOptions = {}) {
         fields,
         facets,
         size,
-        from,
-      },
+        from
+      }
     },
     options
   )

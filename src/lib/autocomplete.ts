@@ -25,10 +25,7 @@ export type AutocompleteInstance = {
   destroy(): void
 }
 
-export type SearchAutocompleteOptions = Pick<
-  SearchOptions,
-  "isKeyword" | "redirect"
->
+export type SearchAutocompleteOptions = Pick<SearchOptions, "isKeyword" | "redirect">
 
 /**
  * @param config Autocomplete configuration.
@@ -114,17 +111,13 @@ export type SearchAutocompleteOptions = Pick<
  * });
  * ```
  */
-export function autocomplete<State = DefaultState>(
-  config: AutocompleteConfig<State>
-): AutocompleteInstance {
+export function autocomplete<State = DefaultState>(config: AutocompleteConfig<State>): AutocompleteInstance {
   const fullConfig = {
     ...getDefaultConfig<State>(),
-    ...config,
+    ...config
   } satisfies AutocompleteConfig<State>
 
-  const history = fullConfig.historyEnabled
-    ? createHistory(fullConfig.historySize)
-    : undefined
+  const history = fullConfig.historyEnabled ? createHistory(fullConfig.historySize) : undefined
 
   const debounce = createDebouncer(300)
 
@@ -132,27 +125,28 @@ export function autocomplete<State = DefaultState>(
     setTimeout(consumeLocalStorageEvent, 1000)
   }
 
-  const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(
-    inputElement => {
-      const actions = getStateActions({
-        config: fullConfig,
-        history,
-        input: inputElement,
-      })
+  const dropdowns = findAll(config.inputSelector, HTMLInputElement).map(inputElement => {
+    const actions = getStateActions({
+      config: fullConfig,
+      history,
+      input: inputElement
+    })
 
-      const dropdown = createInputDropdown({
-        input: inputElement,
-        config: fullConfig,
-        actions,
-      })
+    const dropdown = createInputDropdown({
+      input: inputElement,
+      config: fullConfig,
+      actions
+    })
 
-      if (!dropdown) {
-        return
-      }
+    if (!dropdown) {
+      return
+    }
 
-      disableNativeAutocomplete(inputElement)
+    disableNativeAutocomplete(inputElement)
 
-      const input = bindInput(inputElement, {
+    const input = bindInput(
+      inputElement,
+      {
         onInput: async value => {
           debounce(async () => {
             const state = await actions.updateState(value)
@@ -172,14 +166,14 @@ export function autocomplete<State = DefaultState>(
               trackClick({
                 config: fullConfig,
                 data,
-                query: inputElement.value,
+                query: inputElement.value
               })
             }
             dropdown.handleSubmit()
           } else {
             submitWithContext({
               actions,
-              config: fullConfig,
+              config: fullConfig
             })(inputElement.value)
           }
         },
@@ -197,33 +191,31 @@ export function autocomplete<State = DefaultState>(
               dropdown.goUp()
             }
           }
-        },
-      }, {
-        nativeSubmit: fullConfig.nativeSubmit,
-      })
-
-      const clickOutside = bindClickOutside(
-        [dropdown.container, inputElement],
-        () => {
-          dropdown.hide()
         }
-      )
+      },
+      {
+        nativeSubmit: fullConfig.nativeSubmit
+      }
+    )
 
-      return {
-        open() {
-          dropdown.show()
-        },
-        close() {
-          dropdown.hide()
-        },
-        destroy() {
-          input.destroy()
-          clickOutside.destroy()
-          dropdown.destroy()
-        },
+    const clickOutside = bindClickOutside([dropdown.container, inputElement], () => {
+      dropdown.hide()
+    })
+
+    return {
+      open() {
+        dropdown.show()
+      },
+      close() {
+        dropdown.hide()
+      },
+      destroy() {
+        input.destroy()
+        clickOutside.destroy()
+        dropdown.destroy()
       }
     }
-  )
+  })
 
   return {
     destroy() {
@@ -234,14 +226,14 @@ export function autocomplete<State = DefaultState>(
     },
     close() {
       dropdowns.forEach(dropdown => dropdown?.close())
-    },
+    }
   }
 }
 
 function createInputDropdown<State>({
   input,
   config,
-  actions,
+  actions
 }: {
   input: HTMLInputElement
   config: AutocompleteConfig<State>
@@ -256,9 +248,7 @@ function createInputDropdown<State>({
     logger.error(`No dropdown element found for input ${input}`)
     return
   } else if (dropdownElements.length > 1) {
-    logger.error(
-      `Multiple dropdown elements found for input ${input}, using the first element`
-    )
+    logger.error(`Multiple dropdown elements found for input ${input}, using the first element`)
   }
 
   const dropdownElement = dropdownElements[0]
@@ -269,7 +259,7 @@ function createInputDropdown<State>({
     config.render,
     submitWithContext({
       actions,
-      config,
+      config
     }),
     value => (input.value = value),
     config.routingHandler!,
@@ -287,7 +277,7 @@ function createInputDropdown<State>({
         if (data) {
           trackClick({ config, data, query: input.value })
         }
-      },
+      }
     }
   )
 }
@@ -295,7 +285,7 @@ function createInputDropdown<State>({
 async function trackClick<State>({
   config,
   data,
-  query,
+  query
 }: {
   config: AutocompleteConfig<State>
   data: string
@@ -318,23 +308,20 @@ async function trackClick<State>({
     if (parsedHit._redirect) {
       trackGaPageView({
         delay: true,
-        location: getGaTrackUrl(parsedHit.keyword, config),
+        location: getGaTrackUrl(parsedHit.keyword, config)
       })
     }
 
     if (parsedHit.url) {
       trackGaPageView({
         delay: true,
-        location: getGaTrackUrl(query, config),
+        location: getGaTrackUrl(query, config)
       })
     }
   }
 }
 
-function submitWithContext<State>(context: {
-  config: AutocompleteConfig<State>
-  actions: StateActions<State>
-}) {
+function submitWithContext<State>(context: { config: AutocompleteConfig<State>; actions: StateActions<State> }) {
   return async (value: string, options?: SearchAutocompleteOptions) => {
     const { config, actions } = context
     const { redirect = false } = options ?? {}
@@ -351,7 +338,7 @@ function submitWithContext<State>(context: {
       if (isGaEnabled(config)) {
         trackGaPageView({
           delay: true,
-          location: getGaTrackUrl(value, config),
+          location: getGaTrackUrl(value, config)
         })
       }
 

@@ -17,12 +17,12 @@ function render(container: HTMLElement, state: DefaultState) {
       history: state.history,
       response: {
         products: {
-          hits: state.response?.products?.hits ?? [],
+          hits: state.response?.products?.hits ?? []
         },
         keywords: {
-          hits: state.response?.keywords?.hits ?? [],
-        },
-      },
+          hits: state.response?.keywords?.hits ?? []
+        }
+      }
     })
   )
 }

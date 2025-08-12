@@ -27,17 +27,17 @@ describe("autocomplete dropdown interactions", () => {
 
   const response = {
     response: {
-        products: [
-          {
-            id: 1,
-            name: "Product1",
-            url: "/product/1",
-            price: 10,
-            listPrice: 15,
-          },
-        ],
-      },
+      products: [
+        {
+          id: 1,
+          name: "Product1",
+          url: "/product/1",
+          price: 10,
+          listPrice: 15
+        }
+      ]
     }
+  }
 
   const autocompleteConfig: AutocompleteConfig<typeof response> = {
     inputSelector: "#search",
@@ -60,8 +60,8 @@ describe("autocomplete dropdown interactions", () => {
     const routingHandler = vi.fn()
 
     autocomplete({
-        ...autocompleteConfig,
-        routingHandler: (url) => routingHandler(url),
+      ...autocompleteConfig,
+      routingHandler: url => routingHandler(url)
     })
 
     await user.type(screen.getByTestId("input"), "red")
@@ -84,7 +84,7 @@ describe("autocomplete dropdown interactions", () => {
 
     Object.defineProperty(window, "location", {
       configurable: true,
-      value: {},
+      value: {}
     })
 
     autocomplete(autocompleteConfig)

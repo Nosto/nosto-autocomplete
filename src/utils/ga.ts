@@ -3,24 +3,15 @@ import { AutocompleteConfig, defaultGaConfig } from "../lib/config"
 
 const localStorageKey = "nosto:autocomplete:gaEvent"
 
-export function trackGaPageView(options?: {
-  delay?: boolean
-  title?: string
-  location?: string
-}) {
-  const {
-    delay = false,
-    title = document.title,
-    location = window.location.href,
-  } = options || {}
+export function trackGaPageView(options?: { delay?: boolean; title?: string; location?: string }) {
+  const { delay = false, title = document.title, location = window.location.href } = options || {}
 
   if (delay) {
     saveToLocalStorage(title, location)
   } else {
     if ("gtag" in window && typeof window.gtag === "function") {
       const accounts =
-        "google_tag_manager" in window &&
-        typeof window.google_tag_manager === "object"
+        "google_tag_manager" in window && typeof window.google_tag_manager === "object"
           ? Object.keys(window.google_tag_manager || []).filter(e => {
               return e.substring(0, 2) == "G-"
             })
@@ -31,13 +22,13 @@ export function trackGaPageView(options?: {
           window.gtag("event", "page_view", {
             page_title: title,
             page_location: location,
-            send_to: accounts[i],
+            send_to: accounts[i]
           })
         }
       } else {
         window.gtag("event", "page_view", {
           page_title: title,
-          page_location: location,
+          page_location: location
         })
       }
     }
@@ -63,19 +54,15 @@ export function trackGaPageView(options?: {
 export const isGaEnabled = <State>(config: AutocompleteConfig<State>) =>
   typeof config.googleAnalytics === "boolean"
     ? config.googleAnalytics
-    : typeof config.googleAnalytics === "object" &&
-      config.googleAnalytics.enabled
+    : typeof config.googleAnalytics === "object" && config.googleAnalytics.enabled
 
-export const getGaTrackUrl = <State>(
-  value: string | undefined,
-  config: AutocompleteConfig<State>
-) => {
+export const getGaTrackUrl = <State>(value: string | undefined, config: AutocompleteConfig<State>) => {
   const gaConfig = isGaEnabled(config)
     ? typeof config.googleAnalytics === "boolean"
       ? defaultGaConfig
       : {
           ...defaultGaConfig,
-          ...config.googleAnalytics,
+          ...config.googleAnalytics
         }
     : undefined
 

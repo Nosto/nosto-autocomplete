@@ -4,11 +4,7 @@ import userEvent from "@testing-library/user-event"
 import searchResponse from "../responses/search.json"
 
 import "@testing-library/jest-dom"
-import {
-  AutocompleteConfig,
-  DefaultState,
-  autocomplete,
-} from "../../src"
+import { AutocompleteConfig, DefaultState, autocomplete } from "../../src"
 import { getDefaultConfig } from "../../src/lib/config"
 import type { API, SearchResult } from "@nosto/nosto-js/client"
 import { mockNostojs } from "@nosto/nosto-js/testing"
@@ -25,7 +21,7 @@ export const handleAutocomplete = async (
     fetch: {
       products: {
         fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
-        size: 5,
+        size: 5
       },
       // @ts-expect-error missing fields
       keywords: {
@@ -33,14 +29,14 @@ export const handleAutocomplete = async (
         fields: ["keyword", "_highlight.keyword"],
         highlight: {
           preTag: `<strong>`,
-          postTag: "</strong>",
-        },
-      },
+          postTag: "</strong>"
+        }
+      }
     },
     inputSelector: "#search",
     dropdownSelector: "#search-results",
     render,
-    submit: submit ?? getDefaultConfig<DefaultState>().submit,
+    submit: submit ?? getDefaultConfig<DefaultState>().submit
   })
 }
 
@@ -67,7 +63,7 @@ export function hooks() {
     mockNostojs({
       search: searchSpy,
       recordSearchSubmit: recordSearchSubmitSpy,
-      recordSearchClick: recordSearchClickSpy,
+      recordSearchClick: recordSearchClickSpy
     })
   })
 
@@ -98,7 +94,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
         expect(screen.getByTestId("dropdown")).not.toBeVisible()
       },
       {
-        timeout: 1000,
+        timeout: 1000
       }
     )
 
@@ -115,7 +111,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
         expect(screen.getAllByTestId("product")).toHaveLength(5)
       },
       {
-        timeout: 4000,
+        timeout: 4000
       }
     )
   })
@@ -142,7 +138,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
           expect(screen.getAllByTestId("product")).toHaveLength(5)
         },
         {
-          timeout: 4000,
+          timeout: 4000
         }
       )
     })
@@ -230,9 +226,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
       await user.clear(screen.getByTestId("input"))
 
       await waitFor(async () => {
-        const removeHistoryElement = screen.queryByTestId(
-          "remove-history-black"
-        )
+        const removeHistoryElement = screen.queryByTestId("remove-history-black")
         if (removeHistoryElement) {
           userEvent.click(removeHistoryElement)
           return waitFor(() => expect(screen.queryByText("black")).toBeNull())
@@ -276,9 +270,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
       await user.keyboard("{arrowdown}")
       await user.keyboard("{arrowup}")
 
-      await waitFor(() =>
-        expect(screen.getByText("black")).toHaveClass("selected")
-      )
+      await waitFor(() => expect(screen.getByText("black")).toHaveClass("selected"))
     })
   })
 
@@ -291,9 +283,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
       await user.type(screen.getByTestId("input"), "black")
       await user.click(screen.getByTestId("search-button"))
 
-      await waitFor(() =>
-        expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black")
-      )
+      await waitFor(() => expect(recordSearchSubmitSpy).toHaveBeenCalledWith("black"))
     })
 
     it("should record search submit with keyboard", async () => {
@@ -316,10 +306,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
 
       await waitFor(async () => {
         await user.click(screen.getAllByTestId("keyword")?.[0])
-        expect(recordSearchClickSpy).toHaveBeenCalledWith(
-          "autocomplete",
-          searchResponse.keywords.hits[0]
-        )
+        expect(recordSearchClickSpy).toHaveBeenCalledWith("autocomplete", searchResponse.keywords.hits[0])
       })
     })
 
@@ -335,7 +322,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
         expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
           track: "serp",
           redirect: false,
-          isKeyword: true,
+          isKeyword: true
         })
       })
     })
@@ -348,10 +335,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
 
       await waitFor(async () => {
         await user.click(screen.getAllByTestId("product")?.[0])
-        expect(recordSearchClickSpy).toHaveBeenCalledWith(
-          "autocomplete",
-          searchResponse.products.hits[0]
-        )
+        expect(recordSearchClickSpy).toHaveBeenCalledWith("autocomplete", searchResponse.products.hits[0])
       })
     })
 
@@ -365,10 +349,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
       await waitFor(async () => {
         await user.keyboard("{arrowdown}")
         await user.keyboard("{enter}")
-        expect(recordSearchClickSpy).toHaveBeenCalledWith(
-          "autocomplete",
-          searchResponse.keywords.hits[0]
-        )
+        expect(recordSearchClickSpy).toHaveBeenCalledWith("autocomplete", searchResponse.keywords.hits[0])
       })
     })
 
@@ -388,10 +369,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
       await user.keyboard("{enter}")
 
       await waitFor(() => {
-        expect(recordSearchClickSpy).toHaveBeenCalledWith(
-          "autocomplete",
-          searchResponse.products.hits[0]
-        )
+        expect(recordSearchClickSpy).toHaveBeenCalledWith("autocomplete", searchResponse.products.hits[0])
       })
     })
 
@@ -410,7 +388,7 @@ export function autocompleteSuite({ render, basic }: SuiteProps) {
         expect(searchSpy).toHaveBeenCalledWith(expect.anything(), {
           track: "serp",
           redirect: false,
-          isKeyword: true,
+          isKeyword: true
         })
       })
     })

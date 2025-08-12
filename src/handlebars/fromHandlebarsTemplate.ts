@@ -55,23 +55,21 @@ export type Options = {
  * });
  * ```
  */
-export function fromHandlebarsTemplate<State extends object = DefaultState>(
-  template: string,
-  options?: Options
-) {
+export function fromHandlebarsTemplate<State extends object = DefaultState>(template: string, options?: Options) {
   if (Handlebars === undefined) {
-    throw new Error(
-      "Handlebars is not defined. Please include the Handlebars dependency or library in your page."
-    )
+    throw new Error("Handlebars is not defined. Please include the Handlebars dependency or library in your page.")
   }
 
   const tmpl = Handlebars.compile(template)
 
   return (container: HTMLElement, state: State) => {
-    container.innerHTML = tmpl({
-      ...state,
-      imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock"
-    }, options ?? defaultOptions)
+    container.innerHTML = tmpl(
+      {
+        ...state,
+        imagePlaceholder: "https://cdn.nosto.com/nosto/9/mock"
+      },
+      options ?? defaultOptions
+    )
 
     return Promise.resolve()
   }

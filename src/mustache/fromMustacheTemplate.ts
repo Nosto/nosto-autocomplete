@@ -48,14 +48,9 @@ export type Options = {
  * });
  * ```
  */
-export function fromMustacheTemplate<State extends object = DefaultState>(
-  template: string,
-  options?: Options
-) {
+export function fromMustacheTemplate<State extends object = DefaultState>(template: string, options?: Options) {
   if (Mustache === undefined) {
-    throw new Error(
-      "Mustache is not defined. Please include the Mustache dependency or library in your page."
-    )
+    throw new Error("Mustache is not defined. Please include the Mustache dependency or library in your page.")
   }
 
   const { helpers } = options || {}
@@ -70,7 +65,7 @@ export function fromMustacheTemplate<State extends object = DefaultState>(
       showListPrice: function () {
         return this.listPrice !== this.price
       },
-      ...helpers,
+      ...helpers
     })
 
     return Promise.resolve()

@@ -28,14 +28,7 @@ describe("autocomplete", () => {
 
     const mockQuery = {
       products: {
-        fields: [
-            "name",
-            "url",
-            "imageUrl",
-            "price",
-            "listPrice",
-            "brand",
-        ],
+        fields: ["name", "url", "imageUrl", "price", "listPrice", "brand"],
         size: 5
       }
     }
@@ -49,7 +42,7 @@ describe("autocomplete", () => {
             imageUrl: "https://example.com/red-shirt.jpg",
             price: 10,
             listPrice: 20,
-            brand: "Acme",
+            brand: "Acme"
           },
           {
             name: "blue shirt",
@@ -57,15 +50,15 @@ describe("autocomplete", () => {
             imageUrl: "https://example.com/blue-shirt.jpg",
             price: 15,
             listPrice: 25,
-            brand: "Acme",
+            brand: "Acme"
           }
         ]
       }
-    } 
+    }
 
     mockNostojs({
       internal: {
-        getSettings: () => ({ 
+        getSettings: () => ({
           currencySettings: {
             USD: {
               currencyBeforeAmount: false,
@@ -85,40 +78,35 @@ describe("autocomplete", () => {
       dropdownSelector: "#search-results",
       minQueryLength: 0,
       fetch: mockQuery,
-      hitDecorators: [
-        priceDecorator({ defaultCurrency: "USD" })
-      ],
+      hitDecorators: [priceDecorator({ defaultCurrency: "USD" })],
       render
     })
 
     await user.type(screen.getByTestId("input"), "red")
 
-    expect(render).toHaveBeenLastCalledWith(
-      document.querySelector("#search-results"),
-      {
-        query: {
-          ...mockQuery,
-          query: "r"
-        },
-        response: {
-          ...mockResponse,
-          products: {
-            ...mockResponse.products,
-            hits: [
-              {
-                ...mockResponse.products.hits[0],
-                priceText: "10.00$",
-                listPriceText: "20.00$"
-              },
-              {
-                ...mockResponse.products.hits[1],
-                priceText: "15.00$",
-                listPriceText: "25.00$"
-              }
-            ]
-          }
+    expect(render).toHaveBeenLastCalledWith(document.querySelector("#search-results"), {
+      query: {
+        ...mockQuery,
+        query: "r"
+      },
+      response: {
+        ...mockResponse,
+        products: {
+          ...mockResponse.products,
+          hits: [
+            {
+              ...mockResponse.products.hits[0],
+              priceText: "10.00$",
+              listPriceText: "20.00$"
+            },
+            {
+              ...mockResponse.products.hits[1],
+              priceText: "15.00$",
+              listPriceText: "25.00$"
+            }
+          ]
         }
       }
-    )
+    })
   })
 })

@@ -55,11 +55,7 @@ export interface AutocompleteConfig<State> {
   /**
    * The function to use to submit the search
    */
-  submit?: (
-    query: string,
-    config: AutocompleteConfig<State>,
-    options?: SearchAutocompleteOptions
-  ) => void
+  submit?: (query: string, config: AutocompleteConfig<State>, options?: SearchAutocompleteOptions) => void
   /**
    * Enable history
    */
@@ -112,7 +108,7 @@ export interface AutocompleteConfig<State> {
 export const defaultGaConfig = {
   serpPath: "/search",
   queryParamName: "query",
-  enabled: true,
+  enabled: true
 }
 
 export function getDefaultConfig<State>() {
@@ -123,27 +119,24 @@ export function getDefaultConfig<State>() {
     hitDecorators: [],
     nostoAnalytics: true,
     googleAnalytics: defaultGaConfig,
-    routingHandler: (url) => {
-        location.href = url
+    routingHandler: url => {
+      location.href = url
     },
     nativeSubmit: false,
     submit: (query, config, options) => {
-      if (
-        query.length >=
-        (config.minQueryLength ?? getDefaultConfig<State>().minQueryLength)
-      ) {
+      if (query.length >= (config.minQueryLength ?? getDefaultConfig<State>().minQueryLength)) {
         search(
           {
-            query,
+            query
           },
           {
             redirect: true,
             track: config.nostoAnalytics ? "serp" : undefined,
             hitDecorators: config.hitDecorators,
-            ...options,
+            ...options
           }
         )
       }
-    },
+    }
   } satisfies Partial<AutocompleteConfig<State>>
 }

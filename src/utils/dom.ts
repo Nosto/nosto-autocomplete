@@ -1,16 +1,8 @@
 type Selector = string | Element
 
-export function findAll<T extends Element>(
-  selector: Selector,
-  filterType?: { new (): T }
-): T[] {
-  const elements =
-    typeof selector === "string"
-      ? Array.from(document.querySelectorAll(selector))
-      : [selector]
-  return elements.filter((v): v is T =>
-    filterType ? v instanceof filterType : true
-  )
+export function findAll<T extends Element>(selector: Selector, filterType?: { new (): T }): T[] {
+  const elements = typeof selector === "string" ? Array.from(document.querySelectorAll(selector)) : [selector]
+  return elements.filter((v): v is T => (filterType ? v instanceof filterType : true))
 }
 
 export async function DOMReady(): Promise<void> {
@@ -34,9 +26,7 @@ export function parents(target: Selector, selector?: string): Element[] {
       parentList = parentList.concat(parents(parent))
     }
   })
-  return parentList.filter(
-    element => selector === undefined || matches(element, selector)
-  )
+  return parentList.filter(element => selector === undefined || matches(element, selector))
 }
 
 export function matches(target: Selector, selector: string): boolean {
@@ -48,19 +38,12 @@ export function matches(target: Selector, selector: string): boolean {
   return findAll(target).some(element => matchesFunc.call(element, selector))
 }
 
-export function bindClickOutside(
-  [element, input]: Array<HTMLElement>,
-  callback: () => void
-) {
+export function bindClickOutside([element, input]: Array<HTMLElement>, callback: () => void) {
   const onClick = (event: MouseEvent) => {
     const target = event.target
 
     if (target instanceof HTMLElement && element) {
-      if (
-        target !== element &&
-        target !== input &&
-        !parents(target).includes(element)
-      ) {
+      if (target !== element && target !== input && !parents(target).includes(element)) {
         callback()
       }
     }
@@ -71,6 +54,6 @@ export function bindClickOutside(
   return {
     destroy: () => {
       document.removeEventListener("click", onClick)
-    },
+    }
   }
 }

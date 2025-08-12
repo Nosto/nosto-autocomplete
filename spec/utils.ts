@@ -5,7 +5,7 @@ export function mockFetch<T>(mockUrl: string, response: T) {
       return Promise.resolve({
         status: 200,
         ok: true,
-        text: () => Promise.resolve(response),
+        text: () => Promise.resolve(response)
       })
     }
   })

@@ -34,7 +34,7 @@ export type StateActions<State> = {
 export function getStateActions<State>({
   config,
   history,
-  input,
+  input
 }: {
   config: Required<AutocompleteConfig<State>>
   history?: History
@@ -54,14 +54,15 @@ export function getStateActions<State>({
       return search(
         {
           query: value,
-          ...config.fetch,
+          ...config.fetch
         },
         {
           track: config.nostoAnalytics ? "autocomplete" : undefined,
           redirect: false,
           hitDecorators: config.hitDecorators,
-          ...options,
-        })
+          ...options
+        }
+      )
     }
   }
 
@@ -69,16 +70,13 @@ export function getStateActions<State>({
     // @ts-expect-error type mismatch
     return Promise.resolve({
       query: {
-        query,
+        query
       },
-      history: history?.getItems(),
+      history: history?.getItems()
     })
   }
 
-  function updateState(
-    inputValue?: string,
-    options?: SearchAutocompleteOptions
-  ): PromiseLike<State> {
+  function updateState(inputValue?: string, options?: SearchAutocompleteOptions): PromiseLike<State> {
     cancellable?.cancel()
 
     if (inputValue && inputValue.length >= config.minQueryLength) {
@@ -119,6 +117,6 @@ export function getStateActions<State>({
     updateState,
     addHistoryItem,
     removeHistoryItem,
-    clearHistory,
+    clearHistory
   }
 }

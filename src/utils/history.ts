@@ -25,12 +25,7 @@ export function createHistory(size: number) {
   }
 
   function add(item: string) {
-    set(
-      (items = [{ item }, ...(items?.filter(v => v.item !== item) || [])].slice(
-        0,
-        size
-      ))
-    )
+    set((items = [{ item }, ...(items?.filter(v => v.item !== item) || [])].slice(0, size)))
   }
 
   function clear() {
@@ -49,7 +44,7 @@ export function createHistory(size: number) {
     add,
     clear,
     remove,
-    getItems,
+    getItems
   }
 }
 

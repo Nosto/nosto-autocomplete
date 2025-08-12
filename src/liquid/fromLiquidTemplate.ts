@@ -42,9 +42,7 @@ export function fromLiquidTemplate<State extends object = DefaultState>(
   const instance = Liquid ? new Liquid() : undefined
 
   if (instance === undefined) {
-    throw new Error(
-      "Liquid is not defined. Please include the Liquid library in your page."
-    )
+    throw new Error("Liquid is not defined. Please include the Liquid library in your page.")
   }
 
   const tmpl = instance.parse(template)

@@ -72,12 +72,6 @@
         "test": "vitest run --coverage",
         "prepare": "husky"
     },
-    "prettier": {
-        "trailingComma": "es5",
-        "semi": false,
-        "arrowParens": "avoid",
-        "tabWidth": 2
-    },
     "devDependencies": {
         "@commitlint/cli": "^19.8.0",
         "@commitlint/config-conventional": "^19.8.0",

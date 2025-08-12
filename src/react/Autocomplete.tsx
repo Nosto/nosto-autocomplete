@@ -68,11 +68,7 @@ function History({ history }: { history: AutocompleteProps["history"] }) {
               key={index}
             >
               {hit.item}
-              <a
-                href="#"
-                className="ns-autocomplete-history-item-remove"
-                data-ns-remove-history={hit.item}
-              >
+              <a href="#" className="ns-autocomplete-history-item-remove" data-ns-remove-history={hit.item}>
                 &#x2715;
               </a>
             </div>
@@ -80,11 +76,7 @@ function History({ history }: { history: AutocompleteProps["history"] }) {
         })}
       </div>
       <div className="ns-autocomplete-history-clear">
-        <button
-          type="button"
-          className="ns-autocomplete-button"
-          data-ns-remove-history="all"
-        >
+        <button type="button" className="ns-autocomplete-button" data-ns-remove-history="all">
           Clear history
         </button>
       </div>
@@ -98,16 +90,11 @@ function Keywords({ keywords }: { keywords: SearchKeyword[] }) {
       <div className="ns-autocomplete-header">Keywords</div>
       {keywords?.map((hit, index) => {
         return (
-          <div
-            className="ns-autocomplete-keyword"
-            data-ns-hit={JSON.stringify(hit)}
-            data-testid="keyword"
-            key={index}
-          >
+          <div className="ns-autocomplete-keyword" data-ns-hit={JSON.stringify(hit)} data-testid="keyword" key={index}>
             {hit._highlight && hit._highlight.keyword ? (
               <span
                 dangerouslySetInnerHTML={{
-                  __html: hit._highlight.keyword,
+                  __html: hit._highlight.keyword
                 }}
               ></span>
             ) : (
@@ -133,17 +120,9 @@ function Products({ products }: { products: SearchProduct[] }) {
             data-ns-hit={JSON.stringify(hit)}
             data-testid="product"
           >
-            <img
-              className="ns-autocomplete-product-image"
-              src={hit.imageUrl}
-              alt={hit.name}
-              width="60"
-              height="40"
-            />
+            <img className="ns-autocomplete-product-image" src={hit.imageUrl} alt={hit.name} width="60" height="40" />
             <div className="ns-autocomplete-product-info">
-              {hit.brand && (
-                <div className="ns-autocomplete-product-brand">{hit.brand}</div>
-              )}
+              {hit.brand && <div className="ns-autocomplete-product-brand">{hit.brand}</div>}
               <div className="ns-autocomplete-product-name">{hit.name}</div>
               <div>
                 <span>{hit.price}&euro;</span>

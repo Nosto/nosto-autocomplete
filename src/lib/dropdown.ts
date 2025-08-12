@@ -2,11 +2,7 @@ import { logger } from "@nosto/search-js/utils"
 import { SearchAutocompleteOptions } from "./autocomplete"
 
 type OnClickBindings<State> = {
-  [key: string]: (obj: {
-    data: string | undefined
-    el: HTMLElement
-    update: (state: State) => void
-  }) => unknown
+  [key: string]: (obj: { data: string | undefined; el: HTMLElement; update: (state: State) => void }) => unknown
 }
 
 export function createDropdown<State>(
@@ -39,7 +35,7 @@ export function createDropdown<State>(
       if (parsedHit?.keyword) {
         submit(parsedHit.keyword, {
           redirect: !!parsedHit?._redirect,
-          isKeyword: true,
+          isKeyword: true
         })
 
         if (parsedHit?._redirect) {
@@ -49,7 +45,7 @@ export function createDropdown<State>(
       }
 
       if (parsedHit?.url) {
-		routingHandler(parsedHit.url)
+        routingHandler(parsedHit.url)
       }
     }
   }
@@ -58,9 +54,7 @@ export function createDropdown<State>(
     isEmpty = !container.innerHTML.trim()
 
     if (!isEmpty) {
-      elements = Array.from<HTMLElement>(
-        container.querySelectorAll("[data-ns-hit]")
-      ).map(el => {
+      elements = Array.from<HTMLElement>(container.querySelectorAll("[data-ns-hit]")).map(el => {
         bindElementSubmit(el)
         return el
       })
@@ -70,18 +64,15 @@ export function createDropdown<State>(
   function bindDataCallbacks() {
     Object.entries(onClickBindings ?? {}).map(([key, callback]) => {
       // Convert camelCase to kebab-case
-      const dataKey = `[data-ns-${key
-        .replace(/([A-Z])/g, "-$1")
-        .toLowerCase()}]`
+      const dataKey = `[data-ns-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}]`
 
       Array.from<HTMLElement>(container.querySelectorAll(dataKey)).map(el => {
-        const data =
-          el?.dataset?.[`ns${key.charAt(0).toUpperCase() + key.slice(1)}`]
+        const data = el?.dataset?.[`ns${key.charAt(0).toUpperCase() + key.slice(1)}`]
         const onClick = () => {
           callback({
             data,
             el,
-            update,
+            update
           })
         }
 
@@ -254,7 +245,7 @@ export function createDropdown<State>(
     resetHighlight,
     hasHighlight,
     getHighlight,
-    container,
+    container
   }
 }
 

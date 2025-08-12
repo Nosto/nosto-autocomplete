@@ -7,14 +7,9 @@ type TemplateProps = {
   defaultTemplate: string
 }
 
-export async function initAutocomplete(
-  element: HTMLElement,
-  { handler, defaultTemplate }: TemplateProps
-) {
-  const templateContent = element.querySelector<HTMLScriptElement>(
-    "script[autocomplete-template]"
-  )?.textContent
-  
+export async function initAutocomplete(element: HTMLElement, { handler, defaultTemplate }: TemplateProps) {
+  const templateContent = element.querySelector<HTMLScriptElement>("script[autocomplete-template]")?.textContent
+
   const config = getConfigFromScript(element)
   if (!Object.keys(config).length) {
     throw new Error("NostoAutocomplete: Missing required config.")
