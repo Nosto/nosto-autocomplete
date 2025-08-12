@@ -7,10 +7,12 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
 ## Working Effectively
 
 ### Bootstrap and Install Dependencies
+
 - Install dependencies: `npm ci` -- takes ~1 minute. Set timeout to 3+ minutes.
 - The install process includes husky setup and runs successfully.
 
 ### Build Process
+
 - Run complete build: `npm run build` -- takes ~13 seconds. NEVER CANCEL. Set timeout to 2+ minutes.
   - This runs: typecheck → lint → rollup build → copy styles
   - Creates `dist/` directory with multiple framework distributions
@@ -20,6 +22,7 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
 - Build documentation: `npm run build:docs` -- takes ~7 seconds, creates `docs/` directory
 
 ### Testing
+
 - Run test suite: `npm run test` -- takes ~16 seconds. NEVER CANCEL. Set timeout to 5+ minutes.
   - Uses Vitest with jsdom environment
   - Includes coverage reporting (requires 80%+ coverage)
@@ -27,6 +30,7 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
   - Tests multiple framework integrations and autocomplete functionality
 
 ### Development and Manual Testing
+
 - Start dev server: `npm run dev` -- starts Vite server on port 8080
 - Test basic autocomplete: Navigate to `http://localhost:8080/` (uses index.html)
 - Test web component: Navigate to `http://localhost:8080/webc.html`
@@ -38,6 +42,7 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
   5. Confirm search submission works
 
 ### Code Quality
+
 - Format code: `npm run prettify` -- takes ~1 second, uses Prettier
 - **ALWAYS run before committing:** `npm run lint` and `npm run prettify`
 - The CI will fail if linting or build fails
@@ -45,7 +50,9 @@ Nosto Autocomplete is a TypeScript library that provides search autocomplete fun
 ## Validation Requirements
 
 ### Critical End-to-End Testing
+
 After making any changes, ALWAYS:
+
 1. Run `npm run build` and verify it completes successfully
 2. Run `npm run test` and verify all tests pass
 3. Start dev server with `npm run dev`
@@ -55,10 +62,12 @@ After making any changes, ALWAYS:
 7. Verify search submission functionality works
 
 ### Expected Build Outputs
+
 The build creates these directories in `dist/`:
+
 - `autocomplete.*` (base library)
 - `react/` (React integration)
-- `preact/` (Preact integration) 
+- `preact/` (Preact integration)
 - `handlebars/` (Handlebars integration)
 - `liquid/` (Liquid integration)
 - `mustache/` (Mustache integration)
@@ -67,6 +76,7 @@ The build creates these directories in `dist/`:
 ## Project Structure
 
 ### Key Directories
+
 - `src/` - TypeScript source code with framework-specific subdirectories
 - `spec/` - Vitest test files including suites and webcomponent tests
 - `dist/` - Build output (created by build process)
@@ -74,15 +84,17 @@ The build creates these directories in `dist/`:
 - `dev/` - Development utilities including dummySearch.ts mock backend
 
 ### Entry Points
+
 - `src/index.ts` - Base autocomplete library
 - `src/react.ts` - React integration
-- `src/liquid.ts` - Liquid template integration  
+- `src/liquid.ts` - Liquid template integration
 - `src/handlebars.ts` - Handlebars template integration
 - `src/mustache.ts` - Mustache template integration
 
 ## Known Issues
 
 ### Commands That Don't Work
+
 - `npm run exportTemplates` -- FAILS: missing scripts/exportTemplates.js file
 - Package.json shows warnings about "types" condition placement (harmless, doesn't break functionality)
 
@@ -114,8 +126,9 @@ The build creates these directories in `dist/`:
 ## Timeout Recommendations
 
 **NEVER CANCEL these commands - set appropriate timeouts:**
+
 - `npm ci` -- 3+ minutes
-- `npm run build` -- 2+ minutes  
+- `npm run build` -- 2+ minutes
 - `npm run test` -- 5+ minutes
 - `npm run dev` -- runs continuously until stopped
 - `npm run build:docs` -- 1+ minute
