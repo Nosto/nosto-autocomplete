@@ -16,8 +16,6 @@ updates:
       time: "09:00"
     labels:
       - "dependencies"
-      - "github-actions"
-      - "security"
     commit-message:
       prefix: "chore"
       include: "scope"
