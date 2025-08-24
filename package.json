@@ -28,12 +28,7 @@
             "require": "./dist/liquid/autocomplete.cjs",
             "types": "./dist/liquid/autocomplete.d.ts"
         },
-        "./mustache": {
-            "import": "./dist/mustache/autocomplete.mjs",
-            "browser": "./dist/mustache/autocomplete.bundle.mjs",
-            "require": "./dist/mustache/autocomplete.cjs",
-            "types": "./dist/mustache/autocomplete.d.ts"
-        },
+
         "./handlebars": {
             "import": "./dist/handlebars/autocomplete.mjs",
             "browser": "./dist/handlebars/autocomplete.bundle.mjs",
@@ -62,7 +57,7 @@
         "build": "npm run typecheck && npm run lint && npm run build:rollup && npm run build:styles",
         "build:rollup": "rollup --config rollup.config.mjs",
         "build:styles": "cp src/styles.css dist/styles.css",
-        "build:docs": "typedoc --treatWarningsAsErrors src/index.ts src/liquid.ts src/mustache.ts src/react.ts",
+        "build:docs": "typedoc --treatWarningsAsErrors src/index.ts src/liquid.ts src/handlebars.ts src/react.ts",
         "build:site": "npm run build:docs && rm -rf site && cp -r ./docs ./site",
         "dev": "vite dev",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
@@ -87,7 +82,7 @@
         "@testing-library/jest-dom": "^6.0.0",
         "@testing-library/user-event": "^14.4.3",
         "@types/jest": "^29.5.3",
-        "@types/mustache": "4.x",
+
         "@types/react": "19.x",
         "@types/react-dom": "19.x",
         "@vitest/coverage-v8": "^3.1.2",
@@ -100,7 +95,7 @@
         "jsdom": "^26.1.0",
         "liquidjs": "^10.9.4",
         "make-coverage-badge": "^1.2.0",
-        "mustache": "^4.2.0",
+
         "prettier": "^3.0.2",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
@@ -118,14 +113,12 @@
     "peerDependencies": {
         "handlebars": "4.x",
         "liquidjs": "10.x",
-        "mustache": "4.x",
+
         "react": "19.x",
         "react-dom": "19.x"
     },
     "peerDependenciesMeta": {
-        "mustache": {
-            "optional": true
-        },
+
         "handlebars": {
             "optional": true
         },
