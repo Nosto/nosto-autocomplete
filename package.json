@@ -67,7 +67,6 @@
         "dev": "vite dev",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
-        "exportTemplates": "node scripts/exportTemplates.js",
         "prettify": "prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
         "test": "vitest run --coverage",
         "prepare": "husky"
