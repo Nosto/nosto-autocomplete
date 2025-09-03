@@ -67,6 +67,7 @@
         "dev": "vite dev",
         "lint": "eslint 'src/**/*.{ts,tsx}' --cache",
         "typecheck": "tsc --noEmit",
+        "typedoc-json": "typedoc --json build/typedoc.json src/index.ts src/liquid.ts src/mustache.ts src/react.ts",
         "exportTemplates": "node scripts/exportTemplates.js",
         "prettify": "prettier --write \"{src,spec}/**/*.{ts,tsx}\"",
         "test": "vitest run --coverage",
