@@ -107,7 +107,6 @@ dist
 /lib
 /docs
 /esnext
-/build
 
 # Editors
 .idea
