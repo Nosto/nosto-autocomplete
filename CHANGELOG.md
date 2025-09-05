@@ -1,3 +1,11 @@
+# [2.9.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.8.0...v2.9.0) (2025-09-05)
+
+
+### Features
+
+* add typedoc-json script that outputs to build/typedoc.json ([4c4a09b](https://github.com/Nosto/nosto-autocomplete/commit/4c4a09b751446f1fcd48f3171b27fc79ef0e8075))
+* change typedoc-json output from build/ to dist/ directory ([bc33ba6](https://github.com/Nosto/nosto-autocomplete/commit/bc33ba622b19c906982eff3242d930b3225674e4))
+
 # [2.8.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.7.1...v2.8.0) (2025-08-12)
 
 
