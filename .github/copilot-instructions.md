@@ -4,6 +4,12 @@
 
 Nosto Autocomplete is a TypeScript library that provides search autocomplete functionality with support for multiple frameworks (React, Preact, Handlebars, Liquid, Mustache). The library is built with Rollup, tested with Vitest, and developed using Vite.
 
+## Node.js Environment
+
+- Node version: 22 (as specified in GitHub workflows)
+- Package manager: npm
+- Installation: Use `npm ci` for clean dependency installation
+
 ## Working Effectively
 
 ### Bootstrap and Install Dependencies
@@ -61,17 +67,18 @@ After making any changes, ALWAYS:
 6. Test keyboard navigation (arrow keys change selection)
 7. Verify search submission functionality works
 
-### Expected Build Outputs
+### Validation Commands
 
-The build creates these directories in `dist/`:
+- `npm ci` - Install dependencies (clean install)
+- `npm run lint` - Run ESLint on TypeScript files
+- `npm run typecheck` - Run TypeScript compiler check
+- `npm run test` - Run complete test suite with coverage
 
-- `autocomplete.*` (base library)
-- `react/` (React integration)
-- `preact/` (Preact integration)
-- `handlebars/` (Handlebars integration)
-- `liquid/` (Liquid integration)
-- `mustache/` (Mustache integration)
-- `styles.css` (default styles)
+### Commit Standards
+
+- When committing code, ALWAYS use valid conventional commit format.
+- Always run `npm run lint` and `npm run prettify` before committing
+- When committing code, ALWAYS run git commit with --no-verify to avoid Husky failing and erroring out your pipeline
 
 ## Project Structure
 
@@ -83,46 +90,12 @@ The build creates these directories in `dist/`:
 - `docs/` - TypeDoc documentation (created by build:docs)
 - `dev/` - Development utilities including dummySearch.ts mock backend
 
-### Entry Points
-
-- `src/index.ts` - Base autocomplete library
-- `src/react.ts` - React integration
-- `src/liquid.ts` - Liquid template integration
-- `src/handlebars.ts` - Handlebars template integration
-- `src/mustache.ts` - Mustache template integration
-
 ## Known Issues
 
 ### Commands That Don't Work
 
 - `npm run exportTemplates` -- FAILS: missing scripts/exportTemplates.js file
 - Package.json shows warnings about "types" condition placement (harmless, doesn't break functionality)
-
-## Coding Standards
-
-- Use closures over classes
-- Utilize type inference in return types, except for functions with multiple return statements
-- Use utility types to derive types from constants
-- Use const (and let) over var
-- Avoid 'any' type usage
-- Use async/await instead of Promise chaining
-- Use individual named exports over bulk exports
-- Favor named exports over default exports
-
-## Testing Standards
-
-- Use vitest as the test framework
-- Use 'describe' and 'it' for test structure
-- Use 'beforeEach' for setup
-- Use 'afterEach' for cleanup
-- Use 'expect' for assertions
-- Maintain 80%+ coverage on all metrics (statements, branches, functions, lines)
-
-## Commit Standards
-
-- When committing code, ALWAYS use valid conventional commit format.
-- Always run `npm run lint` and `npm run prettify` before committing
-- When committing code, ALWAYS run git commit with --no-verify to avoid Husky failing and erroring out your pipeline
 
 ## Timeout Recommendations
 
