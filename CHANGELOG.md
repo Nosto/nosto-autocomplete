@@ -1,3 +1,10 @@
+# [2.10.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.9.0...v2.10.0) (2025-09-29)
+
+
+### Features
+
+* restructure copilot instructions into separate targeted files ([b48b7b9](https://github.com/Nosto/nosto-autocomplete/commit/b48b7b96b5bcf1d9a5d0cdd4a0515a3f01dc71c0))
+
 # [2.9.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.8.0...v2.9.0) (2025-09-05)
 
 
