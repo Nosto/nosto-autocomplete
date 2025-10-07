@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.10.0...v2.11.0) (2025-10-07)
+
+
+### Features
+
+* add copilot-setup-steps workflow ([0831d74](https://github.com/Nosto/nosto-autocomplete/commit/0831d74b369d8e89790311e49d772c202d3a7271))
+
 # [2.10.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.9.0...v2.10.0) (2025-09-29)
 
 
