@@ -3,6 +3,8 @@ import { trackGaPageView, isGaEnabled, getGaTrackUrl, consumeLocalStorageEvent }
 import type { AutocompleteConfig } from "../../src/lib/config"
 import type { DefaultState } from "../../src/index"
 
+const GA_EVENT_KEY = "nosto:autocomplete:gaEvent"
+
 describe("ga utilities", () => {
   beforeEach(() => {
     // Clear localStorage
@@ -15,6 +17,7 @@ describe("ga utilities", () => {
 
   afterEach(() => {
     localStorage.clear()
+    vi.unstubAllGlobals()
   })
 
   describe("trackGaPageView", () => {
@@ -24,21 +27,18 @@ describe("ga utilities", () => {
 
       trackGaPageView({ delay: true, title, location })
 
-      const stored = localStorage.getItem("nosto:autocomplete:gaEvent")
+      const stored = localStorage.getItem(GA_EVENT_KEY)
       expect(stored).toBeTruthy()
       expect(JSON.parse(stored!)).toEqual({ title, location })
     })
 
     it("should use default title and location when not provided", () => {
-      Object.defineProperty(document, "title", { value: "Default Title", writable: true })
-      Object.defineProperty(window, "location", {
-        value: { href: "https://example.com/default" },
-        writable: true
-      })
+      vi.stubGlobal("document", { title: "Default Title" })
+      vi.stubGlobal("window", { location: { href: "https://example.com/default" } })
 
       trackGaPageView({ delay: true })
 
-      const stored = localStorage.getItem("nosto:autocomplete:gaEvent")
+      const stored = localStorage.getItem(GA_EVENT_KEY)
       expect(stored).toBeTruthy()
       const parsed = JSON.parse(stored!)
       expect(parsed.title).toBe("Default Title")
@@ -47,7 +47,7 @@ describe("ga utilities", () => {
 
     it("should call gtag when available with single account", () => {
       const gtagMock = vi.fn()
-      window.gtag = gtagMock
+      vi.stubGlobal("gtag", gtagMock)
 
       trackGaPageView({ title: "Test", location: "https://example.com/test" })
 
@@ -59,12 +59,12 @@ describe("ga utilities", () => {
 
     it("should call gtag for each account when multiple accounts exist", () => {
       const gtagMock = vi.fn()
-      window.gtag = gtagMock
-      window.google_tag_manager = {
+      vi.stubGlobal("gtag", gtagMock)
+      vi.stubGlobal("google_tag_manager", {
         "G-123456": {},
         "G-789012": {},
         "other-key": {}
-      }
+      })
 
       trackGaPageView({ title: "Test", location: "https://example.com/test" })
 
@@ -86,7 +86,10 @@ describe("ga utilities", () => {
       const tracker = { send: sendMock }
       const getAllMock = vi.fn().mockReturnValue([tracker])
 
-      window.ga = Object.assign(() => {}, { getAll: getAllMock })
+      vi.stubGlobal(
+        "ga",
+        Object.assign(() => {}, { getAll: getAllMock })
+      )
 
       trackGaPageView({ location: "https://example.com/test?query=value" })
 
@@ -99,7 +102,10 @@ describe("ga utilities", () => {
       const tracker = { send: sendMock }
       const getAllMock = vi.fn().mockReturnValue([tracker])
 
-      window.ga = Object.assign(() => {}, { getAll: getAllMock })
+      vi.stubGlobal(
+        "ga",
+        Object.assign(() => {}, { getAll: getAllMock })
+      )
 
       // Make URL constructor throw by passing an invalid URL
       // We'll test with a URL that looks valid but causes an error
@@ -114,7 +120,10 @@ describe("ga utilities", () => {
     it("should handle empty trackers array", () => {
       const getAllMock = vi.fn().mockReturnValue([])
 
-      window.ga = Object.assign(() => {}, { getAll: getAllMock })
+      vi.stubGlobal(
+        "ga",
+        Object.assign(() => {}, { getAll: getAllMock })
+      )
 
       // Should not throw
       trackGaPageView({ location: "https://example.com/test" })
@@ -125,7 +134,10 @@ describe("ga utilities", () => {
     it("should handle undefined trackers", () => {
       const getAllMock = vi.fn().mockReturnValue(undefined)
 
-      window.ga = Object.assign(() => {}, { getAll: getAllMock })
+      vi.stubGlobal(
+        "ga",
+        Object.assign(() => {}, { getAll: getAllMock })
+      )
 
       // Should not throw
       trackGaPageView({ location: "https://example.com/test" })
@@ -239,10 +251,10 @@ describe("ga utilities", () => {
   describe("consumeLocalStorageEvent", () => {
     it("should consume and remove event from localStorage", () => {
       const gtagMock = vi.fn()
-      window.gtag = gtagMock
+      vi.stubGlobal("gtag", gtagMock)
 
       const event = { title: "Test", location: "https://example.com/test" }
-      localStorage.setItem("nosto:autocomplete:gaEvent", JSON.stringify(event))
+      localStorage.setItem(GA_EVENT_KEY, JSON.stringify(event))
 
       consumeLocalStorageEvent()
 
@@ -250,12 +262,12 @@ describe("ga utilities", () => {
         page_title: "Test",
         page_location: "https://example.com/test"
       })
-      expect(localStorage.getItem("nosto:autocomplete:gaEvent")).toBeNull()
+      expect(localStorage.getItem(GA_EVENT_KEY)).toBeNull()
     })
 
     it("should do nothing when no event exists", () => {
       const gtagMock = vi.fn()
-      window.gtag = gtagMock
+      vi.stubGlobal("gtag", gtagMock)
 
       consumeLocalStorageEvent()
 
@@ -264,15 +276,15 @@ describe("ga utilities", () => {
 
     it("should handle invalid JSON in localStorage", () => {
       const gtagMock = vi.fn()
-      window.gtag = gtagMock
+      vi.stubGlobal("gtag", gtagMock)
 
-      localStorage.setItem("nosto:autocomplete:gaEvent", "invalid json")
+      localStorage.setItem(GA_EVENT_KEY, "invalid json")
 
       // Should not throw
       consumeLocalStorageEvent()
 
       expect(gtagMock).not.toHaveBeenCalled()
-      expect(localStorage.getItem("nosto:autocomplete:gaEvent")).toBeNull()
+      expect(localStorage.getItem(GA_EVENT_KEY)).toBeNull()
     })
   })
 })

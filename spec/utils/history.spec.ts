@@ -1,6 +1,8 @@
 import { describe, expect, it, beforeEach, afterEach, vi } from "vitest"
 import { createHistory } from "../../src/utils/history"
 
+const HISTORY_KEY = "nosto:autocomplete:history"
+
 describe("history utilities", () => {
   beforeEach(() => {
     localStorage.clear()
@@ -19,8 +21,7 @@ describe("history utilities", () => {
 
       const items = history.getItems()
       expect(items).toHaveLength(2)
-      expect(items[0]?.item).toBe("item2")
-      expect(items[1]?.item).toBe("item1")
+      expect(items).toEqual([{ item: "item2" }, { item: "item1" }])
     })
 
     it("should limit history size", () => {
@@ -33,9 +34,7 @@ describe("history utilities", () => {
 
       const items = history.getItems()
       expect(items).toHaveLength(3)
-      expect(items[0]?.item).toBe("item4")
-      expect(items[1]?.item).toBe("item3")
-      expect(items[2]?.item).toBe("item2")
+      expect(items).toEqual([{ item: "item4" }, { item: "item3" }, { item: "item2" }])
     })
 
     it("should not add duplicate items", () => {
@@ -47,8 +46,7 @@ describe("history utilities", () => {
 
       const items = history.getItems()
       expect(items).toHaveLength(2)
-      expect(items[0]?.item).toBe("item1")
-      expect(items[1]?.item).toBe("item2")
+      expect(items).toEqual([{ item: "item1" }, { item: "item2" }])
     })
 
     it("should clear all items", () => {
@@ -72,8 +70,7 @@ describe("history utilities", () => {
 
       const items = history.getItems()
       expect(items).toHaveLength(2)
-      expect(items[0]?.item).toBe("item3")
-      expect(items[1]?.item).toBe("item1")
+      expect(items).toEqual([{ item: "item3" }, { item: "item1" }])
     })
 
     it("should persist items to localStorage", () => {
@@ -82,22 +79,21 @@ describe("history utilities", () => {
       history.add("item1")
       history.add("item2")
 
-      const stored = localStorage.getItem("nosto:autocomplete:history")
+      const stored = localStorage.getItem(HISTORY_KEY)
       expect(stored).toBeTruthy()
       const parsed = JSON.parse(stored!)
       expect(parsed).toHaveLength(2)
-      expect(parsed[0].item).toBe("item2")
-      expect(parsed[1].item).toBe("item1")
+      expect(parsed).toEqual([{ item: "item2" }, { item: "item1" }])
     })
 
     it("should load items from localStorage on creation", () => {
-      localStorage.setItem("nosto:autocomplete:history", JSON.stringify([{ item: "existing" }]))
+      localStorage.setItem(HISTORY_KEY, JSON.stringify([{ item: "existing" }]))
 
       const history = createHistory(5)
       const items = history.getItems()
 
       expect(items).toHaveLength(1)
-      expect(items[0]?.item).toBe("existing")
+      expect(items).toEqual([{ item: "existing" }])
     })
 
     it("should handle empty localStorage", () => {
@@ -108,7 +104,7 @@ describe("history utilities", () => {
     })
 
     it("should handle invalid JSON in localStorage", () => {
-      localStorage.setItem("nosto:autocomplete:history", "invalid json")
+      localStorage.setItem(HISTORY_KEY, "invalid json")
 
       const history = createHistory(5)
       const items = history.getItems()
@@ -117,7 +113,7 @@ describe("history utilities", () => {
     })
 
     it("should handle null JSON parse result", () => {
-      localStorage.setItem("nosto:autocomplete:history", "null")
+      localStorage.setItem(HISTORY_KEY, "null")
 
       const history = createHistory(5)
       const items = history.getItems()
@@ -136,30 +132,34 @@ describe("history utilities", () => {
       const history = createHistory(5)
 
       // Mock localStorage.setItem to throw an error
-      const originalSetItem = localStorage.setItem
-      localStorage.setItem = vi.fn(() => {
-        throw new Error("Storage quota exceeded")
+      vi.stubGlobal("localStorage", {
+        ...localStorage,
+        setItem: vi.fn(() => {
+          throw new Error("Storage quota exceeded")
+        })
       })
 
       // Should not throw
       expect(() => history.add("item1")).not.toThrow()
 
-      // Restore original
-      localStorage.setItem = originalSetItem
+      // Restore
+      vi.unstubAllGlobals()
     })
 
     it("should handle localStorage.getItem errors gracefully", () => {
       // Mock localStorage.getItem to throw an error
-      const originalGetItem = localStorage.getItem
-      localStorage.getItem = vi.fn(() => {
-        throw new Error("Storage access denied")
+      vi.stubGlobal("localStorage", {
+        ...localStorage,
+        getItem: vi.fn(() => {
+          throw new Error("Storage access denied")
+        })
       })
 
       // Should not throw
       expect(() => createHistory(5)).not.toThrow()
 
-      // Restore original
-      localStorage.getItem = originalGetItem
+      // Restore
+      vi.unstubAllGlobals()
     })
 
     it("should update localStorage when clearing items", () => {
@@ -169,7 +169,7 @@ describe("history utilities", () => {
       history.add("item2")
       history.clear()
 
-      const stored = localStorage.getItem("nosto:autocomplete:history")
+      const stored = localStorage.getItem(HISTORY_KEY)
       expect(stored).toBeTruthy()
       const parsed = JSON.parse(stored!)
       expect(parsed).toHaveLength(0)
@@ -182,11 +182,11 @@ describe("history utilities", () => {
       history.add("item2")
       history.remove("item1")
 
-      const stored = localStorage.getItem("nosto:autocomplete:history")
+      const stored = localStorage.getItem(HISTORY_KEY)
       expect(stored).toBeTruthy()
       const parsed = JSON.parse(stored!)
       expect(parsed).toHaveLength(1)
-      expect(parsed[0].item).toBe("item2")
+      expect(parsed).toEqual([{ item: "item2" }])
     })
   })
 })
