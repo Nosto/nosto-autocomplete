@@ -19,9 +19,7 @@ describe("promise utilities", () => {
     })
 
     it("should reject with CancellableError when cancelled before resolve", async () => {
-      let resolveOriginal: (value: string) => void
       const promise = new Promise<string>(resolve => {
-        resolveOriginal = resolve
         setTimeout(() => resolve("success"), 100)
       })
       const cancellable = makeCancellable(promise)
@@ -67,6 +65,7 @@ describe("promise utilities", () => {
       expect(() => cancellable.cancel()).not.toThrow()
 
       // Catch the rejection to avoid unhandled rejection warning
+      // @ts-expect-error -- testing cancellation behavior
       await cancellable.promise.catch(() => {
         // Expected rejection after cancellation
       })
