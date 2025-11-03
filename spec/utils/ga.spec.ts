@@ -8,11 +8,8 @@ describe("ga utilities", () => {
     // Clear localStorage
     localStorage.clear()
     // Clear window objects
-    // @ts-expect-error - clearing window properties
     delete window.gtag
-    // @ts-expect-error - clearing window properties
     delete window.ga
-    // @ts-expect-error - clearing window properties
     delete window.google_tag_manager
   })
 
@@ -50,7 +47,6 @@ describe("ga utilities", () => {
 
     it("should call gtag when available with single account", () => {
       const gtagMock = vi.fn()
-      // @ts-expect-error - mocking window.gtag
       window.gtag = gtagMock
 
       trackGaPageView({ title: "Test", location: "https://example.com/test" })
@@ -63,9 +59,7 @@ describe("ga utilities", () => {
 
     it("should call gtag for each account when multiple accounts exist", () => {
       const gtagMock = vi.fn()
-      // @ts-expect-error - mocking window.gtag
       window.gtag = gtagMock
-      // @ts-expect-error - mocking window.google_tag_manager
       window.google_tag_manager = {
         "G-123456": {},
         "G-789012": {},
@@ -92,7 +86,6 @@ describe("ga utilities", () => {
       const tracker = { send: sendMock }
       const getAllMock = vi.fn().mockReturnValue([tracker])
 
-      // @ts-expect-error - mocking window.ga with proper structure
       window.ga = Object.assign(() => {}, { getAll: getAllMock })
 
       trackGaPageView({ location: "https://example.com/test?query=value" })
@@ -106,7 +99,6 @@ describe("ga utilities", () => {
       const tracker = { send: sendMock }
       const getAllMock = vi.fn().mockReturnValue([tracker])
 
-      // @ts-expect-error - mocking window.ga with proper structure
       window.ga = Object.assign(() => {}, { getAll: getAllMock })
 
       // Make URL constructor throw by passing an invalid URL
@@ -122,7 +114,6 @@ describe("ga utilities", () => {
     it("should handle empty trackers array", () => {
       const getAllMock = vi.fn().mockReturnValue([])
 
-      // @ts-expect-error - mocking window.ga with proper structure
       window.ga = Object.assign(() => {}, { getAll: getAllMock })
 
       // Should not throw
@@ -134,7 +125,6 @@ describe("ga utilities", () => {
     it("should handle undefined trackers", () => {
       const getAllMock = vi.fn().mockReturnValue(undefined)
 
-      // @ts-expect-error - mocking window.ga with proper structure
       window.ga = Object.assign(() => {}, { getAll: getAllMock })
 
       // Should not throw
@@ -249,7 +239,6 @@ describe("ga utilities", () => {
   describe("consumeLocalStorageEvent", () => {
     it("should consume and remove event from localStorage", () => {
       const gtagMock = vi.fn()
-      // @ts-expect-error - mocking window.gtag
       window.gtag = gtagMock
 
       const event = { title: "Test", location: "https://example.com/test" }
@@ -266,7 +255,6 @@ describe("ga utilities", () => {
 
     it("should do nothing when no event exists", () => {
       const gtagMock = vi.fn()
-      // @ts-expect-error - mocking window.gtag
       window.gtag = gtagMock
 
       consumeLocalStorageEvent()
@@ -276,7 +264,6 @@ describe("ga utilities", () => {
 
     it("should handle invalid JSON in localStorage", () => {
       const gtagMock = vi.fn()
-      // @ts-expect-error - mocking window.gtag
       window.gtag = gtagMock
 
       localStorage.setItem("nosto:autocomplete:gaEvent", "invalid json")
