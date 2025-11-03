@@ -60,11 +60,16 @@ describe("promise utilities", () => {
       await new Promise(resolve => setTimeout(resolve, 150))
     })
 
-    it("should allow cancelling after creation", () => {
+    it("should allow cancelling after creation", async () => {
       const promise = Promise.resolve("success")
       const cancellable = makeCancellable(promise)
 
       expect(() => cancellable.cancel()).not.toThrow()
+
+      // Catch the rejection to avoid unhandled rejection warning
+      await cancellable.promise.catch(() => {
+        // Expected rejection after cancellation
+      })
     })
 
     it("should handle immediate resolution", async () => {
