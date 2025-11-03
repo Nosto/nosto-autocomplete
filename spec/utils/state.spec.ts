@@ -1,19 +1,27 @@
-import { describe, expect, it, beforeEach, vi } from "vitest"
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest"
 import { getStateActions } from "../../src/utils/state"
 import type { AutocompleteConfig } from "../../src/lib/config"
 import type { DefaultState } from "../../src/index"
 import { createHistory } from "../../src/utils/history"
 
 describe("state utilities", () => {
+  const mockFetch = vi.fn()
+
   beforeEach(() => {
     localStorage.clear()
   })
 
+  afterEach(() => {
+    mockFetch.mockReset()
+  })
+
   describe("getStateActions", () => {
     it("should update state with search results when input meets minQueryLength", async () => {
+      mockFetch.mockResolvedValue({ query: { query: "test" }, response: { products: [] } })
+
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn().mockResolvedValue({ query: { query: "test" }, response: { products: [] } })
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")
@@ -21,14 +29,14 @@ describe("state utilities", () => {
 
       const state = await actions.updateState("test")
 
-      expect(config.fetch).toHaveBeenCalledWith("test")
+      expect(mockFetch).toHaveBeenCalledWith("test")
       expect(state).toEqual({ query: { query: "test" }, response: { products: [] } })
     })
 
     it("should return history state when input is below minQueryLength and history exists", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const history = createHistory(5)
@@ -43,13 +51,13 @@ describe("state utilities", () => {
 
       expect(state).toHaveProperty("history")
       expect(state.history).toHaveLength(2)
-      expect(config.fetch).not.toHaveBeenCalled()
+      expect(mockFetch).not.toHaveBeenCalled()
     })
 
     it("should return empty state when input is below minQueryLength and no history", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")
@@ -58,13 +66,13 @@ describe("state utilities", () => {
       const state = await actions.updateState("te")
 
       expect(state).toEqual({})
-      expect(config.fetch).not.toHaveBeenCalled()
+      expect(mockFetch).not.toHaveBeenCalled()
     })
 
     it("should return history state when inputValue is undefined and history exists", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const history = createHistory(5)
@@ -80,13 +88,13 @@ describe("state utilities", () => {
     })
 
     it("should cancel previous request when updateState is called again", async () => {
+      mockFetch.mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve({ query: { query: "test" } }), 100))
+      )
+
       const config = {
         minQueryLength: 3,
-        fetch: vi
-          .fn()
-          .mockImplementation(
-            () => new Promise(resolve => setTimeout(() => resolve({ query: { query: "test" } }), 100))
-          )
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")
@@ -105,7 +113,7 @@ describe("state utilities", () => {
     it("should add history item when addHistoryItem is called", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const history = createHistory(5)
@@ -124,7 +132,7 @@ describe("state utilities", () => {
     it("should handle addHistoryItem when no history exists", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")
@@ -141,7 +149,7 @@ describe("state utilities", () => {
     it("should remove history item when removeHistoryItem is called", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const history = createHistory(5)
@@ -163,7 +171,7 @@ describe("state utilities", () => {
     it("should handle removeHistoryItem when no history exists", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")
@@ -180,7 +188,7 @@ describe("state utilities", () => {
     it("should clear history when clearHistory is called", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const history = createHistory(5)
@@ -201,7 +209,7 @@ describe("state utilities", () => {
     it("should handle clearHistory when no history exists", async () => {
       const config = {
         minQueryLength: 3,
-        fetch: vi.fn()
+        fetch: mockFetch
       } as unknown as Required<AutocompleteConfig<DefaultState>>
 
       const input = document.createElement("input")

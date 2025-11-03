@@ -64,11 +64,8 @@ describe("promise utilities", () => {
 
       expect(() => cancellable.cancel()).not.toThrow()
 
-      // Catch the rejection to avoid unhandled rejection warning
-      // @ts-expect-error -- testing cancellation behavior
-      await cancellable.promise.catch(() => {
-        // Expected rejection after cancellation
-      })
+      // After cancellation, the wrapped promise should reject
+      await expect(cancellable.promise).rejects.toThrow(CancellableError)
     })
 
     it("should handle immediate resolution", async () => {
