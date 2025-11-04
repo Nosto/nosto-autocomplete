@@ -33,7 +33,7 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
       const handler = vi.fn((template: string) => {
         return vi.fn()
       })
@@ -63,7 +63,7 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
       const handler = vi.fn((template: string) => {
         return vi.fn()
       })
@@ -86,7 +86,7 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
       const handler = vi.fn((template: string) => {
         return vi.fn()
       })
@@ -112,7 +112,7 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
       const handler = vi.fn((template: string) => {
         return vi.fn()
       })
@@ -141,7 +141,7 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
       const handler = vi.fn((template: string) => {
         return vi.fn()
       })
@@ -170,9 +170,9 @@ describe("components", () => {
         </div>
       `
 
-      const container = document.getElementById("autocomplete-container") as HTMLElement
-      const form = document.getElementById("test-form") as HTMLFormElement
-      const input = document.getElementById("search-input") as HTMLInputElement
+      const container = document.querySelector<HTMLElement>("#autocomplete-container")!
+      const form = document.querySelector<HTMLFormElement>("#test-form")!
+      const input = document.querySelector<HTMLInputElement>("#search-input")!
 
       const handler = vi.fn((template: string) => {
         return vi.fn()
