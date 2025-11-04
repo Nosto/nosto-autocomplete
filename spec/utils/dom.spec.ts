@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest"
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest"
 import { findAll, DOMReady, parents, matches, bindClickOutside } from "../../src/utils/dom"
 
 describe("dom utilities", () => {
@@ -63,11 +63,16 @@ describe("dom utilities", () => {
         configurable: true
       })
 
+      const addEventListenerSpy = vi.spyOn(window, "addEventListener")
+
       const startTime = Date.now()
       await DOMReady()
       const endTime = Date.now()
 
       expect(endTime - startTime).toBeLessThan(10)
+      expect(addEventListenerSpy).not.toHaveBeenCalled()
+
+      addEventListenerSpy.mockRestore()
     })
 
     it("should resolve immediately when document is interactive", async () => {
@@ -77,11 +82,16 @@ describe("dom utilities", () => {
         configurable: true
       })
 
+      const addEventListenerSpy = vi.spyOn(window, "addEventListener")
+
       const startTime = Date.now()
       await DOMReady()
       const endTime = Date.now()
 
       expect(endTime - startTime).toBeLessThan(10)
+      expect(addEventListenerSpy).not.toHaveBeenCalled()
+
+      addEventListenerSpy.mockRestore()
     })
   })
 
