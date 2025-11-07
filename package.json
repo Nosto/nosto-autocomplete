@@ -81,7 +81,7 @@
         "@nosto/nosto-js": "^2.0.0",
         "@nosto/search-js": "^3.0.0",
         "@preact/compat": "^18.3.1",
-        "@rollup/plugin-alias": "^5.1.1",
+        "@rollup/plugin-alias": "^6.0.0",
         "@rollup/plugin-commonjs": "^28.0.1",
         "@rollup/plugin-node-resolve": "^16.0.0",
         "@testing-library/dom": "^10.4.0",
