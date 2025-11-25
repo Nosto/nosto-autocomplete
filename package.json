@@ -114,7 +114,7 @@
         "typescript": "5.9.x",
         "typescript-eslint": "^8.39.0",
         "vite": "^7.0.0",
-        "vitest": "^4.0.4"
+        "vitest": "^4.0.13"
     },
     "peerDependencies": {
         "handlebars": "4.x",
