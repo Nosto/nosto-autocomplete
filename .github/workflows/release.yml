@@ -69,7 +69,7 @@ jobs:
           rm targets.tar
 
       - name: Publish project
-        uses: cycjimmy/semantic-release-action@fb28efae68b11487f17ddbf318ee0768104f14c6 # v6.0.0
+        uses: cycjimmy/semantic-release-action@fb28efae68b11487f17ddbf318ee0768104f14c6 # post-v6.0.0
         id: semantic
         with:
           extra_plugins: |
