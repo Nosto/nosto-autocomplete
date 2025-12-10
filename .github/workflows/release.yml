@@ -19,7 +19,6 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
-          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         run: npm ci
@@ -61,6 +60,7 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
+          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         run: npm ci
