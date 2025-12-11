@@ -4,6 +4,9 @@ on:
   push:
     branches: ["**"]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,6 +43,9 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     if: github.ref == 'refs/heads/main'
     environment:
       name: production
@@ -54,6 +60,7 @@ jobs:
         with:
           node-version: 24
           cache: "npm"
+          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         run: npm ci
@@ -72,6 +79,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
         id: semantic
         with:
+          semantic_version: 25.0.2
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/git
@@ -81,4 +89,3 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PAT_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
