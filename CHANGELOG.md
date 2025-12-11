@@ -1,3 +1,18 @@
+# [2.12.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.11.0...v2.12.0) (2025-12-11)
+
+
+### Bug Fixes
+
+* move registry url to release job ([208d211](https://github.com/Nosto/nosto-autocomplete/commit/208d211334cbf65529a5acb5aec95cfc37a34dee))
+* move trusted publishing permission to release job ([e929826](https://github.com/Nosto/nosto-autocomplete/commit/e929826e7549aedfdce657485f76ae774fed128a))
+* update @vitest/coverage-v8 to match vitest version 4.0.13 ([d8955d6](https://github.com/Nosto/nosto-autocomplete/commit/d8955d696653867c08e4c9d7cd90bda439bbc213))
+* update vitest to 4.0.13 and sync package-lock.json ([45678d4](https://github.com/Nosto/nosto-autocomplete/commit/45678d4d50512382524c8bcae9c0a42eb2276c5c))
+
+
+### Features
+
+* migrate to using trusted publishing from NPMJS token ([6864390](https://github.com/Nosto/nosto-autocomplete/commit/68643902a7f98871e9706ae59aeed5f2bcabe916))
+
 # [2.11.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.10.0...v2.11.0) (2025-10-07)
 
 
