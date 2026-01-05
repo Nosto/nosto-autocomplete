@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Setup NodeJS
-        uses: actions/setup-node@dda4788290998366da86b6a4f497909644397bb2 # v5.0.0
+        uses: actions/setup-node@dda4788290998366da86b6a4f497909644397bb2
         with:
           node-version: 24
           cache: "npm"
@@ -36,7 +36,7 @@ jobs:
         run: tar cf targets.tar dist
 
       - name: Upload targets.tar
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main')
         with:
           name: target-${{ runner.os }}
@@ -54,12 +54,12 @@ jobs:
       name: production
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           persist-credentials: false
 
       - name: Setup NodeJS
-        uses: actions/setup-node@dda4788290998366da86b6a4f497909644397bb2 # v5.0.0
+        uses: actions/setup-node@dda4788290998366da86b6a4f497909644397bb2
         with:
           node-version: 24
           cache: "npm"
@@ -72,7 +72,7 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Download target directories
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: target-${{ runner.os }}
 
@@ -89,7 +89,7 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Publish project
-        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
+        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90
         id: semantic
         with:
           semantic_version: 25.0.2
