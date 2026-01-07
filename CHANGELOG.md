@@ -1,3 +1,15 @@
+# [2.13.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.12.0...v2.13.0) (2026-01-07)
+
+
+### Features
+
+* add npm audit to all GitHub Actions workflows ([c00ac50](https://github.com/Nosto/nosto-autocomplete/commit/c00ac5003c8d340cc8048ed2967a433f62db9f04))
+
+
+### Reverts
+
+* remove npm audit from copilot-setup-steps.yml ([3bfa2a6](https://github.com/Nosto/nosto-autocomplete/commit/3bfa2a6d61e9ccd160e359c02c87f9762d709cb9))
+
 # [2.12.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.11.0...v2.12.0) (2025-12-11)
 
 
