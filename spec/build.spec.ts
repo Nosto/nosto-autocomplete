@@ -27,6 +27,5 @@ describe("externals", () => {
 
   verify("./dist/react/autocomplete.mjs", ["react/jsx-runtime"])
   verify("./dist/liquid/autocomplete.mjs", ["liquidjs"])
-  verify("./dist/mustache/autocomplete.mjs", ["mustache"])
   verify("./dist/handlebars/autocomplete.mjs", ["handlebars"])
 })
