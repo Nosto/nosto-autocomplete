@@ -77,7 +77,7 @@
         "@commitlint/cli": "^20.0.0",
         "@commitlint/config-conventional": "^20.0.0",
         "@eslint/eslintrc": "^3.1.0",
-        "@eslint/js": "^9.13.0",
+        "@eslint/js": "^10.0.1",
         "@nosto/nosto-js": "^2.0.0",
         "@nosto/search-js": "^3.0.0",
         "@preact/compat": "^18.3.1",
