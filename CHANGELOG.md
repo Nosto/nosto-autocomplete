@@ -1,3 +1,10 @@
+## [2.13.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.13.0...v2.13.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* resolve npm audit vulnerabilities by upgrading dependencies and adding overrides ([b9f7315](https://github.com/Nosto/nosto-autocomplete/commit/b9f73154f0b8e19157f8f0df48a45350fda56732))
+
 # [2.13.0](https://github.com/Nosto/nosto-autocomplete/compare/v2.12.0...v2.13.0) (2026-01-07)
 
 
