@@ -143,5 +143,8 @@
     "publishConfig": {
         "access": "public",
         "registry": "https://registry.npmjs.org/"
+    },
+    "overrides": {
+        "minimatch": "^10.2.1"
     }
 }
