@@ -1,3 +1,10 @@
+## [2.13.2](https://github.com/Nosto/nosto-autocomplete/compare/v2.13.1...v2.13.2) (2026-03-15)
+
+
+### Bug Fixes
+
+* add flatted override to resolve npm audit vulnerability ([944ff39](https://github.com/Nosto/nosto-autocomplete/commit/944ff396c21ec9844ed0fcbab8dcda8fc777a2fe))
+
 ## [2.13.1](https://github.com/Nosto/nosto-autocomplete/compare/v2.13.0...v2.13.1) (2026-02-24)
 
 
