@@ -1,3 +1,10 @@
+## [2.13.3](https://github.com/Nosto/nosto-autocomplete/compare/v2.13.2...v2.13.3) (2026-03-17)
+
+
+### Bug Fixes
+
+* add skipLibCheck to tsconfig to fix vitest 4.1.0 type conflict ([d123ca3](https://github.com/Nosto/nosto-autocomplete/commit/d123ca3a320dab6afec7ac8934fad4d01c5b1307))
+
 ## [2.13.2](https://github.com/Nosto/nosto-autocomplete/compare/v2.13.1...v2.13.2) (2026-03-15)
 
 
