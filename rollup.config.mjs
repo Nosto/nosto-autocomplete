@@ -15,7 +15,6 @@ const preactAlias = alias({
 
 const external = [
   "react/jsx-runtime",
-  "mustache",
   "handlebars",
   "liquidjs"
 ]
@@ -27,11 +26,9 @@ export default [
   ...createConfigs('src/react.ts', 'dist/react/autocomplete.[ext]'),
   ...createConfigs('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
   ...createConfigs('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]'),
-  ...createConfigs('src/mustache.ts', 'dist/mustache/autocomplete.[ext]'),
   // bundle artifacts
   createBundleConfig('src/liquid.ts', 'dist/liquid/autocomplete.[ext]'),
-  createBundleConfig('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]'),
-  createBundleConfig('src/mustache.ts', 'dist/mustache/autocomplete.[ext]')
+  createBundleConfig('src/handlebars.ts', 'dist/handlebars/autocomplete.[ext]')
 ]
 
 function createConfigs(input, outputTemplate, ...plugins) {
@@ -51,7 +48,7 @@ function createBuildConfig(input, outputTemplate, ...plugins) {
         minifySyntax: true,
       }),
       string({
-        include: '**/*.{handlebars,mustache,liquid}',
+        include: '**/*.{handlebars,liquid}',
       }),
       visualizer(),
       ...plugins
@@ -77,7 +74,6 @@ function createBundleConfig(input, outputTemplate) {
       alias({
         entries: [
           { find: 'handlebars', replacement: 'handlebars/lib/handlebars.js' },
-          { find: 'mustache', replacement: 'mustache/mustache.mjs' },
           { find: 'liquid', replacement: 'liquid/dist/liquid.browser.mjs' }
         ]
       }),
@@ -86,7 +82,7 @@ function createBundleConfig(input, outputTemplate) {
         minify: true
       }),
       string({
-        include: '**/*.{handlebars,mustache,liquid}',
+        include: '**/*.{handlebars,liquid}',
       })
     ],
     input,
@@ -105,7 +101,7 @@ function createDtsConfig(input, outputTemplate) {
     plugins: [
       dts(),
       string({
-        include: '**/*.{mustache,handlebars,liquid}',
+        include: '**/*.{handlebars,liquid}',
       })
     ],
     input,
